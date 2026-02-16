@@ -1,0 +1,428 @@
+
+
+---
+
+# GENERIC D365 MODERN SHELL
+
+## Full Technical Specification
+
+### Version: 1.0.0 (Baseline Lock Target)
+
+---
+
+# 1. Objective
+
+Build a Git-hosted, modular, Fluent UI–based React shell that:
+
+* Visually resembles a modern Dynamics 365 experience
+* Uses a custom “Circuit” palette
+* Supports dark/light modes
+* Allows easy tool injection via config
+* Scales into a full application platform
+
+This is not a marketing site.
+This is an application shell.
+
+---
+
+# 2. Technology Stack (Locked)
+
+| Layer        | Choice                                           | Rationale                 |
+| ------------ | ------------------------------------------------ | ------------------------- |
+| UI Framework | React 18                                         | Component modularity      |
+| Language     | TypeScript (strict)                              | Long-term maintainability |
+| Bundler      | Vite                                             | Fast dev + clean output   |
+| UI Library   | Fluent UI v9                                     | Authentic Microsoft UX    |
+| Routing      | React Router v6                                  | Lazy tool injection       |
+| State        | Local + Context only (v1)                        | No global store yet       |
+| Hosting      | Git + Static host (GitHub Pages/Azure SWA later) |                           |
+
+---
+
+# 3. Repository Structure
+
+```
+generic-d365-modern-shell/
+│
+├─ src/
+│  ├─ app/
+│  │   ├─ AppShell.tsx
+│  │   ├─ routes.tsx
+│  │   ├─ navConfig.ts
+│  │   └─ AppContext.tsx
+│  │
+│  ├─ layout/
+│  │   ├─ TopBar.tsx
+│  │   ├─ SideNav.tsx
+│  │   └─ ContentArea.tsx
+│  │
+│  ├─ theme/
+│  │   ├─ circuitTokens.ts
+│  │   ├─ darkTheme.ts
+│  │   ├─ lightTheme.ts
+│  │   └─ ThemeProvider.tsx
+│  │
+│  ├─ components/
+│  │   ├─ AppCard.tsx
+│  │   ├─ SectionHeader.tsx
+│  │   └─ DataGrid.tsx
+│  │
+│  ├─ tools/
+│  │   ├─ Dashboard/
+│  │   │   └─ index.tsx
+│  │   └─ SampleTool/
+│  │       └─ index.tsx
+│  │
+│  ├─ main.tsx
+│  └─ App.tsx
+│
+├─ index.html
+├─ package.json
+├─ tsconfig.json
+├─ vite.config.ts
+└─ README.md
+```
+
+---
+
+# 4. Design System Integration
+
+## 4.1 Color System
+
+We use the previously defined **Circuit Palette**:
+
+* Brand Blues
+* Platform Green
+* Signal Red
+* Cyan/Teal accents
+* Gold highlights
+* Structured neutral layers
+
+### Implementation Rule
+
+No raw hex values in components.
+All colors flow through Fluent theme tokens.
+
+---
+
+# 5. Theming Architecture
+
+## 5.1 Base Fluent Themes
+
+We extend:
+
+* `webDarkTheme`
+* `webLightTheme`
+
+## 5.2 Token Overrides
+
+We override:
+
+```
+colorBrandBackground
+colorBrandForeground1
+colorNeutralBackground1
+colorNeutralBackground2
+colorNeutralForeground1
+colorNeutralForeground2
+colorNeutralStroke1
+```
+
+Dark mode uses deep layered backgrounds.
+Light mode uses structural inversion.
+
+## 5.3 Theme Switching
+
+Theme state lives in context:
+
+```
+<AppThemeProvider>
+  <FluentProvider theme={currentTheme}>
+```
+
+Toggle stored in:
+
+* React state (v1)
+* Optional localStorage persistence
+
+---
+
+# 6. Layout Contract
+
+## 6.1 TopBar
+
+Height: 48px
+Position: fixed
+Z-index: 1000
+
+Contains:
+
+* App title (left)
+* Optional breadcrumb (center)
+* Search (right)
+* Theme toggle
+* Profile avatar
+
+Visual behavior:
+
+* Subtle bottom border
+* No heavy shadow
+* Fluent CommandBar styling
+
+---
+
+## 6.2 SideNav
+
+Widths:
+
+* Expanded: 240px
+* Collapsed: 64px
+
+Features:
+
+* Icon + label
+* Active indicator bar (brand accent)
+* Hover background shift
+* Smooth 180ms width transition
+
+Collapsed state:
+
+* Icon only
+* Tooltip on hover
+
+---
+
+## 6.3 ContentArea
+
+* Padded (24px)
+* Scrollable
+* Responsive
+* No layout shift during nav collapse
+
+---
+
+# 7. Routing & Tool Injection
+
+## 7.1 navConfig.ts
+
+This file controls:
+
+* Navigation items
+* Lazy imports
+* Route registration
+
+Example model:
+
+```ts
+export const navItems = [
+  {
+    label: "Dashboard",
+    path: "/",
+    icon: Home24Regular,
+    element: lazy(() => import("../tools/Dashboard"))
+  },
+  {
+    label: "Sample Tool",
+    path: "/sample",
+    icon: Toolbox24Regular,
+    element: lazy(() => import("../tools/SampleTool"))
+  }
+];
+```
+
+## 7.2 routes.tsx
+
+Routes dynamically built from navConfig.
+
+To add a tool:
+
+1. Create `/tools/NewTool/index.tsx`
+2. Add entry in navConfig
+3. Done
+
+No AppShell edits required.
+
+---
+
+# 8. Component Foundations
+
+## 8.1 AppCard
+
+* Padding: 16–24px
+* Radius: 6px
+* Subtle stroke
+* Slight elevation
+* No heavy shadow
+
+## 8.2 SectionHeader
+
+* Title
+* Optional right-aligned action
+* Dense spacing
+
+## 8.3 DataGrid (v1 Minimal)
+
+* Fluent Table
+* Hover highlight
+* Sticky header optional
+* No virtualization (yet)
+
+---
+
+# 9. Typography
+
+Font stack:
+
+```
+"Segoe UI Variable", "Segoe UI", system-ui, sans-serif
+```
+
+Scale:
+
+| Role     | Size | Weight |
+| -------- | ---- | ------ |
+| h1       | 24px | 600    |
+| h2       | 20px | 600    |
+| h3       | 16px | 600    |
+| body     | 14px | 400    |
+| metadata | 12px | 400    |
+
+---
+
+# 10. Motion Guidelines
+
+All transitions:
+
+* 150–180ms
+* ease-in-out
+
+Card hover:
+
+* Slight background shift
+* Optional 1px elevation lift
+
+Nav collapse:
+
+* Width animation only
+* No opacity fade
+
+---
+
+# 11. Accessibility Baseline
+
+* WCAG AA contrast minimum
+* Focus visible outlines
+* Keyboard nav on SideNav
+* ARIA labels on toggle + icons
+
+---
+
+# 12. Git Workflow Model
+
+## Branch Strategy
+
+```
+main
+dev
+feature/*
+```
+
+## Versioning
+
+Semantic:
+
+```
+v1.0.0
+```
+
+Baseline lock when:
+
+* Dark + Light working
+* Nav collapse stable
+* Routing functional
+* One dashboard page renders
+* One sample tool page renders
+* No inline colors
+* No layout jitter
+
+---
+
+# 13. Future Scalability
+
+v1 intentionally excludes:
+
+* Global state manager
+* Authentication
+* API layer
+* Role-based navigation
+* Module federation
+
+These can be layered later.
+
+---
+
+# 14. Development Setup
+
+## 14.1 Create Project
+
+```
+npm create vite@latest generic-d365-modern-shell -- --template react-ts
+cd generic-d365-modern-shell
+npm install
+```
+
+## 14.2 Install Dependencies
+
+```
+npm install @fluentui/react-components
+npm install react-router-dom
+```
+
+Optional icons:
+
+```
+npm install @fluentui/react-icons
+```
+
+## 14.3 Enable Strict TypeScript
+
+In `tsconfig.json`:
+
+```
+"strict": true,
+"noUnusedLocals": true,
+"noUnusedParameters": true
+```
+
+---
+
+# 15. Baseline Lock Criteria
+
+Shell v1.0.0 is complete when:
+
+* AppShell renders
+* SideNav collapses
+* Dark/light toggle works
+* Navigation routing works
+* No console errors
+* No hardcoded colors
+* Visual density matches D365 tone
+
+Only then build tools.
+
+---
+
+# 16. Visual Tone Guardrails
+
+To maintain D365 credibility:
+
+* No hero sections
+* No marketing gradients
+* No oversized typography
+* Accent used sparingly
+* Data-first layout
+
+This is an application surface, not a landing page.
+
+---
+
