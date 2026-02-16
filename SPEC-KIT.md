@@ -145,91 +145,140 @@ generic-d365-modern-shell/
 
 ---
 
-## 5. Design System — Circuit Palette
+## 5. Design System — Theme System v1.2
 
-### 5.1 Color Tokens
+Three themes are supported. All share a unified CSS custom property contract.
 
-| Token              | Hex       | Usage                            |
-|--------------------|-----------|----------------------------------|
-| Brand Primary      | `#0078D4` | Primary actions, active states   |
-| Brand Secondary    | `#106EBE` | Hover/pressed brand states       |
-| Platform Green     | `#107C10` | Success, positive signals        |
-| Signal Red         | `#D13438` | Error, destructive actions       |
-| Accent Cyan        | `#00B7C3` | Informational highlights         |
-| Accent Gold        | `#FFB900` | Warnings, attention markers      |
+### 5.1 Unified Token Contract
 
-### 5.2 Dark Mode Neutrals
+All components consume these tokens — never raw hex values:
 
-| Layer   | Token              | Hex       |
-|---------|--------------------|-----------|
-| Layer 0 | `--dark-layer0`    | `#0B0B0B` |
-| Layer 1 | `--dark-layer1`    | `#141414` |
-| Layer 2 | `--dark-layer2`    | `#1E1E1E` |
-| Layer 3 | `--dark-layer3`    | `#292929` |
-| Layer 4 | `--dark-layer4`    | `#333333` |
-| FG 1    | `--dark-fg1`       | `#FFFFFF` |
-| FG 2    | `--dark-fg2`       | `#C8C8C8` |
-| FG 3    | `--dark-fg3`       | `#A0A0A0` |
-| Stroke  | `--dark-stroke`    | `#3D3D3D` |
+| Token               | Purpose                          |
+|---------------------|----------------------------------|
+| `--bg-primary`      | Page / content area background   |
+| `--bg-secondary`    | Cards, panels, side nav          |
+| `--bg-tertiary`     | Hover states, active backgrounds |
+| `--border-subtle`   | Card borders, dividers           |
+| `--border-strong`   | Emphasized borders               |
+| `--text-primary`    | Headings, primary content        |
+| `--text-secondary`  | Body text, table cells           |
+| `--text-muted`      | Labels, metadata, placeholders   |
+| `--color-primary`   | Brand actions, active indicators |
+| `--color-secondary` | Success, positive signals        |
+| `--color-accent`    | Informational highlights         |
+| `--color-danger`    | Errors, destructive actions      |
+| `--color-warning`   | Warnings, attention markers      |
+| `--color-success`   | Confirmations                    |
+| `--shadow-card`     | Card elevation                   |
+| `--shadow-modal`    | Modal / dropdown elevation       |
 
-### 5.3 Light Mode Neutrals
+### 5.2 Theme: Circuit Dark (`theme-dark`)
 
-| Layer   | Token              | Hex       |
-|---------|--------------------|-----------|
-| Layer 0 | `--light-layer0`   | `#FFFFFF` |
-| Layer 1 | `--light-layer1`   | `#F5F5F5` |
-| Layer 2 | `--light-layer2`   | `#EBEBEB` |
-| Layer 3 | `--light-layer3`   | `#E1E1E1` |
-| Layer 4 | `--light-layer4`   | `#D6D6D6` |
-| FG 1    | `--light-fg1`      | `#242424` |
-| FG 2    | `--light-fg2`      | `#605E5C` |
-| FG 3    | `--light-fg3`      | `#8A8886` |
-| Stroke  | `--light-stroke`   | `#D1D1D1` |
+| Token               | Hex       |
+|---------------------|-----------|
+| `--bg-primary`      | `#0B0D10` |
+| `--bg-secondary`    | `#12161C` |
+| `--bg-tertiary`     | `#1A1F26` |
+| `--border-subtle`   | `#232A33` |
+| `--border-strong`   | `#2E3742` |
+| `--text-primary`    | `#E6EDF3` |
+| `--text-secondary`  | `#C9D1D9` |
+| `--text-muted`      | `#8B949E` |
+| `--color-primary`   | `#1E88E5` |
+| `--color-secondary` | `#43A047` |
+| `--color-accent`    | `#00BCD4` |
+| `--color-danger`    | `#E53935` |
+| `--color-warning`   | `#F2C94C` |
+| `--color-success`   | `#4CAF50` |
+| `--shadow-card`     | `0 8px 24px rgba(0,0,0,0.45)` |
+| `--shadow-modal`    | `0 16px 48px rgba(0,0,0,0.6)` |
 
-### 5.4 Implementation Rule
+### 5.3 Theme: Circuit Light (`theme-light`)
 
-**No raw hex values in components.** All colors flow through Fluent theme tokens.
+| Token               | Hex       |
+|---------------------|-----------|
+| `--bg-primary`      | `#F4F7FA` |
+| `--bg-secondary`    | `#FFFFFF` |
+| `--bg-tertiary`     | `#E9EEF3` |
+| `--border-subtle`   | `#D0D7DE` |
+| `--border-strong`   | `#B6C2CF` |
+| `--text-primary`    | `#0D1117` |
+| `--text-secondary`  | `#30363D` |
+| `--text-muted`      | `#57606A` |
+| `--color-primary`   | `#1565C0` |
+| `--color-secondary` | `#2E7D32` |
+| `--color-accent`    | `#00897B` |
+| `--color-danger`    | `#C62828` |
+| `--color-warning`   | `#D4AF37` |
+| `--color-success`   | `#388E3C` |
+| `--shadow-card`     | `0 6px 18px rgba(0,0,0,0.08)` |
+| `--shadow-modal`    | `0 12px 32px rgba(0,0,0,0.12)` |
+
+### 5.4 Theme: Dynamics 365 (`theme-d365`)
+
+Fluent UI / Microsoft standard feel:
+
+| Token               | Hex       |
+|---------------------|-----------|
+| `--bg-primary`      | `#F3F2F1` |
+| `--bg-secondary`    | `#FFFFFF` |
+| `--bg-tertiary`     | `#FAF9F8` |
+| `--border-subtle`   | `#E1DFDD` |
+| `--border-strong`   | `#C8C6C4` |
+| `--text-primary`    | `#323130` |
+| `--text-secondary`  | `#605E5C` |
+| `--text-muted`      | `#8A8886` |
+| `--color-primary`   | `#0078D4` |
+| `--color-secondary` | `#107C10` |
+| `--color-accent`    | `#00B7C3` |
+| `--color-danger`    | `#D13438` |
+| `--color-warning`   | `#FFB900` |
+| `--color-success`   | `#107C10` |
+| `--shadow-card`     | `0 2px 6px rgba(0,0,0,0.08)` |
+| `--shadow-modal`    | `0 8px 24px rgba(0,0,0,0.2)` |
+
+### 5.5 Implementation Rule
+
+**No raw hex values in components.** All colors flow through CSS custom property tokens.
 
 ---
 
 ## 6. Theming Architecture
 
-### 6.1 Base Themes
+### 6.1 Three Themes
 
-Extend from Fluent UI:
-- `webDarkTheme`
-- `webLightTheme`
+| Theme Class    | Name           | Character                        |
+|----------------|----------------|----------------------------------|
+| `theme-dark`   | Circuit Dark   | Deep, high-contrast dev palette  |
+| `theme-light`  | Circuit Light  | Clean, bright Circuit variant    |
+| `theme-d365`   | Dynamics 365   | Official Microsoft Fluent feel   |
 
-### 6.2 Token Overrides
+### 6.2 CSS Custom Properties (No JavaScript Objects)
 
-Override the following Fluent tokens with Circuit values:
+All themes are implemented as CSS class selectors on `<body>`, each defining the same set of custom properties. Components consume tokens — never theme-specific logic.
 
+```css
+body.theme-dark  { --bg-primary: #0B0D10; /* ... */ }
+body.theme-light { --bg-primary: #F4F7FA; /* ... */ }
+body.theme-d365  { --bg-primary: #F3F2F1; /* ... */ }
 ```
-colorBrandBackground
-colorBrandForeground1
-colorNeutralBackground1
-colorNeutralBackground2
-colorNeutralForeground1
-colorNeutralForeground2
-colorNeutralStroke1
-```
-
-- Dark mode → deep layered backgrounds
-- Light mode → structural inversion
 
 ### 6.3 Theme Switching
 
-```tsx
-<AppThemeProvider>
-  <FluentProvider theme={currentTheme}>
-    {children}
-  </FluentProvider>
-</AppThemeProvider>
+```ts
+const THEMES = ['theme-dark', 'theme-light', 'theme-d365'];
+
+function setTheme(theme: string): void {
+  THEMES.forEach(t => document.body.classList.remove(t));
+  document.body.classList.add(theme);
+  localStorage.setItem('theme', theme);
+}
 ```
 
-- Theme state lives in React context
-- Toggle persisted to `localStorage`
-- Smooth switching, no flash
+- Theme selected via dropdown (not binary toggle)
+- Persisted to `localStorage`
+- Instant switch — no re-render, no flash
+- Default: `theme-dark`
 
 ---
 
@@ -251,7 +300,7 @@ colorNeutralStroke1
 - Hamburger menu toggle (left)
 - Optional breadcrumb (center)
 - Search (right)
-- Theme toggle button (right)
+- Theme selector dropdown (right) — 3 themes: Circuit Dark, Circuit Light, D365
 - Profile avatar (right)
 
 ### 7.2 SideNav
@@ -392,13 +441,14 @@ import { DocumentTable24Regular } from '@fluentui/react-icons';
 
 ### Interaction Patterns
 
-| Element     | Behavior                                  |
-|-------------|-------------------------------------------|
-| Card hover  | Slight background shift, optional 1px lift|
-| Nav collapse| Width animation only (no opacity fade)    |
-| Button hover| Background color shift (150ms)            |
-| Table row   | Background highlight on hover (150ms)     |
-| Theme toggle| Instant swap, no animation                |
+| Element       | Behavior                                  |
+|---------------|-------------------------------------------|
+| Card hover    | Slight background shift, optional 1px lift|
+| Nav collapse  | Width animation only (no opacity fade)    |
+| Button hover  | Background color shift (150ms)            |
+| Table row     | Background highlight on hover (150ms)     |
+| Theme switch  | Instant swap, no animation                |
+| Theme dropdown| Fade in, close on outside click           |
 
 ---
 
@@ -487,7 +537,7 @@ v1.0.0 is **locked** when ALL of these pass:
 |----|------------------------------------|--------|
 | 1  | AppShell renders without errors    | ☐      |
 | 2  | SideNav collapse/expand works      | ☐      |
-| 3  | Dark/Light toggle works            | ☐      |
+| 3  | All 3 themes work (dark/light/d365)| ☐      |
 | 4  | Navigation routing functional      | ☐      |
 | 5  | Dashboard page renders             | ☐      |
 | 6  | Sample tool page renders           | ☐      |
@@ -520,7 +570,8 @@ To maintain D365 credibility:
 
 A standalone HTML demo exists at `demo.html` in the project root. It implements:
 
-- Full dark/light theme switching with CSS custom properties
+- 3-theme system (Circuit Dark, Circuit Light, Dynamics 365) via CSS custom properties
+- Theme selector dropdown with visual indicators
 - Collapsible SideNav (240px ↔ 64px) with smooth transitions
 - TopBar with hamburger menu, theme toggle, and profile icon
 - Dashboard page with stat cards + data table

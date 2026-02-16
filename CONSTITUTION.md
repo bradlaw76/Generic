@@ -149,7 +149,7 @@ src/
 
 | Category            | Required Tests                              |
 |---------------------|---------------------------------------------|
-| Theme toggle        | Switches class/tokens, persists to storage  |
+| Theme switching   | Switches class/tokens, persists to storage, all 3 themes |
 | SideNav collapse    | Width changes, labels hide, no layout shift |
 | Route navigation    | Each nav item loads correct page            |
 | Data display        | Grid renders rows, handles empty state      |
@@ -191,14 +191,15 @@ All three must pass. No exceptions.
 - All border-radius: 4px (buttons) or 6px (cards)
 - All transitions: 150–180ms ease-in-out
 
-### UX2 — Dark/Light Parity
+### UX2 — Theme Parity (3 Themes)
 
-> Both themes are first-class citizens.
+> All three themes are first-class citizens.
 
-- Every component must be verified in both modes
-- No "light mode only" or "dark mode only" styling
-- Contrast must meet WCAG AA in both modes
-- Screenshots of both modes required for visual review
+- Three supported themes: Circuit Dark, Circuit Light, Dynamics 365
+- Every component must be verified in all three modes
+- No theme-specific component logic — all styling via CSS custom properties
+- Contrast must meet WCAG AA in all three themes
+- Screenshots of all three themes required for visual review
 
 ### UX3 — Layout Stability
 
@@ -331,7 +332,7 @@ Every pull request must answer YES to all:
 - [ ] All tests pass
 - [ ] No new `any` types
 - [ ] No hardcoded colors
-- [ ] Verified in both dark and light mode
+- [ ] Verified in all three themes (dark, light, d365)
 - [ ] No new dependencies without justification
 - [ ] Performance budget not exceeded
 - [ ] Loading and error states handled

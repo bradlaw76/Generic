@@ -108,10 +108,11 @@ generic-d365-modern-shell/
 │  │   └─ content-area.ts       # Main content container
 │  │
 │  ├─ theme/
-│  │   ├─ circuit-tokens.css    # CSS custom properties (Circuit palette)
-│  │   ├─ dark.css              # Dark mode overrides
-│  │   ├─ light.css             # Light mode overrides
-│  │   └─ theme-switcher.ts     # Toggle logic + localStorage
+│  │   ├─ circuit-tokens.css    # Shared accent tokens (if any)
+│  │   ├─ dark.css              # theme-dark: Circuit Dark
+│  │   ├─ light.css             # theme-light: Circuit Light
+│  │   ├─ d365.css              # theme-d365: Dynamics 365 (Fluent)
+│  │   └─ theme-switcher.ts     # 3-theme selector + localStorage
 │  │
 │  ├─ components/
 │  │   ├─ app-card.ts           # Card component
@@ -436,39 +437,75 @@ document.querySelector('.content-area')?.addEventListener('click', (e) => {
 
 ## 8. Theming Strategy
 
-### 8.1 CSS Custom Properties (Not JavaScript)
+### 8.1 Three Themes via CSS Custom Properties
 
-The entire theme system runs through CSS custom properties. No JavaScript theme objects.
+The theme system supports three modes. All implemented as CSS class selectors on `<body>` mapping to the same unified token contract:
+
+| Theme Class    | Name           | Character                        |
+|----------------|----------------|----------------------------------|
+| `theme-dark`   | Circuit Dark   | Deep, high-contrast dev palette  |
+| `theme-light`  | Circuit Light  | Clean, bright Circuit variant    |
+| `theme-d365`   | Dynamics 365   | Official Microsoft Fluent feel   |
 
 ```css
-/* src/theme/circuit-tokens.css */
-:root {
-  --brand-primary: #0078D4;
-  --brand-secondary: #106EBE;
-  --platform-green: #107C10;
-  --signal-red: #D13438;
-  --accent-cyan: #00B7C3;
-  --accent-gold: #FFB900;
-}
-
 /* src/theme/dark.css */
-body.dark-mode {
-  --bg-layer1: #141414;
-  --bg-layer2: #1E1E1E;
-  --bg-layer3: #292929;
-  --fg1: #FFFFFF;
-  --fg2: #C8C8C8;
-  --stroke: #3D3D3D;
+body.theme-dark {
+  --bg-primary: #0B0D10;
+  --bg-secondary: #12161C;
+  --bg-tertiary: #1A1F26;
+  --border-subtle: #232A33;
+  --border-strong: #2E3742;
+  --text-primary: #E6EDF3;
+  --text-secondary: #C9D1D9;
+  --text-muted: #8B949E;
+  --color-primary: #1E88E5;
+  --color-secondary: #43A047;
+  --color-accent: #00BCD4;
+  --color-danger: #E53935;
+  --color-warning: #F2C94C;
+  --color-success: #4CAF50;
+  --shadow-card: 0 8px 24px rgba(0,0,0,0.45);
+  --shadow-modal: 0 16px 48px rgba(0,0,0,0.6);
 }
 
 /* src/theme/light.css */
-body.light-mode {
-  --bg-layer1: #FFFFFF;
-  --bg-layer2: #F5F5F5;
-  --bg-layer3: #EBEBEB;
-  --fg1: #242424;
-  --fg2: #605E5C;
-  --stroke: #D1D1D1;
+body.theme-light {
+  --bg-primary: #F4F7FA;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #E9EEF3;
+  --border-subtle: #D0D7DE;
+  --border-strong: #B6C2CF;
+  --text-primary: #0D1117;
+  --text-secondary: #30363D;
+  --text-muted: #57606A;
+  --color-primary: #1565C0;
+  --color-secondary: #2E7D32;
+  --color-accent: #00897B;
+  --color-danger: #C62828;
+  --color-warning: #D4AF37;
+  --color-success: #388E3C;
+  --shadow-card: 0 6px 18px rgba(0,0,0,0.08);
+  --shadow-modal: 0 12px 32px rgba(0,0,0,0.12);
+}
+
+/* src/theme/d365.css */
+body.theme-d365 {
+  --bg-primary: #F3F2F1;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #FAF9F8;
+  --border-subtle: #E1DFDD;
+  --border-strong: #C8C6C4;
+  --text-primary: #323130;
+  --text-secondary: #605E5C;
+  --text-muted: #8A8886;
+  --color-primary: #0078D4;
+  --color-secondary: #107C10;
+  --color-accent: #00B7C3;
+  --color-danger: #D13438;
+  --color-warning: #FFB900;
+  --color-success: #107C10;
+  --shadow-card: 0 2px 6px rgba(0,0,0,0.08);
+  --shadow-modal: 0 8px 24px rgba(0,0,0,0.2);
 }
 ```
 
@@ -476,19 +513,24 @@ body.light-mode {
 
 ```ts
 // src/theme/theme-switcher.ts
-export function toggleTheme(): void {
-  const isDark = document.body.classList.toggle('dark-mode');
-  document.body.classList.toggle('light-mode', !isDark);
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+const THEMES = ['theme-dark', 'theme-light', 'theme-d365'] as const;
+type Theme = typeof THEMES[number];
+
+export function setTheme(theme: Theme): void {
+  THEMES.forEach(t => document.body.classList.remove(t));
+  document.body.classList.add(theme);
+  localStorage.setItem('theme', theme);
 }
 
 export function initTheme(): void {
-  const saved = localStorage.getItem('theme') || 'dark';
-  document.body.classList.add(saved === 'dark' ? 'dark-mode' : 'light-mode');
+  const saved = (localStorage.getItem('theme') || 'theme-dark') as Theme;
+  setTheme(saved);
 }
 ```
 
-Zero JavaScript objects. Zero re-renders. Instant theme switch.
+- Theme selected via dropdown in TopBar (not binary toggle)
+- Zero JavaScript objects. Zero re-renders. Instant theme switch.
+- Default: `theme-dark`
 
 ---
 
@@ -609,10 +651,12 @@ The existing `demo.html` is the **visual blueprint**. The migration to TypeScrip
 
 | demo.html Feature        | Plan Implementation                            |
 |--------------------------|------------------------------------------------|
-| CSS custom properties    | → `src/theme/*.css` (same tokens)              |
-| Inline `<style>`         | → Separate CSS files loaded by Vite            |
-| Inline `<script>`        | → TypeScript modules with type safety          |
-| `toggleTheme()`          | → `src/theme/theme-switcher.ts`                |
+| CSS custom properties    | → `src/theme/*.css` (same unified tokens)       |
+| 3 theme classes          | → `dark.css`, `light.css`, `d365.css`           |
+| Inline `<style>`         | → Separate CSS files loaded by Vite             |
+| Inline `<script>`        | → TypeScript modules with type safety           |
+| `setTheme()`             | → `src/theme/theme-switcher.ts`                 |
+| Theme dropdown           | → `src/layout/top-bar.ts` (dropdown component)  |
 | `toggleNav()`            | → `src/layout/side-nav.ts`                     |
 | `showPage()`             | → `src/app/router.ts` (hash-based)             |
 | Dashboard HTML           | → `src/tools/dashboard/` module                |

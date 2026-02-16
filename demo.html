@@ -11,36 +11,94 @@
             box-sizing: border-box;
         }
 
-        :root {
-            /* Circuit Colors - Dark Mode */
-            --brand-primary: #0078D4;
-            --brand-secondary: #106EBE;
-            --platform-green: #107C10;
-            --signal-red: #D13438;
-            --accent-cyan: #00B7C3;
-            --accent-gold: #FFB900;
-            
-            /* Dark Mode Neutrals */
-            --dark-layer0: #0B0B0B;
-            --dark-layer1: #141414;
-            --dark-layer2: #1E1E1E;
-            --dark-layer3: #292929;
-            --dark-layer4: #333333;
-            --dark-fg1: #FFFFFF;
-            --dark-fg2: #C8C8C8;
-            --dark-fg3: #A0A0A0;
-            --dark-stroke: #3D3D3D;
-            
-            /* Light Mode Neutrals */
-            --light-layer0: #FFFFFF;
-            --light-layer1: #F5F5F5;
-            --light-layer2: #EBEBEB;
-            --light-layer3: #E1E1E1;
-            --light-layer4: #D6D6D6;
-            --light-fg1: #242424;
-            --light-fg2: #605E5C;
-            --light-fg3: #8A8886;
-            --light-stroke: #D1D1D1;
+        /* =====================================================
+           GENERIC D365 SHELL – THEME SYSTEM v1.2
+           Supports:
+           - theme-dark (Circuit)
+           - theme-light (Circuit)
+           - theme-d365 (Microsoft Default)
+        ===================================================== */
+
+        /* =====================================================
+           DARK MODE (Circuit)
+        ===================================================== */
+        body.theme-dark {
+            --bg-primary: #0B0D10;
+            --bg-secondary: #12161C;
+            --bg-tertiary: #1A1F26;
+
+            --border-subtle: #232A33;
+            --border-strong: #2E3742;
+
+            --text-primary: #E6EDF3;
+            --text-secondary: #C9D1D9;
+            --text-muted: #8B949E;
+
+            --color-primary: #1E88E5;
+            --color-secondary: #43A047;
+            --color-accent: #00BCD4;
+            --color-danger: #E53935;
+            --color-warning: #F2C94C;
+            --color-success: #4CAF50;
+
+            --shadow-card: 0 8px 24px rgba(0,0,0,0.45);
+            --shadow-modal: 0 16px 48px rgba(0,0,0,0.6);
+        }
+
+        /* =====================================================
+           LIGHT MODE (Circuit Light)
+        ===================================================== */
+        body.theme-light {
+            --bg-primary: #F4F7FA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #E9EEF3;
+
+            --border-subtle: #D0D7DE;
+            --border-strong: #B6C2CF;
+
+            --text-primary: #0D1117;
+            --text-secondary: #30363D;
+            --text-muted: #57606A;
+
+            --color-primary: #1565C0;
+            --color-secondary: #2E7D32;
+            --color-accent: #00897B;
+            --color-danger: #C62828;
+            --color-warning: #D4AF37;
+            --color-success: #388E3C;
+
+            --shadow-card: 0 6px 18px rgba(0,0,0,0.08);
+            --shadow-modal: 0 12px 32px rgba(0,0,0,0.12);
+        }
+
+        /* =====================================================
+           DYNAMICS 365 DEFAULT MODE
+           (Fluent UI / Microsoft Standard Feel)
+        ===================================================== */
+        body.theme-d365 {
+            --bg-primary: #F3F2F1;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #FAF9F8;
+
+            --border-subtle: #E1DFDD;
+            --border-strong: #C8C6C4;
+
+            --text-primary: #323130;
+            --text-secondary: #605E5C;
+            --text-muted: #8A8886;
+
+            --color-primary: #0078D4;
+            --color-primary-hover: #106EBE;
+            --color-primary-active: #005A9E;
+
+            --color-secondary: #107C10;
+            --color-accent: #00B7C3;
+            --color-danger: #D13438;
+            --color-warning: #FFB900;
+            --color-success: #107C10;
+
+            --shadow-card: 0 2px 6px rgba(0,0,0,0.08);
+            --shadow-modal: 0 8px 24px rgba(0,0,0,0.2);
         }
 
         body {
@@ -48,28 +106,8 @@
             -webkit-font-smoothing: antialiased;
             height: 100vh;
             overflow: hidden;
-        }
-
-        body.dark-mode {
-            --bg-layer1: var(--dark-layer1);
-            --bg-layer2: var(--dark-layer2);
-            --bg-layer3: var(--dark-layer3);
-            --bg-layer4: var(--dark-layer4);
-            --fg1: var(--dark-fg1);
-            --fg2: var(--dark-fg2);
-            --fg3: var(--dark-fg3);
-            --stroke: var(--dark-stroke);
-        }
-
-        body.light-mode {
-            --bg-layer1: var(--light-layer0);
-            --bg-layer2: var(--light-layer1);
-            --bg-layer3: var(--light-layer2);
-            --bg-layer4: var(--light-layer3);
-            --fg1: var(--light-fg1);
-            --fg2: var(--light-fg2);
-            --fg3: var(--light-fg3);
-            --stroke: var(--light-stroke);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
         }
 
         /* TopBar */
@@ -79,8 +117,8 @@
             left: 0;
             right: 0;
             height: 48px;
-            background-color: var(--bg-layer1);
-            border-bottom: 1px solid var(--stroke);
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
             padding: 0 24px;
@@ -96,7 +134,7 @@
         .top-bar-title {
             font-size: 16px;
             font-weight: 600;
-            color: var(--fg1);
+            color: var(--text-primary);
         }
 
         .top-bar-center {
@@ -119,12 +157,66 @@
             border-radius: 4px;
             background: transparent;
             border: none;
-            color: var(--fg2);
+            color: var(--text-secondary);
             transition: background-color 150ms ease-in-out;
         }
 
         .icon-button:hover {
-            background-color: var(--bg-layer3);
+            background-color: var(--bg-tertiary);
+        }
+
+        /* Theme Selector */
+        .theme-selector {
+            position: relative;
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            box-shadow: var(--shadow-card);
+            min-width: 180px;
+            z-index: 2000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .theme-dropdown.open {
+            display: block;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background-color 150ms ease-in-out;
+        }
+
+        .theme-option:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .theme-option.active {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .theme-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
 
         /* SideNav */
@@ -133,8 +225,8 @@
             top: 48px;
             left: 0;
             bottom: 0;
-            background-color: var(--bg-layer2);
-            border-right: 1px solid var(--stroke);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-subtle);
             width: 240px;
             overflow-x: hidden;
             overflow-y: auto;
@@ -156,7 +248,7 @@
             height: 48px;
             padding: 0 16px;
             cursor: pointer;
-            color: var(--fg2);
+            color: var(--text-secondary);
             background: transparent;
             border: none;
             width: 100%;
@@ -166,12 +258,12 @@
         }
 
         .nav-item:hover {
-            background-color: var(--bg-layer3);
+            background-color: var(--bg-tertiary);
         }
 
         .nav-item.active {
-            color: var(--brand-primary);
-            background-color: var(--bg-layer3);
+            color: var(--color-primary);
+            background-color: var(--bg-tertiary);
         }
 
         .nav-item.active::before {
@@ -181,7 +273,7 @@
             top: 0;
             bottom: 0;
             width: 3px;
-            background-color: var(--brand-primary);
+            background-color: var(--color-primary);
         }
 
         .nav-icon {
@@ -207,7 +299,7 @@
             left: 240px;
             right: 0;
             bottom: 0;
-            background-color: var(--bg-layer1);
+            background-color: var(--bg-primary);
             padding: 24px;
             overflow-y: auto;
             transition: left 180ms ease-in-out;
@@ -228,7 +320,7 @@
         .section-title {
             font-size: 20px;
             font-weight: 600;
-            color: var(--fg1);
+            color: var(--text-primary);
         }
 
         .card-grid {
@@ -239,23 +331,23 @@
         }
 
         .card {
-            background-color: var(--bg-layer2);
+            background-color: var(--bg-secondary);
             border-radius: 6px;
-            border: 1px solid var(--stroke);
+            border: 1px solid var(--border-subtle);
             padding: 24px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow-card);
         }
 
         .stat {
             font-size: 32px;
             font-weight: 600;
-            color: var(--fg1);
+            color: var(--text-primary);
             margin-bottom: 8px;
         }
 
         .stat-label {
             font-size: 14px;
-            color: var(--fg2);
+            color: var(--text-secondary);
         }
 
         .table {
@@ -264,22 +356,22 @@
         }
 
         .table thead {
-            border-bottom: 1px solid var(--stroke);
+            border-bottom: 1px solid var(--border-subtle);
         }
 
         .table th {
             text-align: left;
             padding: 12px;
             font-weight: 600;
-            color: var(--fg1);
+            color: var(--text-primary);
             font-size: 14px;
         }
 
         .table td {
             padding: 12px;
-            color: var(--fg2);
+            color: var(--text-secondary);
             font-size: 14px;
-            border-top: 1px solid var(--stroke);
+            border-top: 1px solid var(--border-subtle);
         }
 
         .table tbody tr {
@@ -287,7 +379,7 @@
         }
 
         .table tbody tr:hover {
-            background-color: var(--bg-layer3);
+            background-color: var(--bg-tertiary);
         }
 
         .button {
@@ -301,22 +393,22 @@
         }
 
         .button-primary {
-            background-color: var(--brand-primary);
+            background-color: var(--color-primary);
             color: white;
         }
 
         .button-primary:hover {
-            background-color: var(--brand-secondary);
+            filter: brightness(0.9);
         }
 
         .button-outline {
             background-color: transparent;
-            color: var(--fg1);
-            border: 1px solid var(--stroke);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
         }
 
         .button-outline:hover {
-            background-color: var(--bg-layer3);
+            background-color: var(--bg-tertiary);
         }
 
         .page-content {
@@ -326,14 +418,14 @@
         }
 
         .card h3 {
-            color: var(--fg1);
+            color: var(--text-primary);
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 12px;
         }
 
         .card p {
-            color: var(--fg2);
+            color: var(--text-secondary);
             font-size: 14px;
             line-height: 1.6;
             margin-bottom: 12px;
@@ -352,7 +444,7 @@
         }
     </style>
 </head>
-<body class="dark-mode">
+<body class="theme-dark">
     <!-- TopBar -->
     <div class="top-bar">
         <div class="top-bar-left">
@@ -365,11 +457,27 @@
         </div>
         <div class="top-bar-center"></div>
         <div class="top-bar-right">
-            <button class="icon-button" onclick="toggleTheme()" aria-label="Toggle theme">
-                <svg class="icon theme-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
-                </svg>
-            </button>
+            <div class="theme-selector">
+                <button class="icon-button" onclick="toggleThemeDropdown()" aria-label="Change theme">
+                    <svg class="icon theme-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+                    </svg>
+                </button>
+                <div class="theme-dropdown" id="themeDropdown">
+                    <button class="theme-option active" onclick="setTheme('theme-dark')">
+                        <span class="theme-dot" style="background: #0B0D10;"></span>
+                        Circuit Dark
+                    </button>
+                    <button class="theme-option" onclick="setTheme('theme-light')">
+                        <span class="theme-dot" style="background: #F4F7FA;"></span>
+                        Circuit Light
+                    </button>
+                    <button class="theme-option" onclick="setTheme('theme-d365')">
+                        <span class="theme-dot" style="background: #0078D4;"></span>
+                        Dynamics 365
+                    </button>
+                </div>
+            </div>
             <button class="icon-button" aria-label="User profile">
                 <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2a7.2 7.2 0 0 1-6-3.22c.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08a7.2 7.2 0 0 1-6 3.22z"/>
@@ -492,58 +600,67 @@
     </main>
 
     <script>
-        // Theme Toggle
-        function toggleTheme() {
-            const body = document.body;
+        const THEMES = ['theme-dark', 'theme-light', 'theme-d365'];
+        const THEME_ICONS = {
+            'theme-dark':  '<path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>',
+            'theme-light': '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>',
+            'theme-d365':  '<path d="M17.5 12a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>'
+        };
+
+        // Theme Selector
+        function setTheme(theme) {
+            THEMES.forEach(t => document.body.classList.remove(t));
+            document.body.classList.add(theme);
+            localStorage.setItem('theme', theme);
+
+            // Update icon
             const icon = document.querySelector('.theme-icon');
-            
-            if (body.classList.contains('dark-mode')) {
-                body.classList.remove('dark-mode');
-                body.classList.add('light-mode');
-                icon.innerHTML = '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>';
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.classList.remove('light-mode');
-                body.classList.add('dark-mode');
-                icon.innerHTML = '<path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>';
-                localStorage.setItem('theme', 'dark');
-            }
+            if (icon) icon.innerHTML = THEME_ICONS[theme] || THEME_ICONS['theme-dark'];
+
+            // Update active state in dropdown
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.classList.toggle('active', opt.getAttribute('onclick').includes(theme));
+            });
+
+            // Close dropdown
+            document.getElementById('themeDropdown').classList.remove('open');
         }
+
+        function toggleThemeDropdown() {
+            document.getElementById('themeDropdown').classList.toggle('open');
+        }
+
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.theme-selector')) {
+                document.getElementById('themeDropdown')?.classList.remove('open');
+            }
+        });
 
         // Nav Toggle
         function toggleNav() {
             const sideNav = document.getElementById('sideNav');
             const contentArea = document.getElementById('contentArea');
-            
             sideNav.classList.toggle('collapsed');
             contentArea.classList.toggle('nav-collapsed');
         }
 
         // Page Navigation
         function showPage(pageId) {
-            // Hide all pages
             document.querySelectorAll('.page-content').forEach(page => {
                 page.style.display = 'none';
             });
-            
-            // Remove active class from all nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            
-            // Show selected page
             document.getElementById(pageId).style.display = 'flex';
-            
-            // Add active class to clicked nav item
             event.target.closest('.nav-item').classList.add('active');
         }
 
         // Initialize theme from localStorage
         window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            if (savedTheme === 'light') {
-                toggleTheme();
-            }
+            const saved = localStorage.getItem('theme') || 'theme-dark';
+            setTheme(saved);
         });
     </script>
 </body>

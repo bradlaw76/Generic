@@ -31,15 +31,16 @@
 > **Depends on:** Phase 0
 
 - [ ] **T1.1** — Create `src/styles/reset.css` — minimal CSS reset
-- [ ] **T1.2** — Create `src/theme/circuit-tokens.css` — brand colors, accent colors
-- [ ] **T1.3** — Create `src/theme/dark.css` — dark mode neutral layers, foregrounds, strokes
-- [ ] **T1.4** — Create `src/theme/light.css` — light mode neutral layers, foregrounds, strokes
-- [ ] **T1.5** — Create `src/styles/typography.css` — font stack, type scale (12/14/16/20/24)
-- [ ] **T1.6** — Create `src/index.css` — imports all CSS in correct order
-- [ ] **T1.7** — Create `src/theme/theme-switcher.ts` — `toggleTheme()`, `initTheme()`, localStorage
-- [ ] **T1.8** — Wire `index.html` to load `src/main.ts` → initializes theme
-- [ ] **T1.9** — Verify: page renders in dark mode, toggle switches to light, persists on reload
-- [ ] **T1.10** — Git commit: `"T1: CSS foundation and theme system"`
+- [ ] **T1.2** — Create `src/theme/circuit-tokens.css` — shared brand accent colors (if any shared across themes)
+- [ ] **T1.3** — Create `src/theme/dark.css` — `body.theme-dark` with full token set (bg, border, text, color, shadow)
+- [ ] **T1.4** — Create `src/theme/light.css` — `body.theme-light` with full token set
+- [ ] **T1.5** — Create `src/theme/d365.css` — `body.theme-d365` with Fluent/Microsoft standard tokens
+- [ ] **T1.6** — Create `src/styles/typography.css` — font stack, type scale (12/14/16/20/24)
+- [ ] **T1.7** — Create `src/index.css` — imports all CSS in correct order
+- [ ] **T1.8** — Create `src/theme/theme-switcher.ts` — `setTheme()`, `initTheme()`, localStorage (3 themes)
+- [ ] **T1.9** — Wire `index.html` to load `src/main.ts` → initializes theme
+- [ ] **T1.10** — Verify: page renders in theme-dark, dropdown switches all 3 themes, persists on reload
+- [ ] **T1.11** — Git commit: `"T1: CSS foundation and 3-theme system"`
 
 ---
 
@@ -50,15 +51,16 @@
 > **Depends on:** Phase 1
 
 - [ ] **T2.1** — Create `src/styles/layout.css` — top-bar, side-nav, content-area styles
-- [ ] **T2.2** — Create `src/layout/top-bar.ts` — render 48px fixed header with title, theme toggle, profile icon
+- [ ] **T2.2** — Create `src/layout/top-bar.ts` — render 48px fixed header with title, theme dropdown, profile icon
 - [ ] **T2.3** — Create `src/layout/side-nav.ts` — render collapsible nav (240px/64px), toggle function
 - [ ] **T2.4** — Create `src/layout/content-area.ts` — scrollable main area, adjusts on nav collapse
 - [ ] **T2.5** — Create `src/app/shell.ts` — orchestrates layout: mounts TopBar, SideNav, ContentArea
-- [ ] **T2.6** — Add inline SVG icon functions for: hamburger, moon/sun, profile, home, grid
-- [ ] **T2.7** — Wire `main.ts` to call `shell.init()`
-- [ ] **T2.8** — Verify: layout matches demo.html, nav collapses smoothly (180ms), no jitter
-- [ ] **T2.9** — Verify: dark/light both render correctly for all layout elements
-- [ ] **T2.10** — Git commit: `"T2: shell layout (TopBar, SideNav, ContentArea)"`
+- [ ] **T2.6** — Add inline SVG icon functions for: hamburger, moon/sun/d365, profile, home, grid
+- [ ] **T2.7** — Create theme dropdown component (3 options with color dots)
+- [ ] **T2.8** — Wire `main.ts` to call `shell.init()`
+- [ ] **T2.9** — Verify: layout matches demo.html, nav collapses smoothly (180ms), no jitter
+- [ ] **T2.10** — Verify: all 3 themes render correctly for all layout elements
+- [ ] **T2.11** — Git commit: `"T2: shell layout (TopBar, SideNav, ContentArea)"`
 
 ---
 
@@ -109,7 +111,7 @@
 - [ ] **T5.3** — Render 3 stat cards in grid layout (Total Records, Completion Rate, Active Tasks)
 - [ ] **T5.4** — Render "Recent Activity" data grid (Name, Status, Value columns)
 - [ ] **T5.5** — Wire to nav-config as default route (`/`)
-- [ ] **T5.6** — Verify: matches demo.html dashboard layout in both themes
+- [ ] **T5.6** — Verify: matches demo.html dashboard layout in all 3 themes
 - [ ] **T5.7** — Git commit: `"T5: dashboard tool"`
 
 ---
@@ -125,7 +127,7 @@
 - [ ] **T6.3** — Render "Tool Configuration" card with description + button group
 - [ ] **T6.4** — Render "Integration Points" card with description
 - [ ] **T6.5** — Wire to nav-config at path `/sample`
-- [ ] **T6.6** — Verify: matches demo.html sample tool layout in both themes
+- [ ] **T6.6** — Verify: matches demo.html sample tool layout in all 3 themes
 - [ ] **T6.7** — Git commit: `"T6: sample tool"`
 
 ---
@@ -176,7 +178,7 @@
 - [ ] **T9.2** — Add ARIA roles to navigation (`nav`, `button`, `main`)
 - [ ] **T9.3** — Implement keyboard navigation for SideNav (Tab, Arrow keys, Enter/Space)
 - [ ] **T9.4** — Add visible focus indicators (outline) on all interactive elements
-- [ ] **T9.5** — Verify WCAG AA contrast ratios for all text/background combinations
+- [ ] **T9.5** — Verify WCAG AA contrast ratios for all text/background combinations in all 3 themes
 - [ ] **T9.6** — Test with screen reader (NVDA or VoiceOver)
 - [ ] **T9.7** — Add `skip-to-content` link
 - [ ] **T9.8** — Git commit: `"T9: accessibility and keyboard navigation"`
@@ -190,13 +192,13 @@
 > **Depends on:** All previous phases
 
 - [ ] **T10.1** — Configure Vitest (`vitest.config.ts`, coverage thresholds)
-- [ ] **T10.2** — Write unit tests for `theme-switcher.ts` (toggle, persist, init)
+- [ ] **T10.2** — Write unit tests for `theme-switcher.ts` (setTheme, persist, init, all 3 themes)
 - [ ] **T10.3** — Write unit tests for `router.ts` (register, navigate, cleanup)
 - [ ] **T10.4** — Write unit tests for `nav-config.ts` (items match expected shape)
 - [ ] **T10.5** — Write component tests for `app-card`, `section-header`, `data-grid`
 - [ ] **T10.6** — Write unit tests for `db.ts`, `queries.ts` (CRUD, migrations)
 - [ ] **T10.7** — Install Playwright, write integration test: full nav flow
-- [ ] **T10.8** — Write integration test: theme toggle persists
+- [ ] **T10.8** — Write integration test: theme selector cycles all 3 themes + persists
 - [ ] **T10.9** — Write integration test: dashboard renders data
 - [ ] **T10.10** — Verify: `npm run test` all pass, coverage ≥ 80% unit / ≥ 70% component
 - [ ] **T10.11** — Git commit: `"T10: test suite"`
@@ -229,8 +231,8 @@
 
 - [ ] **T12.1** — Run full baseline lock checklist (SPEC-KIT §15)
 - [ ] **T12.2** — Verify: AppShell renders without errors
-- [ ] **T12.3** — Verify: SideNav collapse/expand works in both themes
-- [ ] **T12.4** — Verify: Dark/Light toggle works + persists
+- [ ] **T12.3** — Verify: SideNav collapse/expand works in all 3 themes
+- [ ] **T12.4** — Verify: All 3 themes work (dark/light/d365) + persist
 - [ ] **T12.5** — Verify: Navigation routing functional (all routes)
 - [ ] **T12.6** — Verify: Dashboard renders stat cards + data grid
 - [ ] **T12.7** — Verify: Sample tool renders correctly
@@ -250,8 +252,8 @@
 | Phase | Name                       | Tasks | Estimate    | Status      |
 |-------|----------------------------|-------|-------------|-------------|
 | 0     | Project Scaffolding        | 8     | 1 session   | ☐ Not started |
-| 1     | CSS Foundation & Themes    | 10    | 1 session   | ☐ Not started |
-| 2     | Shell Layout               | 10    | 1–2 sessions| ☐ Not started |
+| 1     | CSS Foundation & Themes    | 11    | 1 session   | ☐ Not started |
+| 2     | Shell Layout               | 11    | 1–2 sessions| ☐ Not started |
 | 3     | Router & Navigation        | 10    | 1 session   | ☐ Not started |
 | 4     | Shared Components          | 8     | 1 session   | ☐ Not started |
 | 5     | Dashboard Tool             | 7     | 1 session   | ☐ Not started |
@@ -262,7 +264,7 @@
 | 10    | Testing                    | 11    | 2 sessions  | ☐ Not started |
 | 11    | Performance Optimization   | 9     | 1 session   | ☐ Not started |
 | 12    | Baseline Lock & Release    | 15    | 0.5 session | ☐ Not started |
-|       | **TOTAL**                  | **121**| **~13 sessions** |         |
+|       | **TOTAL**                  | **123**| **~13 sessions** |         |
 
 ---
 
