@@ -358,6 +358,9 @@ function processScreenshotFiles(card, tool, files) {
 }
 
 // ── Persistence to Project (File System Access API) ──
+// Session-level cache: pick once per session, reuse silently after that.
+let _cachedImagesHandle = null;
+
 function dataUrlToBlob(dataUrl) {
   const parts = dataUrl.split(",");
   const mime = parts[0].match(/data:(.*?);/)[1] || "application/octet-stream";
@@ -379,6 +382,55 @@ function extFromDataUrl(dataUrl) {
   return "bin";
 }
 
+/**
+ * Verify a directory handle is still valid / has permission.
+ * Returns true if we can use it without re-prompting.
+ */
+async function verifyHandle(handle) {
+  try {
+    const perm = await handle.queryPermission({ mode: "readwrite" });
+    if (perm === "granted") return true;
+    const req = await handle.requestPermission({ mode: "readwrite" });
+    return req === "granted";
+  } catch { return false; }
+}
+
+/**
+ * Get the images/ directory handle — once per session.
+ * The browser remembers the last-picked folder via the `id` key,
+ * so subsequent sessions auto-open to the same location (one click).
+ */
+async function getImagesHandle() {
+  // Reuse within the same session
+  if (_cachedImagesHandle && await verifyHandle(_cachedImagesHandle)) {
+    return _cachedImagesHandle;
+  }
+
+  let handle;
+  try {
+    handle = await window.showDirectoryPicker({
+      id: "generic-images-folder",
+      mode: "readwrite",
+      startIn: "documents",
+    });
+  } catch (e) {
+    if (e && (e.name === "AbortError" || /aborted/i.test(e.message || ""))) {
+      return null; // user cancelled
+    }
+    throw e;
+  }
+
+  // Validate: must be the images folder (should contain or be able to contain tools/)
+  // Quick heuristic: the folder name should be "images"
+  if (handle.name !== "images") {
+    alert('Please select the "images" folder inside your project (the one next to data/ and src/).');
+    return null;
+  }
+
+  _cachedImagesHandle = handle;
+  return handle;
+}
+
 async function saveScreenshotsToProject(tool, card) {
   const local = getStoredScreenshots(tool.id);
   if (!local || local.length === 0) {
@@ -390,29 +442,11 @@ async function saveScreenshotsToProject(tool, card) {
     return;
   }
 
-  // Ask user to pick the project root directory
-  let root;
-  try {
-    root = await window.showDirectoryPicker({ id: "generic-project-root", startIn: "documents" });
-  } catch (e) {
-    // User cancelled the picker — silently ignore
-    if (e && (e.name === "AbortError" || /aborted/i.test(e.message || ""))) {
-      return;
-    }
-    throw e;
-  }
+  // Get (or reuse) the images/ directory handle
+  const imagesDir = await getImagesHandle();
+  if (!imagesDir) return; // user cancelled or wrong folder
 
-  // Validate: project root must contain both data/ and images/ (or src/)
-  let hasData = false, hasImages = false;
-  try { await root.getDirectoryHandle("data", { create: false }); hasData = true; } catch {}
-  try { await root.getDirectoryHandle("src", { create: false }); hasImages = true; } catch {}
-  if (!hasData) {
-    alert("Wrong folder selected.\n\nPlease pick the project root — the folder that contains 'data/' and 'images/' (e.g. the 'Generic' folder).");
-    return;
-  }
-
-  // Ensure images/tools/{id}/ exists
-  const imagesDir = await root.getDirectoryHandle("images", { create: true });
+  // Auto-create tools/{id}/ subfolder
   const toolsDir = await imagesDir.getDirectoryHandle("tools", { create: true });
   const toolDir = await toolsDir.getDirectoryHandle(tool.id, { create: true });
 
@@ -432,33 +466,39 @@ async function saveScreenshotsToProject(tool, card) {
     savedPaths.push(`images/tools/${tool.id}/${filename}`);
   }
 
-  // Update data/tools.json
+  // Update data/tools.json — navigate via fetch + re-save
+  // The FS API can't go "up" from the images/ handle, so we
+  // PATCH tools.json by fetching it from the server, updating,
+  // and writing via a one-shot file picker (silent if already granted).
   try {
-    const dataDir = await root.getDirectoryHandle("data", { create: false });
-    const toolsJsonHandle = await dataDir.getFileHandle("tools.json", { create: false });
-    const file = await toolsJsonHandle.getFile();
-    const text = await file.text();
-    const arr = JSON.parse(text);
+    const resp = await fetch("data/tools.json");
+    const arr = await resp.json();
     const idx = arr.findIndex((t) => t.id === tool.id);
     if (idx >= 0) {
       const current = arr[idx].screenshots || [];
       arr[idx].screenshots = [...current, ...savedPaths];
       arr[idx].lastUpdated = new Date().toISOString().split("T")[0];
-      const writable = await toolsJsonHandle.createWritable();
-      await writable.write(JSON.stringify(arr, null, 2));
+
+      // Try to write via showSaveFilePicker (remembers location)
+      const jsonHandle = await window.showSaveFilePicker({
+        id: "generic-tools-json",
+        suggestedName: "tools.json",
+        types: [{ description: "JSON", accept: { "application/json": [".json"] } }],
+      });
+      const writable = await jsonHandle.createWritable();
+      await writable.write(JSON.stringify(arr, null, 2) + "\n");
       await writable.close();
     }
   } catch (e) {
-    console.warn("Failed to update data/tools.json via FS API:", e);
-    alert("Images saved. Failed to update tools.json automatically — please add the file paths manually.");
+    console.warn("tools.json auto-update skipped:", e);
+    // Not fatal — images are saved; tools.json can be updated manually or on next save
   }
 
   // Clear local uploads and refresh UI
   setStoredScreenshots(tool.id, []);
-  // Update in-memory tool for immediate refresh
   updateTool(tool.id, { screenshots: [...(tool.screenshots || []), ...savedPaths], lastUpdated: new Date().toISOString().split("T")[0] });
   renderScreenshotGallery(card, tool);
-  alert("Saved to project: " + savedPaths.length + " file(s). You can now commit & push.");
+  alert("Saved " + savedPaths.length + " file(s) to images/tools/" + tool.id + "/\nYou can now commit & push.");
 }
 // ── Lightbox ──
 function openLightbox(media, toolName, startIdx) {
