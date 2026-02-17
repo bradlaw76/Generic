@@ -1,4 +1,140 @@
 // =============================================================================
+// SPECKKIT — Governance, Code Standards, and Specify CLI Guidance
+// Version: 1.0.0 | Last Updated: 2026-02-17
+//
+// COMPONENT: SpeckKitPage
+// DESCRIPTION: Explains SpeckKit governance for this project, summarizes
+//              code standards (component header block), UI references policy,
+//              and provides safe guidance to use the external "specify" CLI
+//              to generate or update project specifications.
+// ENVIRONMENT: Vanilla JS (ES Module) — GitHub Pages
+// =============================================================================
+
+import { icon } from "../shared/icons.js";
+import { navigate } from "../app/router.js";
+
+/**
+ * Renders the SpeckKit page.
+ * @param {HTMLElement} container
+ */
+export function render(container) {
+  const page = document.createElement("div");
+  page.className = "page-content";
+
+  // ── Header ──
+  const header = document.createElement("div");
+  header.className = "section-header";
+  header.innerHTML = `
+    <div class="section-header-left">
+      ${icon("library", "icon")}
+      <h2 class="section-title" style="margin-left:8px;">SpeckKit Governance</h2>
+    </div>
+    <div class="section-header-right">
+      <button class="button button-outline" id="backBtn">Back</button>
+    </div>
+  `;
+  page.appendChild(header);
+
+  // ── SpeckKit overview card ──
+  const overview = document.createElement("div");
+  overview.className = "card";
+  overview.innerHTML = `
+    <h3>Overview</h3>
+    <p class="text-secondary" style="margin-top:8px;">
+      This project is governed by the SpeckKit registry. It enforces code standards, UI reference catalogs,
+      and agent behavior defaults to keep projects consistent and maintainable.
+    </p>
+    <div class="meta-grid" style="margin-top:16px;">
+      <div class="meta-item"><span class="meta-label">Registry</span><span class="meta-value"><a href="https://github.com/bradlaw76/SpeckKit-Project-Development" target="_blank" rel="noopener">SpeckKit-Project-Development</a></span></div>
+      <div class="meta-item"><span class="meta-label">Agent Defaults</span><span class="meta-value"><a href="https://raw.githubusercontent.com/bradlaw76/SpeckKit-Project-Development/main/AGENT_BEHAVIOR_DEFAULTS.jsonc" target="_blank" rel="noopener">AGENT_BEHAVIOR_DEFAULTS.jsonc</a></span></div>
+      <div class="meta-item"><span class="meta-label">Local Submodule</span><span class="meta-value">.speckkit-registry/</span></div>
+    </div>
+  `;
+  page.appendChild(overview);
+
+  // ── Code Standards card ──
+  const standards = document.createElement("div");
+  standards.className = "card";
+  standards.innerHTML = `
+    <h3>Code Standards</h3>
+    <ul class="bullet-list" style="margin-top:8px;">
+      <li>Apply the SpeckKit component header comment block to every new component/module.</li>
+      <li>Update Version and Last Updated stamps when modifying core components.</li>
+      <li>Follow naming, file sizing, and single-responsibility conventions as defined in the Constitution.</li>
+      <li>No new dependencies — keep the zero-dependency runtime intact.</li>
+    </ul>
+    <p style="margin-top:12px;">
+      Header template: <a href="https://raw.githubusercontent.com/bradlaw76/SpeckKit-Project-Development/main/code-standards/comments/component-header-block.md" target="_blank" rel="noopener">component-header-block.md</a>
+    </p>
+  `;
+  page.appendChild(standards);
+
+  // ── UI References policy card ──
+  const uiRef = document.createElement("div");
+  uiRef.className = "card";
+  uiRef.innerHTML = `
+    <h3>UI References Policy</h3>
+    <p class="text-secondary" style="margin-top:8px;">
+      UI references are loaded <strong>by request</strong> when tasks explicitly involve a platform (e.g., Dynamics 365).
+    </p>
+    <ul class="bullet-list" style="margin-top:8px;">
+      <li>Use reusable patterns for component conventions.</li>
+      <li>Use visual indicators for colour/badge mappings; do not hardcode colours in JS.</li>
+      <li>Local catalog (if present): <code>.speckkit-registry/ui-references/UI_REFERENCE_CATALOG.json.md</code>.</li>
+    </ul>
+  `;
+  page.appendChild(uiRef);
+
+  // ── Specify CLI guidance card ──
+  const specifyCard = document.createElement("div");
+  specifyCard.className = "card";
+  specifyCard.innerHTML = `
+    <h3>Specify — Generate Project Spec</h3>
+    <p class="text-secondary" style="margin-top:8px;">
+      The external <strong>specify</strong> CLI can generate or update project specifications. Run it in your terminal.
+      This app is static and does not execute CLIs in-browser.
+    </p>
+    <div class="code-block" style="margin-top:12px;">
+      <pre style="white-space:pre-wrap;"># Show help
+specify --help
+
+# Example: generate/update the project spec file
+# (Adjust flags per your CLI version; see help output)
+specify generate --output spec.chatgpt
+      </pre>
+    </div>
+    <div class="button-group" style="margin-top:12px;">
+      <button class="button button-outline" id="copyHelpBtn">Copy: specify --help</button>
+      <button class="button button-outline" id="copyGenBtn">Copy: specify generate --output spec.chatgpt</button>
+    </div>
+    <p class="text-secondary" style="margin-top:12px;">
+      Tip: Keep <em>spec.chatgpt</em> aligned with our current zero-dependency architecture and Constitution.
+    </p>
+  `;
+  page.appendChild(specifyCard);
+
+  // ── Wire events ──
+  header.querySelector("#backBtn").addEventListener("click", () => navigate("/"));
+
+  const copy = (text) => {
+    try {
+      navigator.clipboard.writeText(text);
+      const btn = document.createElement("div");
+      btn.className = "toast";
+      btn.textContent = "Copied to clipboard";
+      document.body.appendChild(btn);
+      setTimeout(() => btn.remove(), 1500);
+    } catch (e) {
+      alert("Copy failed — please copy manually.");
+    }
+  };
+
+  specifyCard.querySelector("#copyHelpBtn").addEventListener("click", () => copy("specify --help"));
+  specifyCard.querySelector("#copyGenBtn").addEventListener("click", () => copy("specify generate --output spec.chatgpt"));
+
+  container.appendChild(page);
+}
+// =============================================================================
 // SPECKKIT PRESENTATION — Overview + 20-slide interactive deck
 // Version: 2.2.0 | Last Updated: 2026-02-16
 //

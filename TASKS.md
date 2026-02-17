@@ -132,14 +132,11 @@
 
 > **Status:** ✅ Complete
 
-- [x] Create `src/pages/speckkit.js` — overview + presentation
-- [x] Overview section explaining SpeckKit methodology
-- [x] 20-slide interactive presentation
-- [x] Chapter sidebar navigation
-- [x] Slide navigation: previous/next buttons + keyboard support
-- [x] Auto-sizing for content
+- [x] Create `src/pages/speckkit.js` — governance overview + guidance
+- [x] Governance overview and code standards summary
+- [x] UI references policy (ask-first loading)
+- [x] Specify CLI guidance with copy-to-clipboard helpers
 - [x] Cleanup function returned for route teardown
-- [x] Create `speckit-presentation.html` — standalone fullscreen version
 
 ---
 
@@ -175,7 +172,7 @@
 | 4     | Dashboard                | 8     | ✅ Complete  |
 | 5     | Settings Page            | 20    | ✅ Complete  |
 | 6     | Tool Detail Page         | 14    | ✅ Complete  |
-| 7     | SpeckKit Page            | 8     | ✅ Complete  |
+| 7     | SpeckKit Page            | 5     | ✅ Complete  |
 | 8     | VS Code Page             | 2     | ✅ Complete  |
 | 9     | SideNav & Routing        | 6     | ✅ Complete  |
 |       | **TOTAL**                | **87**| **All Complete** |

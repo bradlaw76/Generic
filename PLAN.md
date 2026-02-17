@@ -2,8 +2,8 @@
 
 ## Architecture & Design Decisions
 
-> **Version:** 3.0.0  
-> **Last updated:** 2026-02-16  
+> **Version:** 3.1.0  
+> **Last updated:** 2026-02-17  
 > **Guiding principle:** Zero dependencies. No build step. Vanilla everything.
 
 ---
@@ -20,20 +20,17 @@
 8. [GitHub Integration](#8-github-integration)
 9. [Development Workflow](#9-development-workflow)
 10. [Dependency Inventory](#10-dependency-inventory)
+11. [SpeckKit Implementation Plan](#11-speckkit-implementation-plan)
 
 ---
 
 ## 1. Architecture Philosophy
 
-### Zero-Dependency Principle
 
 This project uses **zero** npm packages, **zero** build tools, and **zero** frameworks. The entire application runs from raw HTML, CSS, and JavaScript files served statically.
 
 - **HTML** — single `index.html` entry point
 - **CSS** — 6 stylesheets with custom properties for theming
-- **JavaScript** — ES modules loaded natively by the browser
-- **Data** — JSON file + localStorage (no database)
-- **Server** — Python `http.server` for development; GitHub Pages for production
 
 ### Why Zero Dependencies?
 
@@ -66,11 +63,7 @@ The OneDrive workspace path makes `node_modules` unreliable. This architecture e
 | Routing     | Hash-based SPA router      | No server config, works on GitHub Pages        |
 | Icons       | Inline SVGs (functions)    | No icon library dependency                     |
 | Dev server  | Python `http.server`       | Pre-installed, zero config                     |
-| Hosting     | GitHub Pages               | Free, static, automatic                        |
 
-### Explicitly Rejected
-
-| Library/Framework | Reason for Rejection                                 |
 |-------------------|------------------------------------------------------|
 | React / Vue / etc.| Unnecessary runtime; vanilla JS is simpler here      |
 | TypeScript        | Build step required; not justified for this scope    |
@@ -210,7 +203,7 @@ Layout is rendered once by `shell.js` at startup. Only the content area re-rende
 | Dashboard  | `tools/dashboard/index.js`      | 4 stat cards, category bars, donut chart, recent list, quick actions |
 | Settings   | `pages/settings.js`             | 3-tab interface: tool grid with edit, add-tool form, GitHub sync |
 | Tool Detail| `pages/tool-detail.js`          | Full metadata, tags, edit panel       |
-| SpeckKit   | `pages/speckkit.js`             | Overview + 20-slide interactive deck  |
+| SpeckKit   | `pages/speckkit.js`             | Governance overview, code standards, UI references policy, Specify CLI guidance |
 | VS Code    | `pages/vscode.js`               | Dev environment showcase              |
 
 ### 5.4 Icons

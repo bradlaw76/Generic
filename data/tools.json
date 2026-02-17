@@ -126,5 +126,20 @@
     "dateCreated": "2026-02-16",
     "lastUpdated": "2026-02-16",
     "origin": "Web"
+  },
+  {
+    "id": "specify",
+    "name": "Specify CLI",
+    "version": "1.0.0",
+    "status": "Active",
+    "priority": "Normal",
+    "category": "Development",
+    "description": "Guidance and commands for the Specify CLI to generate or update project specifications.",
+    "longDescription": "The Specify CLI produces structured project specifications. This entry provides in-app guidance and safe commands to run in your terminal.\n\nUsage:\n- Show help: specify --help\n- Generate/update spec: specify generate --output spec.chatgpt\n\nNote: The app is static and does not run CLIs in-browser. See the SpeckKit page for governance and standards.",
+    "repoUrl": "#/speckkit",
+    "screenshots": [],
+    "tags": ["CLI", "Specification", "Governance"],
+    "dateCreated": "2026-02-17",
+    "lastUpdated": "2026-02-17"
   }
 ]
