@@ -393,13 +393,22 @@ async function saveScreenshotsToProject(tool, card) {
   // Ask user to pick the project root directory
   let root;
   try {
-    root = await window.showDirectoryPicker();
+    root = await window.showDirectoryPicker({ id: "generic-project-root", startIn: "documents" });
   } catch (e) {
     // User cancelled the picker — silently ignore
     if (e && (e.name === "AbortError" || /aborted/i.test(e.message || ""))) {
       return;
     }
     throw e;
+  }
+
+  // Validate: project root must contain both data/ and images/ (or src/)
+  let hasData = false, hasImages = false;
+  try { await root.getDirectoryHandle("data", { create: false }); hasData = true; } catch {}
+  try { await root.getDirectoryHandle("src", { create: false }); hasImages = true; } catch {}
+  if (!hasData) {
+    alert("Wrong folder selected.\n\nPlease pick the project root — the folder that contains 'data/' and 'images/' (e.g. the 'Generic' folder).");
+    return;
   }
 
   // Ensure images/tools/{id}/ exists

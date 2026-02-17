@@ -9,10 +9,13 @@
     "description": "A reusable, collapsible sidebar navigation component designed for Dynamics 365 model-driven apps and Power Pages. Provides consistent left-nav patterns across projects.",
     "longDescription": "Generic.Sidebar is a standalone navigation component that replicates the Dynamics 365 sidebar pattern. It supports collapsible groups, active state indicators, and theme-aware styling. Built with vanilla HTML/CSS/JS for maximum portability across projects.\n\nKey features include:\n- Collapsible navigation groups\n- Active route highlighting with left-edge indicator\n- Theme-aware (dark/light/D365 modes)\n- Zero dependencies — drop-in ready\n- Responsive collapse to icon-only mode at 64px",
     "repoUrl": "https://github.com/bradlaw76/Generic.Sidebar",
-    "screenshots": [],
+    "screenshots": [
+      "images/tools/generic-sidebar/screenshot-2026-02-17_23-14-23-317Z-1.png",
+      "images/tools/generic-sidebar/screenshot-2026-02-17_23-14-23-317Z-2.png"
+    ],
     "tags": ["Navigation", "UI Component", "Dynamics 365"],
     "dateCreated": "2025-09-23",
-    "lastUpdated": "2025-09-23",
+    "lastUpdated": "2026-02-17",
     "origin": "Web"
   },
   {
