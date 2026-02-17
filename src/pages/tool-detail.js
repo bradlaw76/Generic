@@ -391,7 +391,16 @@ async function saveScreenshotsToProject(tool, card) {
   }
 
   // Ask user to pick the project root directory
-  const root = await window.showDirectoryPicker();
+  let root;
+  try {
+    root = await window.showDirectoryPicker();
+  } catch (e) {
+    // User cancelled the picker — silently ignore
+    if (e && (e.name === "AbortError" || /aborted/i.test(e.message || ""))) {
+      return;
+    }
+    throw e;
+  }
 
   // Ensure images/tools/{id}/ exists
   const imagesDir = await root.getDirectoryHandle("images", { create: true });
