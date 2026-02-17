@@ -122,6 +122,21 @@ Generic/
 
 ---
 
+## Persisting Uploads to the Project
+
+Screenshots added in the Tool Detail page are initially stored in localStorage.
+
+To persist them into the repo and make them available on GitHub Pages:
+- Open a tool’s detail page and click “Save to Project” in the Screenshots header.
+- Choose your project root when prompted; images will be written to `images/tools/{id}/` and `data/tools.json` will be updated.
+- Commit and push.
+
+Notes:
+- Requires a Chromium-based browser (Microsoft Edge or Chrome) and running locally. Browsers cannot write to GitHub Pages.
+- If the automatic update of `data/tools.json` fails, the app will save the images and prompt you to add the paths manually.
+
+---
+
 ## Routes
 
 | Hash Route | Page | Description |

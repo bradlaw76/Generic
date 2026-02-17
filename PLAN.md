@@ -2,7 +2,7 @@
 
 ## Architecture & Design Decisions
 
-> **Version:** 3.1.0  
+> **Version:** 3.2.0  
 > **Last updated:** 2026-02-17  
 > **Guiding principle:** Zero dependencies. No build step. Vanilla everything.
 
@@ -21,6 +21,7 @@
 9. [Development Workflow](#9-development-workflow)
 10. [Dependency Inventory](#10-dependency-inventory)
 11. [SpeckKit Implementation Plan](#11-speckkit-implementation-plan)
+12. [Screenshot Persistence](#12-screenshot-persistence)
 
 ---
 
@@ -377,3 +378,25 @@ Push to `main` → GitHub Pages serves the static files. No CI/CD pipeline neede
 ---
 
 *End of Plan — Generic Tool Portfolio v3.0.0*
+
+---
+
+## 12. Screenshot Persistence
+
+### Goal
+Persist user-uploaded screenshots into the repository so they are available across sessions and on GitHub Pages.
+
+### Approach
+- Use the File System Access API (Edge/Chrome) from the Tool Detail page to write files under `images/tools/{id}/` and update `data/tools.json`.
+- Fall back to manual file path updates if JSON write fails.
+
+### Flow
+1. Upload screenshots (localStorage `generic_screenshots_{id}`).
+2. Click “Save to Project” → pick project root.
+3. App writes `images/tools/{id}/screenshot-<timestamp>-N.ext` and updates `data/tools.json` → `screenshots` paths.
+4. App clears localStorage entries and refreshes gallery.
+5. Commit and push.
+
+### Notes
+- The FS API runs only in local dev, not on Pages.
+- Videos (`mp4`, `webm`, `ogg`) are supported; file extensions are inferred from MIME.

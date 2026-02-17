@@ -1,6 +1,6 @@
 // =============================================================================
 // TOOL DETAIL — Rich detail page for a single portfolio tool entry
-// Version: 3.1.1 | Last Updated: 2026-02-17
+// Version: 3.2.0 | Last Updated: 2026-02-17
 //
 // COMPONENT: ToolDetailPage
 // DESCRIPTION: Shows full description, metadata, screenshots, tags,
@@ -8,6 +8,7 @@
 //              Screenshot upload via Add Files button + drag-and-drop.
 //              User uploads stored in localStorage (generic_screenshots_{id}).
 // CHANGELOG: 3.1.0 — Screenshot upload: Add Files, drag-drop, remove, lightbox
+//           3.2.0 — Save to Project via File System Access API (images/tools/{id}/)
 // ENVIRONMENT: Vanilla JS (ES Module) — GitHub Pages
 // =============================================================================
 
@@ -124,6 +125,7 @@ export function render(container, tool) {
           Add Files
         </button>
         <input type="file" id="screenshotFileInput" class="upload-file-input" multiple accept="image/*,video/mp4,video/webm,video/ogg" />
+        <button class="button button-outline" id="saveToProjectBtn" title="Persist uploads to project" style="margin-left:8px;">Save to Project</button>
       </div>
     </div>
     <div class="screenshot-gallery" id="screenshotGallery" data-count="0"></div>
@@ -143,6 +145,15 @@ export function render(container, tool) {
     const files = Array.from(e.target.files);
     if (files.length) processScreenshotFiles(screenshotCard, tool, files);
     e.target.value = "";
+  });
+
+  // Wire Save to Project (File System Access API)
+  screenshotCard.querySelector("#saveToProjectBtn").addEventListener("click", async () => {
+    try {
+      await saveScreenshotsToProject(tool, screenshotCard);
+    } catch (err) {
+      alert("Save failed: " + (err && err.message ? err.message : String(err)));
+    }
   });
 
   // Wire drag-and-drop
@@ -346,6 +357,91 @@ function processScreenshotFiles(card, tool, files) {
   });
 }
 
+// ── Persistence to Project (File System Access API) ──
+function dataUrlToBlob(dataUrl) {
+  const parts = dataUrl.split(",");
+  const mime = parts[0].match(/data:(.*?);/)[1] || "application/octet-stream";
+  const bstr = atob(parts[1]);
+  const n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  for (let i = 0; i < n; i++) u8arr[i] = bstr.charCodeAt(i);
+  return new Blob([u8arr], { type: mime });
+}
+
+function extFromDataUrl(dataUrl) {
+  const m = dataUrl.match(/^data:(.*?);/);
+  const mime = m ? m[1] : "application/octet-stream";
+  if (mime.startsWith("image/")) {
+    const ext = mime.split("/")[1];
+    return ext === "jpeg" ? "jpg" : ext;
+  }
+  if (mime.startsWith("video/")) return mime.split("/")[1];
+  return "bin";
+}
+
+async function saveScreenshotsToProject(tool, card) {
+  const local = getStoredScreenshots(tool.id);
+  if (!local || local.length === 0) {
+    alert("No local uploads to save. Add files first.");
+    return;
+  }
+  if (!window.showDirectoryPicker) {
+    alert("Your browser does not support saving directly to the project. Use Microsoft Edge or Chrome locally.");
+    return;
+  }
+
+  // Ask user to pick the project root directory
+  const root = await window.showDirectoryPicker();
+
+  // Ensure images/tools/{id}/ exists
+  const imagesDir = await root.getDirectoryHandle("images", { create: true });
+  const toolsDir = await imagesDir.getDirectoryHandle("tools", { create: true });
+  const toolDir = await toolsDir.getDirectoryHandle(tool.id, { create: true });
+
+  // Write files
+  const savedPaths = [];
+  const now = new Date();
+  const stamp = now.toISOString().replace(/[:.]/g, "-").split("T").join("_");
+  for (let i = 0; i < local.length; i++) {
+    const dataUrl = local[i];
+    const ext = extFromDataUrl(dataUrl);
+    const blob = dataUrlToBlob(dataUrl);
+    const filename = `screenshot-${stamp}-${i + 1}.${ext}`;
+    const fileHandle = await toolDir.getFileHandle(filename, { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(blob);
+    await writable.close();
+    savedPaths.push(`images/tools/${tool.id}/${filename}`);
+  }
+
+  // Update data/tools.json
+  try {
+    const dataDir = await root.getDirectoryHandle("data", { create: false });
+    const toolsJsonHandle = await dataDir.getFileHandle("tools.json", { create: false });
+    const file = await toolsJsonHandle.getFile();
+    const text = await file.text();
+    const arr = JSON.parse(text);
+    const idx = arr.findIndex((t) => t.id === tool.id);
+    if (idx >= 0) {
+      const current = arr[idx].screenshots || [];
+      arr[idx].screenshots = [...current, ...savedPaths];
+      arr[idx].lastUpdated = new Date().toISOString().split("T")[0];
+      const writable = await toolsJsonHandle.createWritable();
+      await writable.write(JSON.stringify(arr, null, 2));
+      await writable.close();
+    }
+  } catch (e) {
+    console.warn("Failed to update data/tools.json via FS API:", e);
+    alert("Images saved. Failed to update tools.json automatically — please add the file paths manually.");
+  }
+
+  // Clear local uploads and refresh UI
+  setStoredScreenshots(tool.id, []);
+  // Update in-memory tool for immediate refresh
+  updateTool(tool.id, { screenshots: [...(tool.screenshots || []), ...savedPaths], lastUpdated: new Date().toISOString().split("T")[0] });
+  renderScreenshotGallery(card, tool);
+  alert("Saved to project: " + savedPaths.length + " file(s). You can now commit & push.");
+}
 // ── Lightbox ──
 function openLightbox(media, toolName, startIdx) {
   let idx = startIdx;

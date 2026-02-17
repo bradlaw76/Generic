@@ -2,7 +2,7 @@
 
 ## Feature Completion Checklist
 
-> **Version:** 3.0.0  
+> **Version:** 3.2.0  
 > **Last updated:** 2026-02-16  
 > **Architecture:** Vanilla HTML/CSS/JS — zero dependencies
 
@@ -128,6 +128,19 @@
 
 ---
 
+## Phase 10: Screenshot Persistence to Project
+
+> **Status:** ✅ Complete
+
+- [x] Add “Save to Project” button in Screenshots header
+- [x] Use File System Access API (Edge/Chrome) to write images to `images/tools/{id}/`
+- [x] Update `data/tools.json` to include new file paths
+- [x] Clear localStorage uploads after save
+- [x] Refresh gallery to show saved images
+- [x] Document workflow in README
+
+---
+
 ## Phase 7: SpeckKit Page
 
 > **Status:** ✅ Complete
@@ -195,4 +208,4 @@ These are not in scope but could be added later:
 
 ---
 
-*End of Tasks — Generic Tool Portfolio v3.1.0*
+*End of Tasks — Generic Tool Portfolio v3.2.0*
