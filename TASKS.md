@@ -36,7 +36,7 @@
 - [x] Create `src/styles/presentation.css` — SpeckKit slide styles
 - [x] Create `src/theme/theme-switcher.js` — theme persistence + dropdown close handler
 - [x] Theme dropdown in TopBar with 3 options
-- [x] localStorage persistence (`generic_theme`), default: `theme-dark`
+- [x] localStorage persistence (`generic-d365-theme`), default: `theme-dark`
 - [x] Verify: all 3 themes render correctly, switch is instant, persists on reload
 
 ---

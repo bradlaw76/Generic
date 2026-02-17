@@ -1,6 +1,7 @@
 // =============================================================================
 // VS CODE & HOW — Development workflow and tooling page
-// Version: 2.0.0 | Last Updated: 2026-02-16
+// Version: 2.1.0 | Last Updated: 2026-02-17
+// CHANGELOG: 2.1.0 — Added embedded presentation deck + fullscreen link
 //
 // COMPONENT: VSCodePage
 // DESCRIPTION: Explains the VS Code-centric development workflow, extensions
@@ -20,6 +21,14 @@ export function render(container) {
 
   page.innerHTML = `
     <h1>${icon("vscode")} VS Code &amp; How I Build</h1>
+    <div class="button-group" style="margin: 12px 0 20px;">
+      <button class="button button-primary" id="vsDeckOpenBtn" aria-expanded="false" aria-controls="vsDeckWrapper" title="Open VS Code Presentation">
+        ▶ Open Presentation Deck
+      </button>
+      <a class="button button-outline" href="vscode-presentation.html" target="_blank" rel="noopener" title="Open Fullscreen Presentation">
+        ${icon("openInNew")} Open Fullscreen Presentation
+      </a>
+    </div>
 
     <div class="card">
       <h2>Development Environment</h2>
@@ -170,4 +179,245 @@ export function render(container) {
   `;
 
   container.appendChild(page);
+
+  // ── Embedded Presentation Deck (SpeckKit-style) ──
+  const deck = document.createElement("div");
+  deck.className = "pres-wrapper";
+  deck.id = "vsDeckWrapper";
+  deck.style.display = "none";
+  deck.innerHTML = `
+    <aside class="pres-sidebar" aria-label="Presentation chapters">
+      <div class="pres-sidebar-label">Chapters</div>
+      <button class="pres-chapter-btn" data-target="0">Overview</button>
+      <button class="pres-chapter-btn" data-target="2">Editor Setup</button>
+      <button class="pres-chapter-btn" data-target="5">Workflow</button>
+      <button class="pres-chapter-btn" data-target="8">Debugging</button>
+      <button class="pres-chapter-btn" data-target="10">Testing</button>
+      <button class="pres-chapter-btn" data-target="12">Productivity</button>
+      <button class="pres-chapter-btn" data-target="14">SpeckKit Integration</button>
+      <button class="pres-chapter-btn" data-target="17">Resources</button>
+    </aside>
+    <section class="pres-stage">
+      <div class="pres-counter"><span id="vsDeckCounter"></span></div>
+      <div id="vsSlides"></div>
+    </section>
+  `;
+  container.appendChild(deck);
+
+  const slides = [
+    // 0 Overview
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <h1>VS Code for SpeckKit</h1>
+        <p class="pres-subtitle">A practical workflow using VS Code + Copilot to deliver spec-driven tools.</p>
+        <p class="pres-tagline">Focus: same length and intent as the SpeckKit deck, tailored to IDE usage.</p>
+      </div>
+    </div>`,
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <div class="pres-bullets">
+          <li>Spec-first mindset: CONSTITUTION, SPEC-KIT, PLAN, TASKS</li>
+          <li>Agent-assisted scaffolding: GitHub Copilot for structure</li>
+          <li>Vanilla JS: zero dependencies, fast iteration</li>
+          <li>Git discipline: small commits, descriptive messages</li>
+        </div>
+      </div>
+    </div>`,
+
+    // 2 Editor Setup
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <h2>Editor Setup</h2>
+        <div class="pres-grid cols-3">
+          <div class="pres-grid-item"><h4>Settings Sync</h4><p>Keep fonts, themes, keybinds in sync across devices.</p></div>
+          <div class="pres-grid-item"><h4>Extensions</h4><p>Copilot, ESLint, Prettier, GitLens, Live Server.</p></div>
+          <div class="pres-grid-item"><h4>Workspace</h4><p>Trust folders; configure editor.formatOnSave.</p></div>
+        </div>
+      </div>
+    </div>`,
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <div class="pres-pill"><h4>Devcontainers (optional)</h4><p>Use for consistent tooling across machines when needed.</p></div>
+        <div class="pres-pill"><h4>Tasks</h4><p>Create tasks for serve, lint, format to streamline repeatables.</p></div>
+      </div>
+    </div>`,
+
+    // 5 Workflow
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <h2>Workflow</h2>
+        <div class="pres-workflow">
+          <div class="pres-wf-step"><div class="pres-wf-circle">Spec</div><div class="pres-wf-label">Write docs</div></div>
+          <div class="pres-arrow">→</div>
+          <div class="pres-wf-step"><div class="pres-wf-circle">Scaffold</div><div class="pres-wf-label">Agent assists</div></div>
+          <div class="pres-arrow">→</div>
+          <div class="pres-wf-step"><div class="pres-wf-circle">Iterate</div><div class="pres-wf-label">Feature by feature</div></div>
+          <div class="pres-arrow">→</div>
+          <div class="pres-wf-step"><div class="pres-wf-circle">Verify</div><div class="pres-wf-label">Serve & test</div></div>
+        </div>
+      </div>
+    </div>`,
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <div class="pres-bullets">
+          <li>Use Copilot Chat to apply diffs precisely.</li>
+          <li>Prefer small, isolated changes; update CHANGELOG & version.</li>
+          <li>Keep layout stable; respect tool isolation rules.</li>
+        </div>
+      </div>
+    </div>`,
+
+    // 8 Debugging
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <h2>Debugging</h2>
+        <div class="pres-grid">
+          <div class="pres-grid-item"><h4>Breakpoints</h4><p>Set in sources; step through router handlers.</p></div>
+          <div class="pres-grid-item"><h4>Network</h4><p>Inspect fetches for tools.json and cache behavior.</p></div>
+        </div>
+        <div class="pres-warning amber"><h4>ESM Caching</h4><p>Disable cache or add <code>?v=dev</code> to import paths during dev.</p></div>
+      </div>
+    </div>`,
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <div class="pres-quote"><p>“Make it testable and observable.”</p><cite>Debugging mantra</cite></div>
+      </div>
+    </div>`,
+
+    // 10 Testing
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <h2>Testing</h2>
+        <div class="pres-bullets">
+          <li>Start with targeted manual checks for changed modules.</li>
+          <li>Broaden to flows: navigation, edits, uploads.</li>
+          <li>Use tasks.json to script repeatable checks when possible.</li>
+        </div>
+      </div>
+    </div>`,
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <div class="pres-grid cols-3">
+          <div class="pres-grid-item"><h4>Lint</h4><p>ESLint for quality.</p></div>
+          <div class="pres-grid-item"><h4>Format</h4><p>Prettier for consistency.</p></div>
+          <div class="pres-grid-item"><h4>Serve</h4><p>Python http.server / Live Server.</p></div>
+        </div>
+      </div>
+    </div>`,
+
+    // 12 Productivity
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <h2>Productivity</h2>
+        <div class="pres-bullets">
+          <li>Multi-cursor, block select, and quick rename.</li>
+          <li>Snippets: component headers, card blocks, route handlers.</li>
+          <li>Command Palette: navigate, diff, toggle word wrap.</li>
+        </div>
+      </div>
+    </div>`,
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <div class="pres-grid">
+          <div class="pres-grid-item"><h4>Refactor</h4><p>Extract functions; reduce duplication.</p></div>
+          <div class="pres-grid-item"><h4>Search</h4><p>Use ripgrep-like workspace search patterns.</p></div>
+        </div>
+      </div>
+    </div>`,
+
+    // 14 SpeckKit Integration
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <h2>SpeckKit Integration</h2>
+        <div class="pres-artifacts">
+          <div class="pres-artifact"><div class="pres-artifact-icon">📘</div><div><h4>Code Standards</h4><p>Apply component headers; bump versions on changes.</p></div></div>
+          <div class="pres-artifact"><div class="pres-artifact-icon">🧭</div><div><h4>Agent Defaults</h4><p>Follow tooling rules and isolation constraints.</p></div></div>
+          <div class="pres-artifact"><div class="pres-artifact-icon">🔗</div><div><h4>UI References</h4><p>Optional, load when relevant to the target UI.</p></div></div>
+        </div>
+      </div>
+    </div>`,
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <div class="pres-split">
+          <div class="pres-panel"><h3>Pitfalls</h3><p>Unbounded changes, missed cleanup, stale cache issues.</p></div>
+          <div class="pres-panel good"><h3>Solutions</h3><p>Small diffs, router teardowns, cache controls, docs updates.</p></div>
+        </div>
+      </div>
+    </div>`,
+
+    // 17 Resources
+    `
+    <div class="pres-slide">
+      <div class="pres-slide-content">
+        <h2>Resources</h2>
+        <div class="pres-bullets">
+          <li>Visual Studio Code — code.visualstudio.com</li>
+          <li>GitHub Copilot — github.com/features/copilot</li>
+          <li>SpeckKit Registry — github.com/bradlaw76/SpeckKit-Project-Development</li>
+        </div>
+      </div>
+    </div>`,
+  ];
+
+  const slidesHost = deck.querySelector("#vsSlides");
+  slidesHost.innerHTML = slides.join("");
+  const slideEls = Array.from(slidesHost.querySelectorAll(".pres-slide"));
+  const counterEl = deck.querySelector("#vsDeckCounter");
+  const chapterBtns = Array.from(deck.querySelectorAll(".pres-chapter-btn"));
+
+  let idx = 0;
+  function show(i) {
+    idx = Math.max(0, Math.min(slideEls.length - 1, i));
+    slideEls.forEach((el, j) => el.classList.toggle("active", j === idx));
+    if (counterEl) counterEl.textContent = `${idx + 1} / ${slideEls.length}`;
+    chapterBtns.forEach((b) => b.classList.toggle("active", parseInt(b.dataset.target, 10) === idx));
+  }
+  show(0);
+
+  chapterBtns.forEach((btn) => {
+    btn.addEventListener("click", () => show(parseInt(btn.dataset.target, 10)));
+  });
+
+  function keyHandler(e) {
+    if (deck.style.display === "none") return;
+    if (e.key === "ArrowRight") show(idx + 1);
+    if (e.key === "ArrowLeft") show(idx - 1);
+    if (e.key === "Escape") {
+      deck.style.display = "none";
+      openBtn.setAttribute("aria-expanded", "false");
+    }
+  }
+  document.addEventListener("keydown", keyHandler);
+
+  const openBtn = page.querySelector("#vsDeckOpenBtn");
+  openBtn.addEventListener("click", () => {
+    const isOpen = deck.style.display !== "none";
+    deck.style.display = isOpen ? "none" : "flex";
+    openBtn.setAttribute("aria-expanded", String(!isOpen));
+    openBtn.textContent = isOpen ? "▶ Open Presentation Deck" : "✕ Close Presentation Deck";
+    if (!isOpen) {
+      show(idx); // refresh counter
+      deck.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
+  // Provide cleanup to router
+  return () => {
+    document.removeEventListener("keydown", keyHandler);
+    if (deck && deck.parentElement) deck.remove();
+  };
 }

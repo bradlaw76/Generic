@@ -1,6 +1,6 @@
 // =============================================================================
 // TOOL DETAIL — Rich detail page for a single portfolio tool entry
-// Version: 3.1.0 | Last Updated: 2026-02-17
+// Version: 3.1.1 | Last Updated: 2026-02-17
 //
 // COMPONENT: ToolDetailPage
 // DESCRIPTION: Shows full description, metadata, screenshots, tags,
@@ -18,6 +18,24 @@ import { updateTool } from "../platform/tool-registry.js";
 const CATEGORIES = ["Generic Tools", "Publications", "Development"];
 const PRIORITIES = ["High", "Normal", "Low"];
 const STATUSES = ["Active", "Draft", "Archived"];
+
+// ── Safety helpers ──
+function escapeHTML(str) {
+  if (!str && str !== 0) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function isSafeHttpUrl(url) {
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" || u.protocol === "http:";
+  } catch { return false; }
+}
 
 /**
  * Renders the tool detail page.
@@ -44,19 +62,20 @@ export function render(container, tool) {
   meta.className = "detail-meta";
 
   const metaFields = [
-    { label: "Status", value: `<span class="status-${(tool.status || "active").toLowerCase()}">${tool.status}</span>` },
-    { label: "Priority", value: `<span class="priority-${(tool.priority || "normal").toLowerCase()}">${tool.priority || "—"}</span>` },
-    { label: "Version", value: tool.version },
-    { label: "Category", value: tool.category },
-    { label: "Origin", value: tool.origin || "—" },
-    { label: "Created", value: tool.dateCreated || "—" },
-    { label: "Last Updated", value: tool.lastUpdated || "—" },
+    { label: "Status", value: `<span class="status-${(tool.status || "active").toLowerCase()}">${escapeHTML(tool.status || "Active")}</span>` },
+    { label: "Priority", value: `<span class="priority-${(tool.priority || "normal").toLowerCase()}">${escapeHTML(tool.priority || "—")}</span>` },
+    { label: "Version", value: escapeHTML(tool.version || "") },
+    { label: "Category", value: escapeHTML(tool.category || "") },
+    { label: "Origin", value: escapeHTML(tool.origin || "—") },
+    { label: "Created", value: escapeHTML(tool.dateCreated || "—") },
+    { label: "Last Updated", value: escapeHTML(tool.lastUpdated || "—") },
   ];
 
-  if (tool.repoUrl) {
+  if (tool.repoUrl && isSafeHttpUrl(tool.repoUrl)) {
+    const display = escapeHTML(tool.repoUrl.replace("https://github.com/", ""));
     metaFields.push({
       label: "Repository",
-      value: `<a href="${tool.repoUrl}" target="_blank" rel="noopener">${tool.repoUrl.replace("https://github.com/", "")} ${icon("openInNew", "icon").replace('width="24" height="24"', 'style="width:14px;height:14px;vertical-align:middle;"')}</a>`,
+      value: `<a href="${tool.repoUrl}" target="_blank" rel="noopener">${display} ${icon("openInNew", "icon").replace('width="24" height="24"', 'style="width:14px;height:14px;vertical-align:middle;"')}</a>`,
     });
   }
 
@@ -76,7 +95,7 @@ export function render(container, tool) {
     tagSection.style.marginBottom = "24px";
     tagSection.innerHTML = `
       <div class="tag-list">
-        ${tool.tags.map((t) => `<span class="tag">${t}</span>`).join("")}
+        ${tool.tags.map((t) => `<span class="tag">${escapeHTML(t)}</span>`).join("")}
       </div>
     `;
     page.appendChild(tagSection);
@@ -85,9 +104,10 @@ export function render(container, tool) {
   // ── Description ──
   const descCard = document.createElement("div");
   descCard.className = "card";
+  const safeDesc = escapeHTML(tool.longDescription || tool.description || "No description available.");
   descCard.innerHTML = `
     <h3>Description</h3>
-    <div class="detail-body">${tool.longDescription || tool.description || "No description available."}</div>
+    <div class="detail-body">${safeDesc}</div>
   `;
   page.appendChild(descCard);
 
@@ -173,6 +193,15 @@ export function render(container, tool) {
     }
     showDetailEditPanel(area, tool, page);
   });
+
+  // Provide cleanup for router on navigation
+  return () => {
+    document.querySelectorAll(".lightbox").forEach((overlay) => {
+      const handler = overlay._keydownHandler;
+      if (handler) document.removeEventListener("keydown", handler);
+      overlay.remove();
+    });
+  };
 }
 
 // =============================================================================
@@ -289,7 +318,18 @@ function processScreenshotFiles(card, tool, files) {
     return;
   }
 
-  const batch = files.slice(0, room);
+  const ALLOWED_VIDEOS = ["video/mp4", "video/webm", "video/ogg"];
+  const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8MB
+  const MAX_VIDEO_BYTES = 32 * 1024 * 1024; // 32MB
+  const batch = files.slice(0, room).filter((f) => {
+    if (f.type.startsWith("image/")) {
+      return f.size <= MAX_IMAGE_BYTES;
+    }
+    if (f.type.startsWith("video/")) {
+      return ALLOWED_VIDEOS.includes(f.type) && f.size <= MAX_VIDEO_BYTES;
+    }
+    return false;
+  });
   let done = 0;
 
   batch.forEach((file) => {
@@ -353,11 +393,14 @@ function openLightbox(media, toolName, startIdx) {
   if (prev) prev.addEventListener("click", () => show((idx - 1 + media.length) % media.length));
   if (next) next.addEventListener("click", () => show((idx + 1) % media.length));
 
-  document.addEventListener("keydown", function handler(e) {
+  function handler(e) {
     if (e.key === "Escape") { overlay.remove(); document.removeEventListener("keydown", handler); }
     if (e.key === "ArrowLeft" && prev) { show((idx - 1 + media.length) % media.length); }
     if (e.key === "ArrowRight" && next) { show((idx + 1) % media.length); }
-  });
+  }
+  document.addEventListener("keydown", handler);
+  // Store handler reference on overlay for router cleanup
+  overlay._keydownHandler = handler;
 }
 
 /**

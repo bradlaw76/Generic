@@ -1,8 +1,8 @@
 # GENERIC TOOL PORTFOLIO — SPEC KIT
 
-## Version 3.1.0 | Complete Specification
+## Version 3.1.1 | Complete Specification
 
-> **Last updated:** 2026-02-16  
+> **Last updated:** 2026-02-17  
 > **Status:** Implemented — all features live  
 > **Type:** Portfolio showcase application (D365 Modern UI shell)
 
@@ -281,12 +281,12 @@ const THEMES = ['theme-dark', 'theme-light', 'theme-d365'];
 function setTheme(theme) {
   THEMES.forEach(t => document.body.classList.remove(t));
   document.body.classList.add(theme);
-  localStorage.setItem('generic_theme', theme);
+  localStorage.setItem('generic-d365-theme', theme);
 }
 ```
 
 - Theme selected via dropdown in TopBar (3 options)
-- Persisted to `localStorage` key `generic_theme`
+- Persisted to `localStorage` key `generic-d365-theme`
 - Instant switch — CSS class swap, no JS re-render
 - Default: `theme-dark`
 
@@ -414,7 +414,7 @@ Pages are loaded via dynamic `import()` in route handlers within `shell.js`. The
 | `generic_disabled_tools` | JSON array   | Disabled tool IDs                    |
 | `generic_screenshots_{id}` | JSON array | User-uploaded screenshot data URLs   |
 | `generic_github_pat`     | String       | GitHub PAT (optional)                |
-| `generic_theme`          | String       | Active theme class name              |
+| `generic-d365-theme`     | String       | Active theme class name              |
 
 ### 9.4 Data Merge Strategy (`tool-registry.js`)
 
@@ -622,6 +622,46 @@ No `npm install`. No build. No config.
 **Via JSON:** Add entry to `data/tools.json`, refresh browser.  
 **Via UI:** Settings → Tab 2 → fill form → Add Tool.  
 **Via GitHub:** Settings → Tab 3 → Poll → + Add to Portfolio.
+
+### SpecKit CLI (Optional)
+
+To install or update the SpecKit CLI using `uv` tools:
+
+```bash
+uv tool install specify-cli --force --from git+https://github.com/github/spec-kit.git
+```
+
+Notes:
+- Requires `uv` installed on your system.
+- `--force` ensures the CLI is updated to the latest commit.
+- Use this when you want the local SpecKit CLI to track the GitHub repository tip.
+
+#### Initialize in this repo
+
+Run either of the following to initialize SpecKit here with Copilot integration:
+
+```bash
+# If the shim exposes `specify` directly
+specify init --here --force --ai copilot
+
+# If the command is exposed as a uv-managed tool
+uv tool run specify-cli -- init --here --force --ai copilot
+```
+
+- To initialize with Claude instead of Copilot, use:
+
+```bash
+# Direct shim
+specify init --here --force --ai claude
+
+# Via uv-managed tool
+uv tool run specify-cli -- init --here --force --ai claude
+```
+
+- `--here`: initialize in the current directory
+- `--force`: overwrite existing local config if present
+- `--ai copilot`: configure Copilot as the agent integration
+  - swap to `--ai claude` to use Claude instead
 
 ---
 

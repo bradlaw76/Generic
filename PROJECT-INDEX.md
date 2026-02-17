@@ -202,7 +202,7 @@ This document catalogues every file in the project, its purpose, exports, and re
 - **Type:** ES Module
 - **Purpose:** Theme persistence and dropdown close handler
 - **Exports:** `initTheme()`, `initThemeDropdownClose()`
-- **localStorage key:** `generic_theme`
+ - **localStorage key:** `generic-d365-theme`
 - **Default:** `theme-dark`
 
 ---

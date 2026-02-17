@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VS Code Presentation</title>
+  <link rel="stylesheet" href="src/styles/reset.css" />
+  <link rel="stylesheet" href="src/styles/themes.css" />
+  <link rel="stylesheet" href="src/styles/typography.css" />
+  <link rel="stylesheet" href="src/styles/presentation.css" />
+  <style>
+    body { background: var(--bg-primary); color: var(--text-primary); margin: 0; }
+    .fullscreen-topbar { height: 48px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--border-subtle); background: var(--bg-secondary); }
+    .fullscreen-topbar a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  </style>
+  <script>
+    // Apply saved theme after DOM is ready so body exists
+    document.addEventListener('DOMContentLoaded', function(){
+      try {
+        var t = localStorage.getItem('generic-d365-theme') || 'theme-dark';
+        document.body.classList.remove('theme-dark','theme-light','theme-d365');
+        document.body.classList.add(t);
+      } catch(e) {}
+    });
+  </script>
+</head>
+<body>
+  <div class="fullscreen-topbar">
+    <a href="./" aria-label="Back to site">← Back to Site</a>
+  </div>
+  <div class="pres-wrapper" id="deck">
+    <aside class="pres-sidebar" aria-label="Presentation chapters">
+      <div class="pres-sidebar-label">Chapters</div>
+      <button class="pres-chapter-btn" data-target="0">Overview</button>
+      <button class="pres-chapter-btn" data-target="2">Editor Setup</button>
+      <button class="pres-chapter-btn" data-target="5">Workflow</button>
+      <button class="pres-chapter-btn" data-target="8">Debugging</button>
+      <button class="pres-chapter-btn" data-target="10">Testing</button>
+      <button class="pres-chapter-btn" data-target="12">Productivity</button>
+      <button class="pres-chapter-btn" data-target="14">SpeckKit Integration</button>
+      <button class="pres-chapter-btn" data-target="17">Resources</button>
+    </aside>
+    <section class="pres-stage">
+      <div class="pres-counter"><span id="counter"></span></div>
+      <div id="slides"></div>
+    </section>
+  </div>
+  <script>
+    const slides = [
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h1>VS Code for SpeckKit</h1><p class=\"pres-subtitle\">A practical workflow using VS Code + Copilot to deliver spec-driven tools.</p><p class=\"pres-tagline\">Fullscreen version of the in-app deck.</p></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-bullets\"><li>Spec-first: docs drive implementation</li><li>Copilot assists with scaffolding</li><li>Vanilla JS for speed</li></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Editor Setup</h2><div class=\"pres-grid cols-3\"><div class=\"pres-grid-item\"><h4>Settings Sync</h4><p>Share config across machines.</p></div><div class=\"pres-grid-item\"><h4>Extensions</h4><p>Copilot, ESLint, Prettier, GitLens.</p></div><div class=\"pres-grid-item\"><h4>Workspace</h4><p>Trust folders; formatOnSave.</p></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-pill\"><h4>Devcontainers</h4><p>Optional for consistent environments.</p></div><div class=\"pres-pill\"><h4>Tasks</h4><p>Script serve, lint, format.</p></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Workflow</h2><div class=\"pres-workflow\"><div class=\"pres-wf-step\"><div class=\"pres-wf-circle\">Spec</div><div class=\"pres-wf-label\">Docs</div></div><div class=\"pres-arrow\">→</div><div class=\"pres-wf-step\"><div class=\"pres-wf-circle\">Scaffold</div><div class=\"pres-wf-label\">Agent</div></div><div class=\"pres-arrow\">→</div><div class=\"pres-wf-step\"><div class=\"pres-wf-circle\">Iterate</div><div class=\"pres-wf-label\">Features</div></div><div class=\"pres-arrow\">→</div><div class=\"pres-wf-step\"><div class=\"pres-wf-circle\">Verify</div><div class=\"pres-wf-label\">Serve</div></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-bullets\"><li>Small diffs with strong messages</li><li>Update CHANGELOG + versions</li></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Debugging</h2><div class=\"pres-grid\"><div class=\"pres-grid-item\"><h4>Breakpoints</h4><p>Step router logic.</p></div><div class=\"pres-grid-item\"><h4>Network</h4><p>Check tools.json, caching.</p></div></div><div class=\"pres-warning amber\"><h4>ESM Caching</h4><p>Disable cache or add ?v=dev.</p></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-quote\"><p>“Make it testable and observable.”</p><cite>Debugging mantra</cite></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Testing</h2><div class=\"pres-bullets\"><li>Targeted checks for changed modules</li><li>Flow checks: nav, edits, uploads</li><li>Use tasks.json for repeatables</li></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-grid cols-3\"><div class=\"pres-grid-item\"><h4>Lint</h4><p>ESLint</p></div><div class=\"pres-grid-item\"><h4>Format</h4><p>Prettier</p></div><div class=\"pres-grid-item\"><h4>Serve</h4><p>http.server</p></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Productivity</h2><div class=\"pres-bullets\"><li>Multi-cursor & snippets</li><li>Command Palette</li><li>Quick Fixes</li></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-grid\"><div class=\"pres-grid-item\"><h4>Refactor</h4><p>Extract functions.</p></div><div class=\"pres-grid-item\"><h4>Search</h4><p>Use filters.</p></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>SpeckKit Integration</h2><div class=\"pres-artifacts\"><div class=\"pres-artifact\"><div class=\"pres-artifact-icon\">📘</div><div><h4>Standards</h4><p>Headers, versions.</p></div></div><div class=\"pres-artifact\"><div class=\"pres-artifact-icon\">🧭</div><div><h4>Defaults</h4><p>Follow constraints.</p></div></div><div class=\"pres-artifact\"><div class=\"pres-artifact-icon\">🔗</div><div><h4>References</h4><p>Load when relevant.</p></div></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-split\"><div class=\"pres-panel\"><h3>Pitfalls</h3><p>Unbounded changes, missed cleanup.</p></div><div class=\"pres-panel good\"><h3>Solutions</h3><p>Small diffs, teardown, docs.</p></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Resources</h2><div class=\"pres-bullets\"><li>VS Code</li><li>GitHub Copilot</li><li>SpeckKit Registry</li></div></div></div>`
+    ];
+
+    const host = document.getElementById('slides');
+    host.innerHTML = slides.join('');
+    const slideEls = Array.from(host.querySelectorAll('.pres-slide'));
+    const counter = document.getElementById('counter');
+    const chapterBtns = Array.from(document.querySelectorAll('.pres-chapter-btn'));
+
+    let idx = 0;
+    function show(i) {
+      idx = Math.max(0, Math.min(slideEls.length - 1, i));
+      slideEls.forEach((el, j) => el.classList.toggle('active', j === idx));
+      if (counter) counter.textContent = `${idx + 1} / ${slideEls.length}`;
+      chapterBtns.forEach((b) => b.classList.toggle('active', parseInt(b.dataset.target, 10) === idx));
+    }
+    show(0);
+
+    chapterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => show(parseInt(btn.dataset.target, 10)));
+    });
+
+    function keyHandler(e) {
+      if (e.key === 'ArrowRight') show(idx + 1);
+      if (e.key === 'ArrowLeft') show(idx - 1);
+    }
+    document.addEventListener('keydown', keyHandler);
+  </script>
+</body>
+</html>

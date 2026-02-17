@@ -60,6 +60,14 @@ No `npm install`. No build step. Just serve and open.
 
 ---
 
+## Dev Tips
+
+- ES Modules can be browser-cached between refreshes. If changes don't appear:
+  - Use a hard refresh, or enable "Disable cache" in dev tools while refreshing.
+  - Alternatively, change the import URL with a query (e.g., `?v=dev`) during development.
+
+---
+
 ## Project Structure
 
 ```
@@ -158,7 +166,7 @@ Tools are defined in `data/tools.json` with the following schema:
 | `generic_disabled_tools` | Disabled tool IDs |
 | `generic_screenshots_{id}` | User-uploaded screenshot data URLs per tool |
 | `generic_github_pat` | GitHub Personal Access Token (optional) |
-| `generic_theme` | Active theme selection |
+| `generic-d365-theme` | Active theme selection |
 
 ---
 

@@ -1,6 +1,7 @@
 // =============================================================================
 // SIDE NAV — 240px / 64px collapsible, data-driven from tools.json
-// Version: 2.0.0 | Last Updated: 2026-02-16
+// Version: 2.1.0 | Last Updated: 2026-02-17
+// CHANGELOG: 2.1.0 — Distinct icons per tool item in nav
 // =============================================================================
 
 import { buildToolGroups } from "../platform/navigation-engine.js";
@@ -16,6 +17,27 @@ export function renderSideNav(container) {
   const nav = document.createElement("nav");
   nav.className = "side-nav";
   nav.id = "sideNav";
+
+  const toolIconKeys = [
+    "tools",
+    "document",
+    "code",
+    "analytics",
+    "classifier",
+    "link",
+    "profile",
+    "addNew",
+    "grid",
+  ];
+
+  function pickIconKeyForTool(tool) {
+    // Stable selection based on tool.id char codes
+    const id = String(tool.id || tool.name || "");
+    if (!id) return toolIconKeys[0];
+    let sum = 0;
+    for (let i = 0; i < id.length; i++) sum += id.charCodeAt(i);
+    return toolIconKeys[sum % toolIconKeys.length];
+  }
 
   function buildNavHTML() {
     const groups = buildToolGroups();
@@ -37,10 +59,11 @@ export function renderSideNav(container) {
       html += `<li class="nav-group-label"><span class="nav-label">${group.label}</span></li>`;
 
       for (const tool of group.tools) {
+        const key = pickIconKeyForTool(tool);
         html += `
           <li>
             <button class="nav-item" data-route="/tools/${tool.id}">
-              ${icon("tools", "nav-icon")}
+              ${icon(key, "nav-icon")}
               <span class="nav-label">${tool.name}</span>
             </button>
           </li>

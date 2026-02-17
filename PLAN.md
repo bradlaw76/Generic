@@ -147,7 +147,7 @@ All user modifications are layered on top of `tools.json` via localStorage:
 | `generic_tool_edits`   | JSON object| Edit overrides keyed by tool ID          |
 | `generic_disabled_tools`| JSON array| IDs of disabled tools                    |
 | `generic_github_pat`   | String     | GitHub Personal Access Token (optional)  |
-| `generic_theme`        | String     | Active theme class name                  |
+| `generic-d365-theme`   | String     | Active theme class name                  |
 
 ### 4.3 Data Merge Strategy
 
@@ -241,7 +241,7 @@ Each theme defines the same set of CSS custom properties (`--bg-primary`, `--tex
 
 - Theme selector dropdown in TopBar (3 options)
 - `setTheme()` swaps the class on `<body>` — instant, no re-render
-- Selection persisted to `localStorage` key `generic_theme`
+- Selection persisted to `localStorage` key `generic-d365-theme`
 - Default: `theme-dark`
 
 ---
