@@ -1,10 +1,10 @@
-# GENERIC D365 MODERN SHELL — PLAN
+# GENERIC TOOL PORTFOLIO — PLAN
 
-## Implementation Plan & Architecture Decisions
+## Architecture & Design Decisions
 
-> **Version:** 1.0.0  
+> **Version:** 3.0.0  
 > **Last updated:** 2026-02-16  
-> **Guiding principle:** Vanilla first. Minimal libraries. Local data. No uploads.
+> **Guiding principle:** Zero dependencies. No build step. Vanilla everything.
 
 ---
 
@@ -13,51 +13,43 @@
 1. [Architecture Philosophy](#1-architecture-philosophy)
 2. [Technology Decisions](#2-technology-decisions)
 3. [Project Structure](#3-project-structure)
-4. [Build System — Vite](#4-build-system--vite)
-5. [Data Layer — Local SQLite](#5-data-layer--local-sqlite)
-6. [Image Handling — Local Only](#6-image-handling--local-only)
-7. [UI Implementation — Vanilla HTML/CSS/JS](#7-ui-implementation--vanilla-htmlcssjs)
-8. [Theming Strategy](#8-theming-strategy)
-9. [Routing & Navigation](#9-routing--navigation)
-10. [Development Workflow](#10-development-workflow)
-11. [Dependency Inventory](#11-dependency-inventory)
-12. [Migration Path from Demo](#12-migration-path-from-demo)
+4. [Data Layer](#4-data-layer)
+5. [UI Implementation](#5-ui-implementation)
+6. [Theming Strategy](#6-theming-strategy)
+7. [Routing & Navigation](#7-routing--navigation)
+8. [GitHub Integration](#8-github-integration)
+9. [Development Workflow](#9-development-workflow)
+10. [Dependency Inventory](#10-dependency-inventory)
 
 ---
 
 ## 1. Architecture Philosophy
 
-### Vanilla-First Principle
+### Zero-Dependency Principle
 
-This project intentionally avoids heavy frameworks and libraries. The existing `demo.html` proves the shell works with **zero dependencies** — pure HTML, CSS, and JavaScript. The production implementation preserves this spirit:
+This project uses **zero** npm packages, **zero** build tools, and **zero** frameworks. The entire application runs from raw HTML, CSS, and JavaScript files served statically.
 
-- **HTML** for structure and semantics
-- **CSS custom properties** for theming (no CSS-in-JS)
-- **Vanilla JavaScript / TypeScript** for behavior
-- **Vite** as the only build tool
-- **SQLite** as the only data dependency
+- **HTML** — single `index.html` entry point
+- **CSS** — 6 stylesheets with custom properties for theming
+- **JavaScript** — ES modules loaded natively by the browser
+- **Data** — JSON file + localStorage (no database)
+- **Server** — Python `http.server` for development; GitHub Pages for production
 
-### Why Not React?
+### Why Zero Dependencies?
 
-The original spec referenced React + Fluent UI. The revised plan explicitly moves away from that:
+| Concern              | Framework Approach            | This Project (Chosen)            |
+|----------------------|-------------------------------|----------------------------------|
+| Bundle size          | 140KB+ (React + ReactDOM)     | **0KB** — native browser APIs    |
+| Build step           | Vite/Webpack/esbuild          | **None** — serve and open        |
+| Theme switching      | Context + Provider re-render  | CSS class swap — instant         |
+| Component model      | JSX + virtual DOM             | ES modules + `innerHTML`         |
+| State management     | useState / Redux / Zustand    | localStorage + DOM               |
+| Routing              | React Router (~12KB)          | 131-line hash router             |
+| Dev server           | Vite HMR                      | `python -m http.server 8080`     |
+| Time to interactive  | Hydration delay               | **Instant** — no framework boot  |
+| OneDrive compat.     | `npm install` fails on paths  | **No npm** — no path issues      |
 
-| Concern           | React Approach         | Vanilla Approach (Chosen)       |
-|-------------------|------------------------|---------------------------------|
-| Bundle size       | ~140KB+ (React + ReactDOM) | 0KB (native)                |
-| Theme switching   | Context + FluentProvider | CSS custom properties          |
-| Component model   | JSX Components         | Web Components or ES modules   |
-| State management  | useState/Context       | Native events + DOM state      |
-| Routing           | React Router (~12KB)   | History API + hash routing     |
-| Build complexity  | JSX transform + deps   | Vite vanilla template          |
-| Time to interactive| Higher (hydration)    | Instant (no framework boot)    |
-
-### Decision: Vanilla TypeScript + Vite
-
-- Use Vite's vanilla-ts template
-- TypeScript for type safety without runtime cost
-- No JSX — use template literals or DOM APIs
-- CSS files loaded natively by Vite
-- Code splitting via dynamic `import()`
+The OneDrive workspace path makes `node_modules` unreliable. This architecture eliminates the problem entirely.
 
 ---
 
@@ -65,381 +57,177 @@ The original spec referenced React + Fluent UI. The revised plan explicitly move
 
 ### Locked Stack
 
-| Layer       | Choice              | Rationale                                     |
-|-------------|---------------------|-----------------------------------------------|
-| Bundler     | Vite 5+             | Fast HMR, native ES modules, minimal config   |
-| Language    | TypeScript (strict)  | Type safety, zero runtime overhead            |
-| Markup      | Vanilla HTML         | Semantic, accessible, no transform needed     |
-| Styling     | Vanilla CSS          | Custom properties, no preprocessor needed     |
-| Scripting   | Vanilla JS/TS       | No framework runtime cost                      |
-| Database    | SQLite (sql.js)      | Local, serverless, single-file database       |
-| Images      | Local filesystem     | Never uploaded, paths stored in SQLite         |
+| Layer       | Choice                     | Rationale                                     |
+|-------------|----------------------------|-----------------------------------------------|
+| Language    | JavaScript (ES Modules)    | Native browser support, no transpile step      |
+| Markup      | HTML5                      | Single `index.html`, everything else dynamic   |
+| Styling     | CSS3 + Custom Properties   | 3 themes, no preprocessor needed               |
+| Data        | JSON + localStorage        | Portable, zero-server, instant persistence     |
+| Routing     | Hash-based SPA router      | No server config, works on GitHub Pages        |
+| Icons       | Inline SVGs (functions)    | No icon library dependency                     |
+| Dev server  | Python `http.server`       | Pre-installed, zero config                     |
+| Hosting     | GitHub Pages               | Free, static, automatic                        |
 
 ### Explicitly Rejected
 
-| Library/Framework | Reason for Rejection                         |
-|-------------------|----------------------------------------------|
-| React             | Unnecessary runtime for this application     |
-| Vue, Svelte, etc. | Same — no framework runtime needed           |
-| Tailwind CSS      | Utility classes add build complexity          |
-| Bootstrap         | Opinionated styling conflicts with Circuit   |
-| Lodash            | Native array/object methods suffice          |
-| Axios             | Native `fetch` is sufficient                 |
-| Moment.js         | `Intl.DateTimeFormat` is standard            |
-| Express/Fastify   | No server — this is a static application     |
-| Electron          | Not a desktop app (yet)                      |
+| Library/Framework | Reason for Rejection                                 |
+|-------------------|------------------------------------------------------|
+| React / Vue / etc.| Unnecessary runtime; vanilla JS is simpler here      |
+| TypeScript        | Build step required; not justified for this scope    |
+| Vite / Webpack    | No build needed — native ES modules work directly    |
+| Tailwind CSS      | Adds build pipeline; CSS custom properties suffice   |
+| SQLite (sql.js)   | 400KB WASM payload; localStorage is adequate         |
+| npm (any)         | OneDrive path breaks `node_modules`; not needed      |
+| Axios             | Native `fetch` is sufficient                         |
+| Moment.js         | `Intl.DateTimeFormat` / `toLocaleDateString` suffice |
 
 ---
 
 ## 3. Project Structure
 
 ```
-generic-d365-modern-shell/
-│
-├─ src/
-│  ├─ app/
-│  │   ├─ shell.ts              # Main shell orchestrator
-│  │   ├─ router.ts             # Hash-based router (vanilla)
-│  │   └─ nav-config.ts         # Tool registration config
-│  │
-│  ├─ layout/
-│  │   ├─ top-bar.ts            # TopBar component (48px header)
-│  │   ├─ side-nav.ts           # SideNav component (collapsible)
-│  │   └─ content-area.ts       # Main content container
-│  │
-│  ├─ theme/
-│  │   ├─ circuit-tokens.css    # Shared accent tokens (if any)
-│  │   ├─ dark.css              # theme-dark: Circuit Dark
-│  │   ├─ light.css             # theme-light: Circuit Light
-│  │   ├─ d365.css              # theme-d365: Dynamics 365 (Fluent)
-│  │   └─ theme-switcher.ts     # 3-theme selector + localStorage
-│  │
-│  ├─ components/
-│  │   ├─ app-card.ts           # Card component
-│  │   ├─ section-header.ts     # Section header component
-│  │   └─ data-grid.ts          # Data table component
-│  │
-│  ├─ tools/
-│  │   ├─ dashboard/
-│  │   │   ├─ index.ts          # Dashboard page logic
-│  │   │   └─ dashboard.html    # Dashboard template
-│  │   └─ sample-tool/
-│  │       ├─ index.ts          # Sample tool logic
-│  │       └─ sample-tool.html  # Sample tool template
-│  │
-│  ├─ data/
-│  │   ├─ db.ts                 # SQLite connection manager
-│  │   ├─ migrations.ts         # Schema creation / versioning
-│  │   └─ queries.ts            # Typed query functions
-│  │
-│  ├─ styles/
-│  │   ├─ reset.css             # CSS reset (minimal)
-│  │   ├─ layout.css            # Shell layout styles
-│  │   ├─ components.css        # Shared component styles
-│  │   └─ typography.css        # Type scale + font stack
-│  │
-│  ├─ main.ts                   # Entry point
-│  └─ index.css                 # CSS imports aggregator
-│
-├─ data/
-│  └─ app.db                    # SQLite database file (gitignored)
-│
-├─ index.html                   # HTML shell
-├─ package.json                 # Minimal dependencies
-├─ tsconfig.json                # Strict TypeScript config
-├─ vite.config.ts               # Vite config
-├─ .gitignore                   # Includes data/*.db
-└─ README.md                    # Usage guide
+Generic/
+├── index.html                     # Entry point — loads CSS + shell.js
+├── data/
+│   └── tools.json                 # 8 tool definitions (source of truth)
+├── images/
+│   └── Generic.ASCII.png          # Logo
+├── src/
+│   ├── app/
+│   │   ├── shell.js               # Main orchestrator — layout + routes
+│   │   └── router.js              # Hash router with parameterised patterns
+│   ├── layout/
+│   │   ├── top-bar.js             # Logo, title, theme selector, settings gear
+│   │   ├── side-nav.js            # Collapsible nav with category groups
+│   │   └── content-area.js        # Route target container
+│   ├── pages/
+│   │   ├── settings.js            # 3-tab settings (grid, add tool, GitHub)
+│   │   ├── tool-detail.js         # Tool metadata + inline edit panel
+│   │   ├── speckkit.js            # SpeckKit overview + 20-slide deck
+│   │   ├── vscode.js              # VS Code & How I Build page
+│   │   └── add-tool.js            # Legacy redirect to /settings
+│   ├── platform/
+│   │   ├── tool-registry.js       # Data CRUD — JSON + localStorage merge
+│   │   ├── navigation-engine.js   # Navigation configuration
+│   │   └── tool-types.js          # Schema definitions
+│   ├── shared/
+│   │   ├── icons.js               # 18 inline SVG icon functions
+│   │   └── components/            # Shared UI components
+│   ├── styles/
+│   │   ├── reset.css              # CSS reset
+│   │   ├── themes.css             # 3 theme token sets
+│   │   ├── typography.css         # Font stack & text utilities
+│   │   ├── layout.css             # Shell grid + top-bar logo
+│   │   ├── components.css         # All component styles (~1050 lines)
+│   │   └── presentation.css       # SpeckKit slide styles
+│   ├── theme/
+│   │   └── theme-switcher.js      # Theme persistence + dropdown logic
+│   └── tools/
+│       └── dashboard/
+│           └── index.js           # Metrics dashboard with donut chart
+├── speckit-presentation.html      # Standalone SpeckKit presentation
+└── demo.html                      # Original demo prototype
 ```
 
 ---
 
-## 4. Build System — Vite
+## 4. Data Layer
 
-### 4.1 Project Initialization
+### 4.1 Source of Truth: `data/tools.json`
 
-```bash
-npm create vite@latest generic-d365-modern-shell -- --template vanilla-ts
-cd generic-d365-modern-shell
-npm install
-```
+The JSON file contains 8 tool definitions loaded at startup via `fetch()`. This file is the static baseline — never modified at runtime.
 
-**Note:** `vanilla-ts` template — not `react-ts`.
+### 4.2 Runtime Persistence: localStorage
 
-### 4.2 Vite Configuration
+All user modifications are layered on top of `tools.json` via localStorage:
 
-```ts
-// vite.config.ts
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
+| Key                    | Type       | Purpose                                  |
+|------------------------|------------|------------------------------------------|
+| `generic_user_tools`   | JSON array | Tools added via Settings or auto-import  |
+| `generic_tool_edits`   | JSON object| Edit overrides keyed by tool ID          |
+| `generic_disabled_tools`| JSON array| IDs of disabled tools                    |
+| `generic_github_pat`   | String     | GitHub Personal Access Token (optional)  |
+| `generic_theme`        | String     | Active theme class name                  |
 
-export default defineConfig({
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src'),
-    },
-  },
-  build: {
-    target: 'es2022',
-    outDir: 'dist',
-    rollupOptions: {
-      input: resolve(__dirname, 'index.html'),
-    },
-  },
-  server: {
-    port: 3000,
-    open: true,
-  },
-});
-```
+### 4.3 Data Merge Strategy
 
-### 4.3 Scripts
+`tool-registry.js` → `loadTools()`:
 
-```json
-{
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint src --ext .ts",
-    "test": "vitest run",
-    "test:watch": "vitest"
-  }
-}
-```
+1. `fetch('data/tools.json')` → base array
+2. Read `generic_user_tools` → append user-added tools
+3. Read `generic_tool_edits` → overlay field-level edits on any tool
+4. Return merged array — callers see a single unified list
+
+### 4.4 CRUD Operations
+
+| Function              | Source            | Persistence                       |
+|-----------------------|-------------------|-----------------------------------|
+| `loadTools()`         | JSON + localStorage| Read-only merge                  |
+| `getAllTools()`        | In-memory cache   | —                                 |
+| `getActiveTools()`    | Filters disabled  | Reads `generic_disabled_tools`    |
+| `getToolById(id)`     | In-memory lookup  | —                                 |
+| `addTool(tool)`       | User action       | Writes `generic_user_tools`       |
+| `updateTool(id, edits)` | User action    | Writes `generic_tool_edits`       |
+| `toggleToolDisabled(id)` | User action   | Writes `generic_disabled_tools`   |
+| `removeUserTool(id)`  | User action       | Updates `generic_user_tools`      |
 
 ---
 
-## 5. Data Layer — Local SQLite
+## 5. UI Implementation
 
-### 5.1 Why SQLite?
+### 5.1 Component Pattern
 
-- **No server required** — runs entirely in the browser or Node
-- **Single file database** — portable, backupable
-- **SQL standard** — familiar, powerful queries
-- **Zero network** — all data is local
+Components are ES modules exporting `render(container, ...args)` functions. Each page clears the container and builds DOM via `innerHTML` template literals:
 
-### 5.2 Implementation: sql.js
-
-[sql.js](https://github.com/sql-js/sql.js) compiles SQLite to WebAssembly, enabling SQLite in the browser with no server.
-
-```bash
-npm install sql.js
-```
-
-This is the **only runtime dependency** beyond Vite.
-
-### 5.3 Database Schema (v1)
-
-```sql
--- Metadata store
-CREATE TABLE IF NOT EXISTS tools (
-  id          TEXT PRIMARY KEY,
-  label       TEXT NOT NULL,
-  path        TEXT NOT NULL UNIQUE,
-  icon        TEXT,
-  sort_order  INTEGER DEFAULT 0,
-  created_at  TEXT DEFAULT (datetime('now')),
-  updated_at  TEXT DEFAULT (datetime('now'))
-);
-
--- Image reference store (paths only, never blobs)
-CREATE TABLE IF NOT EXISTS images (
-  id          TEXT PRIMARY KEY,
-  tool_id     TEXT NOT NULL,
-  file_path   TEXT NOT NULL,          -- local filesystem path
-  alt_text    TEXT,
-  width       INTEGER,
-  height      INTEGER,
-  file_size   INTEGER,
-  created_at  TEXT DEFAULT (datetime('now')),
-  FOREIGN KEY (tool_id) REFERENCES tools(id)
-);
-
--- Key-value settings
-CREATE TABLE IF NOT EXISTS settings (
-  key         TEXT PRIMARY KEY,
-  value       TEXT NOT NULL,
-  updated_at  TEXT DEFAULT (datetime('now'))
-);
-
--- Schema versioning
-CREATE TABLE IF NOT EXISTS schema_version (
-  version     INTEGER PRIMARY KEY,
-  applied_at  TEXT DEFAULT (datetime('now'))
-);
-```
-
-### 5.4 Connection Manager
-
-```ts
-// src/data/db.ts
-import initSqlJs, { Database } from 'sql.js';
-
-let db: Database | null = null;
-
-export async function getDatabase(): Promise<Database> {
-  if (db) return db;
-  
-  const SQL = await initSqlJs({
-    locateFile: (file: string) => `https://sql.js.org/dist/${file}`,
-  });
-  
-  // Load existing database from localStorage or create new
-  const savedData = localStorage.getItem('app-db');
-  if (savedData) {
-    const buf = Uint8Array.from(atob(savedData), c => c.charCodeAt(0));
-    db = new SQL.Database(buf);
-  } else {
-    db = new SQL.Database();
-  }
-  
-  return db;
-}
-
-export function saveDatabase(): void {
-  if (!db) return;
-  const data = db.export();
-  const base64 = btoa(String.fromCharCode(...data));
-  localStorage.setItem('app-db', base64);
-}
-```
-
-### 5.5 Data Rules
-
-- Database persisted to `localStorage` (browser) or file (Node/Electron future)
-- All queries are typed — no raw string SQL without type wrappers
-- Migrations run on app startup, are idempotent
-- Image file paths stored as strings — never binary data in DB
-- `saveDatabase()` called after every write operation
-
----
-
-## 6. Image Handling — Local Only
-
-### 6.1 Core Rule
-
-**Images are never uploaded anywhere.** They remain on the local filesystem.
-
-### 6.2 How It Works
-
-```
-User selects image → File picker returns local path
-                   → Path stored in SQLite `images.file_path`
-                   → <img src="file:///..."> renders from local disk
-                   → No copy, no upload, no encoding
-```
-
-### 6.3 Image Reference Pattern
-
-```ts
-// Store reference
-function addImageRef(toolId: string, filePath: string, alt: string): void {
-  db.run(
-    `INSERT INTO images (id, tool_id, file_path, alt_text) VALUES (?, ?, ?, ?)`,
-    [crypto.randomUUID(), toolId, filePath, alt]
-  );
-  saveDatabase();
-}
-
-// Render reference
-function renderImage(filePath: string, alt: string): string {
-  return `<img src="${filePath}" alt="${alt}" loading="lazy" />`;
-}
-```
-
-### 6.4 What's NOT Allowed
-
-| Action                | Status |
-|-----------------------|--------|
-| Upload to cloud       | ❌     |
-| Encode as Base64      | ❌     |
-| Store blob in SQLite  | ❌     |
-| Copy to app directory | ❌ (v1)|
-| CDN / external URL    | ❌     |
-| Reference local path  | ✅     |
-
----
-
-## 7. UI Implementation — Vanilla HTML/CSS/JS
-
-### 7.1 Component Pattern
-
-Components are ES modules that return DOM elements:
-
-```ts
-// src/components/app-card.ts
-export interface AppCardProps {
-  title: string;
-  content: string;
-  actions?: HTMLElement[];
-}
-
-export function createAppCard(props: AppCardProps): HTMLElement {
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.innerHTML = `
-    <h3>${props.title}</h3>
-    <p>${props.content}</p>
+```js
+// Typical page module
+export function render(container, data) {
+  container.innerHTML = `
+    <div class="page-content">
+      <h1>${data.name}</h1>
+      ...
+    </div>
   `;
-  
-  if (props.actions) {
-    const group = document.createElement('div');
-    group.className = 'button-group';
-    props.actions.forEach(a => group.appendChild(a));
-    card.appendChild(group);
-  }
-  
-  return card;
+  // Attach event listeners after DOM insertion
+  container.querySelector('.btn').addEventListener('click', handleClick);
 }
 ```
 
-### 7.2 Page Pattern
+### 5.2 Layout Components
 
-Each tool page is a module with a `render()` function:
+| Component          | Module                 | Responsibility                        |
+|--------------------|------------------------|---------------------------------------|
+| TopBar             | `layout/top-bar.js`    | Logo, title, theme dropdown, gear     |
+| SideNav            | `layout/side-nav.js`   | Collapsible groups, tool categories   |
+| ContentArea        | `layout/content-area.js`| Route target `<main>` element        |
 
-```ts
-// src/tools/dashboard/index.ts
-export function render(container: HTMLElement): void {
-  container.innerHTML = '';
-  
-  const header = createSectionHeader({ title: 'Dashboard' });
-  const stats = createStatCards(getStats());
-  const grid = createDataGrid(getRecentActivity());
-  
-  container.append(header, stats, grid);
-}
+Layout is rendered once by `shell.js` at startup. Only the content area re-renders on route changes.
 
-export function destroy(): void {
-  // Cleanup event listeners, intervals, etc.
-}
-```
+### 5.3 Page Modules
 
-### 7.3 Event Delegation
+| Page       | Module                          | Features                              |
+|------------|---------------------------------|---------------------------------------|
+| Dashboard  | `tools/dashboard/index.js`      | 4 stat cards, category bars, donut chart, recent list, quick actions |
+| Settings   | `pages/settings.js`             | 3-tab interface: tool grid with edit, add-tool form, GitHub sync |
+| Tool Detail| `pages/tool-detail.js`          | Full metadata, tags, edit panel       |
+| SpeckKit   | `pages/speckkit.js`             | Overview + 20-slide interactive deck  |
+| VS Code    | `pages/vscode.js`               | Dev environment showcase              |
 
-Use event delegation at the shell level, not per-element listeners:
+### 5.4 Icons
 
-```ts
-document.querySelector('.content-area')?.addEventListener('click', (e) => {
-  const target = e.target as HTMLElement;
-  
-  if (target.matches('[data-action="refresh"]')) {
-    handleRefresh();
-  }
-  if (target.matches('[data-action="delete"]')) {
-    handleDelete(target.dataset.id);
-  }
-});
-```
+`shared/icons.js` exports 18 functions returning inline SVG strings. No icon font, no sprite sheet, no external library.
+
+### 5.5 Inline Edit Panels
+
+Both the Settings grid and Tool Detail page support inline editing via `showEditPanel()` / `showDetailEditPanel()`. The edit panel renders a form with all tool fields and persists changes via `updateTool()` → localStorage.
 
 ---
 
-## 8. Theming Strategy
+## 6. Theming Strategy
 
-### 8.1 Three Themes via CSS Custom Properties
+### 6.1 Three Themes via CSS Custom Properties
 
-The theme system supports three modes. All implemented as CSS class selectors on `<body>` mapping to the same unified token contract:
+All three themes are defined in `src/styles/themes.css` as class selectors on `<body>`:
 
 | Theme Class    | Name           | Character                        |
 |----------------|----------------|----------------------------------|
@@ -447,225 +235,152 @@ The theme system supports three modes. All implemented as CSS class selectors on
 | `theme-light`  | Circuit Light  | Clean, bright Circuit variant    |
 | `theme-d365`   | Dynamics 365   | Official Microsoft Fluent feel   |
 
-```css
-/* src/theme/dark.css */
-body.theme-dark {
-  --bg-primary: #0B0D10;
-  --bg-secondary: #12161C;
-  --bg-tertiary: #1A1F26;
-  --border-subtle: #232A33;
-  --border-strong: #2E3742;
-  --text-primary: #E6EDF3;
-  --text-secondary: #C9D1D9;
-  --text-muted: #8B949E;
-  --color-primary: #1E88E5;
-  --color-secondary: #43A047;
-  --color-accent: #00BCD4;
-  --color-danger: #E53935;
-  --color-warning: #F2C94C;
-  --color-success: #4CAF50;
-  --shadow-card: 0 8px 24px rgba(0,0,0,0.45);
-  --shadow-modal: 0 16px 48px rgba(0,0,0,0.6);
-}
+Each theme defines the same set of CSS custom properties (`--bg-primary`, `--text-primary`, `--color-primary`, `--shadow-card`, etc.). Components reference only the custom properties — never raw colour values.
 
-/* src/theme/light.css */
-body.theme-light {
-  --bg-primary: #F4F7FA;
-  --bg-secondary: #FFFFFF;
-  --bg-tertiary: #E9EEF3;
-  --border-subtle: #D0D7DE;
-  --border-strong: #B6C2CF;
-  --text-primary: #0D1117;
-  --text-secondary: #30363D;
-  --text-muted: #57606A;
-  --color-primary: #1565C0;
-  --color-secondary: #2E7D32;
-  --color-accent: #00897B;
-  --color-danger: #C62828;
-  --color-warning: #D4AF37;
-  --color-success: #388E3C;
-  --shadow-card: 0 6px 18px rgba(0,0,0,0.08);
-  --shadow-modal: 0 12px 32px rgba(0,0,0,0.12);
-}
+### 6.2 Theme Switching
 
-/* src/theme/d365.css */
-body.theme-d365 {
-  --bg-primary: #F3F2F1;
-  --bg-secondary: #FFFFFF;
-  --bg-tertiary: #FAF9F8;
-  --border-subtle: #E1DFDD;
-  --border-strong: #C8C6C4;
-  --text-primary: #323130;
-  --text-secondary: #605E5C;
-  --text-muted: #8A8886;
-  --color-primary: #0078D4;
-  --color-secondary: #107C10;
-  --color-accent: #00B7C3;
-  --color-danger: #D13438;
-  --color-warning: #FFB900;
-  --color-success: #107C10;
-  --shadow-card: 0 2px 6px rgba(0,0,0,0.08);
-  --shadow-modal: 0 8px 24px rgba(0,0,0,0.2);
-}
-```
-
-### 8.2 Theme Switcher
-
-```ts
-// src/theme/theme-switcher.ts
-const THEMES = ['theme-dark', 'theme-light', 'theme-d365'] as const;
-type Theme = typeof THEMES[number];
-
-export function setTheme(theme: Theme): void {
-  THEMES.forEach(t => document.body.classList.remove(t));
-  document.body.classList.add(theme);
-  localStorage.setItem('theme', theme);
-}
-
-export function initTheme(): void {
-  const saved = (localStorage.getItem('theme') || 'theme-dark') as Theme;
-  setTheme(saved);
-}
-```
-
-- Theme selected via dropdown in TopBar (not binary toggle)
-- Zero JavaScript objects. Zero re-renders. Instant theme switch.
+- Theme selector dropdown in TopBar (3 options)
+- `setTheme()` swaps the class on `<body>` — instant, no re-render
+- Selection persisted to `localStorage` key `generic_theme`
 - Default: `theme-dark`
 
 ---
 
-## 9. Routing & Navigation
+## 7. Routing & Navigation
 
-### 9.1 Hash Router (No Library)
+### 7.1 Hash Router
 
-```ts
-// src/app/router.ts
-type RouteHandler = (container: HTMLElement) => void;
-type CleanupFn = () => void;
+`src/app/router.js` (131 lines) implements a complete SPA router using `window.location.hash`:
 
-const routes = new Map<string, RouteHandler>();
-let currentCleanup: CleanupFn | null = null;
+- `registerRoute(pattern, handler)` — registers a pattern with placeholders (e.g. `/tools/:id`)
+- `navigate(path)` — programmatic navigation via `location.hash`
+- `startRouter()` — begins listening to `hashchange` events
+- Pattern matching via `compilePattern()` — converts `/tools/:id` to regex
+- Route handlers receive `(container, params)` and return optional cleanup functions
+- Previous page cleanup called automatically on route change
 
-export function registerRoute(path: string, handler: RouteHandler): void {
-  routes.set(path, handler);
-}
+### 7.2 Registered Routes
 
-export function navigate(path: string): void {
-  window.location.hash = path;
-}
+| Pattern        | Handler                            |
+|----------------|------------------------------------|
+| `/`            | `tools/dashboard/index.js`         |
+| `/tools/:id`   | `pages/tool-detail.js`            |
+| `/settings`    | `pages/settings.js`               |
+| `/add-tool`    | Redirect → `/settings`            |
+| `/speckkit`    | `pages/speckkit.js`               |
+| `/vscode`      | `pages/vscode.js`                 |
 
-function handleRoute(): void {
-  const path = window.location.hash.slice(1) || '/';
-  const handler = routes.get(path);
-  const container = document.getElementById('contentArea');
-  
-  if (!container || !handler) return;
-  
-  // Cleanup previous page
-  if (currentCleanup) currentCleanup();
-  
-  // Render new page
-  handler(container);
-}
+### 7.3 Lazy Loading
 
-window.addEventListener('hashchange', handleRoute);
-window.addEventListener('DOMContentLoaded', handleRoute);
-```
+Pages are loaded via dynamic `import()` in route handlers — the browser handles module caching natively. No bundler required.
 
-### 9.2 Lazy Loading Tools
+### 7.4 SideNav Integration
 
-```ts
-// src/app/nav-config.ts
-export const navItems = [
-  {
-    label: 'Dashboard',
-    path: '/',
-    icon: 'home',
-    load: () => import('../tools/dashboard/index'),
-  },
-  {
-    label: 'Sample Tool',
-    path: '/sample',
-    icon: 'grid',
-    load: () => import('../tools/sample-tool/index'),
-  },
-];
-```
-
-Dynamic `import()` gives us code splitting for free via Vite.
+`side-nav.js` renders navigation groups derived from tool categories. Active route highlighting uses `updateActiveNav()` called by the router on each transition.
 
 ---
 
-## 10. Development Workflow
+## 8. GitHub Integration
 
-### 10.1 Daily Flow
+### 8.1 Repository Polling
+
+Settings Tab 3 ("GitHub Repository Sync") polls the GitHub API for repos owned by `bradlaw76`:
+
+| Mode            | Endpoint                     | Auth Header         |
+|-----------------|------------------------------|---------------------|
+| Public (default)| `GET /users/bradlaw76/repos` | None                |
+| Authenticated   | `GET /user/repos`            | `Bearer <PAT>`     |
+
+Pagination is handled automatically (follows `Link` headers up to 10 pages).
+
+### 8.2 PAT Management
+
+- Optional password input with Show/Hide toggle
+- Token stored in `localStorage` key `generic_github_pat`
+- Clear button removes token and reverts to public mode
+
+### 8.3 Repo Classification
+
+Polled repos are classified as:
+- **Tracked** — already exists in the tool portfolio (matched by `repoUrl`)
+- **Untracked** — not yet in the portfolio
+
+### 8.4 Import Options
+
+For untracked repos:
+- **Generate JSON** — copies a `tools.json`-compatible JSON object to clipboard
+- **+ Add to Portfolio** — instantly imports the repo as a new tool via `addTool()`
+
+### 8.5 Visibility Badges
+
+Public/Private badges appear throughout the app:
+- Settings tool grid (Visibility column)
+- Untracked repos table
+- Tracked repos list
+
+---
+
+## 9. Development Workflow
+
+### 9.1 Daily Flow
 
 ```bash
-npm run dev          # Start Vite dev server (port 3000)
-# Edit files → instant HMR
-npm run typecheck     # Verify types
-npm run test          # Run tests
-npm run build         # Production build
+# Start dev server
+python -m http.server 8080
+
+# Open browser
+# http://localhost:8080
+
+# Edit files → refresh browser
 ```
 
-### 10.2 Adding a New Tool
+No build step. No watch process. No HMR. Just edit and refresh.
 
-1. Create `src/tools/my-tool/index.ts`
-2. Export `render(container)` and `destroy()`
-3. Add entry to `src/app/nav-config.ts`
-4. Done — no other files need editing
+### 9.2 Adding a New Tool
 
-### 10.3 Database Changes
+**Option A — Manual (data/tools.json)**
+1. Add a JSON object to `data/tools.json`
+2. Refresh the browser
 
-1. Add migration to `src/data/migrations.ts`
-2. Increment schema version
-3. Migrations run automatically on next app load
+**Option B — Settings UI (Add New Tool tab)**
+1. Open Settings → Tab 2
+2. Fill in the form
+3. Click "Add Tool"
 
----
+**Option C — GitHub Auto-Import**
+1. Open Settings → Tab 3
+2. Poll repos → click "+ Add to Portfolio" on any untracked repo
 
-## 11. Dependency Inventory
+### 9.3 Deployment
 
-### Production Dependencies (Target: 1)
-
-| Package  | Version | Size (gzip) | Purpose            | Alternative Considered |
-|----------|---------|-------------|--------------------|-----------------------|
-| sql.js   | 1.x     | ~400KB wasm | Local SQLite in browser | IndexedDB (less powerful) |
-
-### Development Dependencies
-
-| Package    | Purpose                  |
-|------------|--------------------------|
-| vite       | Build tool + dev server  |
-| typescript | Type checking            |
-| vitest     | Unit testing             |
-| eslint     | Code linting             |
-| playwright | Integration testing      |
-
-**Total production runtime dependencies: 1**
+Push to `main` → GitHub Pages serves the static files. No CI/CD pipeline needed.
 
 ---
 
-## 12. Migration Path from Demo
+## 10. Dependency Inventory
 
-The existing `demo.html` is the **visual blueprint**. The migration to TypeScript + Vite preserves everything:
+### Production Dependencies: **0**
 
-| demo.html Feature        | Plan Implementation                            |
-|--------------------------|------------------------------------------------|
-| CSS custom properties    | → `src/theme/*.css` (same unified tokens)       |
-| 3 theme classes          | → `dark.css`, `light.css`, `d365.css`           |
-| Inline `<style>`         | → Separate CSS files loaded by Vite             |
-| Inline `<script>`        | → TypeScript modules with type safety           |
-| `setTheme()`             | → `src/theme/theme-switcher.ts`                 |
-| Theme dropdown           | → `src/layout/top-bar.ts` (dropdown component)  |
-| `toggleNav()`            | → `src/layout/side-nav.ts`                     |
-| `showPage()`             | → `src/app/router.ts` (hash-based)             |
-| Dashboard HTML           | → `src/tools/dashboard/` module                |
-| Sample Tool HTML         | → `src/tools/sample-tool/` module              |
-| localStorage theme       | → Same pattern, same keys                      |
-| SVG icons inline         | → Same inline SVGs, extracted to functions      |
+| Package  | Status     |
+|----------|------------|
+| (none)   | ✅ Zero dependencies |
 
-**No visual regression.** The Vite build adds: TypeScript, modules, code splitting, SQLite — while keeping the same UI.
+### Development Dependencies: **0**
+
+| Package  | Status     |
+|----------|------------|
+| (none)   | ✅ No build tools |
+
+### External Runtime APIs Used
+
+| API              | Purpose                                 |
+|------------------|-----------------------------------------|
+| GitHub REST API  | Repository polling (optional, Settings) |
+| localStorage     | User data persistence                   |
+| fetch()          | Load `tools.json` + GitHub API calls    |
+
+**Total dependencies: 0. Total build tools: 0. Total npm packages: 0.**
 
 ---
 
-*End of Plan — Generic D365 Modern Shell v1.0.0*
+*End of Plan — Generic Tool Portfolio v3.0.0*

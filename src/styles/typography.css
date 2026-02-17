@@ -1,0 +1,40 @@
+/* =============================================================================
+   GENERIC D365 SHELL — TYPE SCALE
+   Font: Segoe UI Variable / Segoe UI / system-ui
+   Version: 1.0.0
+   Last Updated: 2026-02-16
+   ============================================================================= */
+
+/* Scale: 12 / 14 / 16 / 20 / 24 */
+
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+body {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.text-muted {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}

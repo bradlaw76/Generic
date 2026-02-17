@@ -1,0 +1,67 @@
+/* =============================================================================
+   GENERIC D365 SHELL — THEME SYSTEM v1.2
+   Three themes: Circuit Dark, Circuit Light, Dynamics 365
+   All components consume tokens — never raw hex values.
+   Version: 1.0.0
+   Last Updated: 2026-02-16
+   ============================================================================= */
+
+/* ─── Circuit Dark ─── */
+body.theme-dark {
+  --bg-primary: #0B0D10;
+  --bg-secondary: #12161C;
+  --bg-tertiary: #1A1F26;
+  --border-subtle: #232A33;
+  --border-strong: #2E3742;
+  --text-primary: #E6EDF3;
+  --text-secondary: #C9D1D9;
+  --text-muted: #8B949E;
+  --color-primary: #1E88E5;
+  --color-secondary: #43A047;
+  --color-accent: #00BCD4;
+  --color-danger: #E53935;
+  --color-warning: #F2C94C;
+  --color-success: #4CAF50;
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-modal: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Circuit Light ─── */
+body.theme-light {
+  --bg-primary: #F4F7FA;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #E9EEF3;
+  --border-subtle: #D0D7DE;
+  --border-strong: #B6C2CF;
+  --text-primary: #0D1117;
+  --text-secondary: #30363D;
+  --text-muted: #57606A;
+  --color-primary: #1565C0;
+  --color-secondary: #2E7D32;
+  --color-accent: #00897B;
+  --color-danger: #C62828;
+  --color-warning: #D4AF37;
+  --color-success: #388E3C;
+  --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.08);
+  --shadow-modal: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* ─── Dynamics 365 ─── */
+body.theme-d365 {
+  --bg-primary: #F3F2F1;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #FAF9F8;
+  --border-subtle: #E1DFDD;
+  --border-strong: #C8C6C4;
+  --text-primary: #323130;
+  --text-secondary: #605E5C;
+  --text-muted: #8A8886;
+  --color-primary: #0078D4;
+  --color-secondary: #107C10;
+  --color-accent: #00B7C3;
+  --color-danger: #D13438;
+  --color-warning: #FFB900;
+  --color-success: #107C10;
+  --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.08);
+  --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.2);
+}

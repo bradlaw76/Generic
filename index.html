@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generic — Tool Portfolio</title>
+  <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+
+  <!-- Stylesheets — no build step required -->
+  <link rel="stylesheet" href="src/styles/reset.css" />
+  <link rel="stylesheet" href="src/styles/themes.css" />
+  <link rel="stylesheet" href="src/styles/typography.css" />
+  <link rel="stylesheet" href="src/styles/layout.css" />
+  <link rel="stylesheet" href="src/styles/components.css" />
+  <link rel="stylesheet" href="src/styles/presentation.css" />
+</head>
+<body class="theme-dark">
+  <!--
+    The shell renders everything dynamically:
+    TopBar, SideNav, and ContentArea are created by src/app/shell.js.
+    No static DOM needed beyond <body>.
+  -->
+
+  <!-- App entry — native ES module, zero dependencies -->
+  <script type="module">
+    import { init } from "./src/app/shell.js";
+    init();
+  </script>
+</body>
+</html>

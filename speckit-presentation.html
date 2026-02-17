@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Spec Kit: Spec-Driven Development</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0e1a;
+            color: #e4e8f0;
+            overflow: hidden;
+        }
+
+        .presentation {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #111827;
+            border-right: 1px solid #1f2937;
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .chapter {
+            margin-bottom: 25px;
+        }
+
+        .chapter-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #9ca3af;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .chapter-title:hover {
+            background: #1f2937;
+            color: #e4e8f0;
+        }
+
+        .chapter-title.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-counter {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+            z-index: 10;
+        }
+
+        .slides-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.4s ease-out;
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 40px;
+        }
+
+        .subtitle {
+            font-size: 28px;
+            color: #9ca3af;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        .tagline {
+            font-size: 24px;
+            color: #6b7280;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        .content-text {
+            font-size: 32px;
+            line-height: 1.6;
+            color: #d1d5db;
+            margin-bottom: 30px;
+        }
+
+        .bullet-list {
+            font-size: 28px;
+            line-height: 1.8;
+            color: #d1d5db;
+            list-style: none;
+        }
+
+        .bullet-list li {
+            margin-bottom: 20px;
+            padding-left: 40px;
+            position: relative;
+        }
+
+        .bullet-list li:before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        .split-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-top: 40px;
+        }
+
+        .panel {
+            background: #111827;
+            border-radius: 16px;
+            padding: 40px;
+            border: 2px solid #1f2937;
+        }
+
+        .panel h3 {
+            font-size: 32px;
+            margin-bottom: 25px;
+            color: #f87171;
+        }
+
+        .panel.good h3 {
+            color: #34d399;
+        }
+
+        .panel p {
+            font-size: 22px;
+            line-height: 1.6;
+            color: #9ca3af;
+        }
+
+        .big-number {
+            font-size: 120px;
+            font-weight: 900;
+            color: #3b82f6;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 12px 28px;
+            background: #1e40af;
+            color: white;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 8px;
+        }
+
+        .pill {
+            background: #1f2937;
+            border-left: 4px solid #3b82f6;
+            padding: 24px 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .pill h4 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #60a5fa;
+        }
+
+        .pill p {
+            font-size: 20px;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        .workflow-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .workflow-step {
+            text-align: center;
+        }
+
+        .workflow-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .workflow-label {
+            font-size: 18px;
+            color: #9ca3af;
+        }
+
+        .arrow {
+            font-size: 48px;
+            color: #4b5563;
+        }
+
+        .artifact-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 40px 0;
+        }
+
+        .artifact {
+            background: #1f2937;
+            border-left: 5px solid;
+            padding: 25px 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .artifact:nth-child(1) { border-color: #ef4444; }
+        .artifact:nth-child(2) { border-color: #f59e0b; }
+        .artifact:nth-child(3) { border-color: #10b981; }
+        .artifact:nth-child(4) { border-color: #3b82f6; }
+        .artifact:nth-child(5) { border-color: #8b5cf6; }
+
+        .artifact-icon {
+            font-size: 36px;
+            width: 60px;
+            text-align: center;
+        }
+
+        .artifact-content h4 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .artifact-content p {
+            font-size: 18px;
+            color: #9ca3af;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .grid-item {
+            background: #111827;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #1f2937;
+        }
+
+        .grid-item h4 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #60a5fa;
+        }
+
+        .grid-item p {
+            font-size: 18px;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        .comparison-table {
+            width: 100%;
+            margin-top: 40px;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .comparison-table th {
+            font-size: 20px;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            font-size: 18px;
+            color: #9ca3af;
+        }
+
+        .comparison-table tr:first-child th {
+            border-top: 2px solid #3b82f6;
+        }
+
+        .warning-box {
+            background: #7f1d1d;
+            border: 2px solid #dc2626;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            font-size: 24px;
+            color: #fca5a5;
+            margin-bottom: 15px;
+        }
+
+        .warning-box p {
+            font-size: 20px;
+            color: #fecaca;
+            line-height: 1.5;
+        }
+
+        .roadmap {
+            display: flex;
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .roadmap-step {
+            flex: 1;
+            background: #111827;
+            border-radius: 12px;
+            padding: 30px;
+            border-top: 4px solid #3b82f6;
+            text-align: center;
+        }
+
+        .roadmap-number {
+            font-size: 48px;
+            font-weight: 900;
+            color: #3b82f6;
+            margin-bottom: 15px;
+        }
+
+        .roadmap-step h4 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .roadmap-step p {
+            font-size: 16px;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .quote-box {
+            background: #1e293b;
+            border-left: 6px solid #3b82f6;
+            padding: 40px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .quote-box p {
+            font-size: 32px;
+            font-style: italic;
+            line-height: 1.5;
+            color: #e2e8f0;
+        }
+
+        .quote-box cite {
+            display: block;
+            margin-top: 20px;
+            font-size: 20px;
+            color: #94a3b8;
+            font-style: normal;
+        }
+
+        @media (max-width: 1400px) {
+            h1 { font-size: 56px; }
+            h2 { font-size: 44px; }
+            .content-text { font-size: 26px; }
+            .bullet-list { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <aside class="sidebar">
+            <h3>Chapters</h3>
+            <div class="chapter">
+                <div class="chapter-title" data-chapter="0">Introduction</div>
+            </div>
+            <div class="chapter">
+                <div class="chapter-title" data-chapter="1">Architecture & Components</div>
+            </div>
+            <div class="chapter">
+                <div class="chapter-title" data-chapter="2">The Workflow</div>
+            </div>
+            <div class="chapter">
+                <div class="chapter-title" data-chapter="3">Real-World Benefits</div>
+            </div>
+            <div class="chapter">
+                <div class="chapter-title" data-chapter="4">Limitations & Considerations</div>
+            </div>
+            <div class="chapter">
+                <div class="chapter-title" data-chapter="5">Effective Usage Tips</div>
+            </div>
+            <div class="chapter">
+                <div class="chapter-title" data-chapter="6">Wrap-up</div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="slide-counter">
+                <span id="current-slide">1</span> / <span id="total-slides">20</span>
+            </div>
+
+            <div class="slides-container" id="slides">
+                <!-- Slide 1: Title -->
+                <div class="slide active" data-chapter="0">
+                    <div class="slide-content">
+                        <h1>GitHub Spec Kit</h1>
+                        <div class="subtitle">Accelerating Spec-Driven Development with AI</div>
+                        <p class="tagline">"Intent is the new source of truth"</p>
+                    </div>
+                </div>
+
+                <!-- Slide 2: The Problem -->
+                <div class="slide" data-chapter="0">
+                    <div class="slide-content">
+                        <h2>The Problem</h2>
+                        <div class="split-panel">
+                            <div class="panel">
+                                <h3>❌ Traditional AI Coding</h3>
+                                <p>Context lost in chat threads</p>
+                                <p>Unclear requirements</p>
+                                <p>Misaligned code generation</p>
+                                <p>Repeated rework</p>
+                            </div>
+                            <div class="panel good">
+                                <h3>✓ Spec-Driven Approach</h3>
+                                <p>Structured specifications</p>
+                                <p>Clear requirements upfront</p>
+                                <p>AI generates aligned code</p>
+                                <p>Reduced iteration cycles</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: What is Spec Kit? -->
+                <div class="slide" data-chapter="0">
+                    <div class="slide-content">
+                        <h2>What is Spec Kit?</h2>
+                        <p class="content-text">Open-source toolkit that makes specifications <span class="highlight">"executable"</span> for AI code generation</p>
+                        <div class="workflow-diagram">
+                            <div class="workflow-step">
+                                <div class="workflow-circle">📝</div>
+                                <div class="workflow-label">Write Spec</div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="workflow-step">
+                                <div class="workflow-circle">🤖</div>
+                                <div class="workflow-label">AI Generates</div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="workflow-step">
+                                <div class="workflow-circle">💻</div>
+                                <div class="workflow-label">Quality Code</div>
+                            </div>
+                        </div>
+                        <p class="content-text" style="margin-top: 40px;">Experimental GitHub project designed for AI-assisted coding</p>
+                    </div>
+                </div>
+
+                <!-- Slide 4: Core Philosophy -->
+                <div class="slide" data-chapter="0">
+                    <div class="slide-content">
+                        <h2>Core Philosophy</h2>
+                        <div class="quote-box">
+                            <p>"Intent is the new source of truth"</p>
+                        </div>
+                        <div style="display: flex; gap: 20px; justify-content: center; margin-top: 50px;">
+                            <div class="badge">WHAT to build</div>
+                            <div class="badge">WHY it matters</div>
+                            <div class="badge">HOW to implement</div>
+                        </div>
+                        <p class="content-text" style="margin-top: 50px; text-align: center;">Define the "What" and "Why" before the "How"</p>
+                    </div>
+                </div>
+
+                <!-- Slide 5: Five Key Artifacts -->
+                <div class="slide" data-chapter="1">
+                    <div class="slide-content">
+                        <h2>Five Key Artifacts</h2>
+                        <div class="artifact-stack">
+                            <div class="artifact">
+                                <div class="artifact-icon">🏛️</div>
+                                <div class="artifact-content">
+                                    <h4>constitution.md</h4>
+                                    <p>Project playbook: rules, constraints, standards</p>
+                                </div>
+                            </div>
+                            <div class="artifact">
+                                <div class="artifact-icon">📋</div>
+                                <div class="artifact-content">
+                                    <h4>spec.md</h4>
+                                    <p>Functional specification: requirements, user stories, acceptance criteria</p>
+                                </div>
+                            </div>
+                            <div class="artifact">
+                                <div class="artifact-icon">🏗️</div>
+                                <div class="artifact-content">
+                                    <h4>plan.md</h4>
+                                    <p>Technical design: architecture, tech stack, module breakdown</p>
+                                </div>
+                            </div>
+                            <div class="artifact">
+                                <div class="artifact-icon">✅</div>
+                                <div class="artifact-content">
+                                    <h4>tasks.md</h4>
+                                    <p>Implementation breakdown: step-by-step tasks with dependencies</p>
+                                </div>
+                            </div>
+                            <div class="artifact">
+                                <div class="artifact-icon">💻</div>
+                                <div class="artifact-content">
+                                    <h4>Code</h4>
+                                    <p>Generated implementation aligned with all specifications</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 6: Constitution -->
+                <div class="slide" data-chapter="1">
+                    <div class="slide-content">
+                        <h2>constitution.md</h2>
+                        <p class="content-text">The project's immutable engineering playbook</p>
+                        <div class="pill">
+                            <h4>Global Context</h4>
+                            <p>Coding standards, naming conventions, tech stack preferences</p>
+                        </div>
+                        <div class="pill">
+                            <h4>Reusable Rules</h4>
+                            <p>Security constraints, compliance requirements, forbidden frameworks</p>
+                        </div>
+                        <div class="pill">
+                            <h4>AI Guardrails</h4>
+                            <p>Ensures AI respects project principles across all features</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 7: Spec → Plan → Tasks -->
+                <div class="slide" data-chapter="1">
+                    <div class="slide-content">
+                        <h2>The Progression</h2>
+                        <div class="workflow-diagram" style="flex-direction: column; align-items: flex-start; gap: 20px;">
+                            <div style="display: flex; align-items: center; gap: 30px; width: 100%;">
+                                <div class="workflow-circle" style="width: 100px; height: 100px; font-size: 18px;">📋<br>Spec</div>
+                                <div style="flex: 1;">
+                                    <h4 style="font-size: 24px; margin-bottom: 10px; color: #60a5fa;">What & Why</h4>
+                                    <p style="font-size: 20px; color: #9ca3af;">Requirements, user stories, acceptance criteria</p>
+                                </div>
+                            </div>
+                            <div class="arrow" style="transform: rotate(90deg); margin: -10px 0;">↓</div>
+                            <div style="display: flex; align-items: center; gap: 30px; width: 100%;">
+                                <div class="workflow-circle" style="width: 100px; height: 100px; font-size: 18px;">🏗️<br>Plan</div>
+                                <div style="flex: 1;">
+                                    <h4 style="font-size: 24px; margin-bottom: 10px; color: #60a5fa;">How</h4>
+                                    <p style="font-size: 20px; color: #9ca3af;">Architecture decisions, design patterns, data models</p>
+                                </div>
+                            </div>
+                            <div class="arrow" style="transform: rotate(90deg); margin: -10px 0;">↓</div>
+                            <div style="display: flex; align-items: center; gap: 30px; width: 100%;">
+                                <div class="workflow-circle" style="width: 100px; height: 100px; font-size: 18px;">✅<br>Tasks</div>
+                                <div style="flex: 1;">
+                                    <h4 style="font-size: 24px; margin-bottom: 10px; color: #60a5fa;">Steps</h4>
+                                    <p style="font-size: 20px; color: #9ca3af;">Granular implementation roadmap with testable units</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 8: Supporting Files -->
+                <div class="slide" data-chapter="1">
+                    <div class="slide-content">
+                        <h2>Supporting Files</h2>
+                        <ul class="bullet-list">
+                            <li>Agent-specific prompts (AGENTS.md) for different AI tools</li>
+                            <li>Memory files for persistent context across sessions</li>
+                            <li>Quality check scripts and test harnesses</li>
+                        </ul>
+                        <p class="content-text" style="margin-top: 40px;">Integrates with <span class="highlight">Model-Context-Protocol</span> (MCP) for standardized AI interactions</p>
+                    </div>
+                </div>
+
+                <!-- Slide 9: The Five Commands -->
+                <div class="slide" data-chapter="2">
+                    <div class="slide-content">
+                        <h2>The Five Commands</h2>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-top: 40px;">
+                            <div class="workflow-step">
+                                <div class="workflow-circle">/constitution</div>
+                                <div class="workflow-label">Set rules</div>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-circle">/specify</div>
+                                <div class="workflow-label">Define requirements</div>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-circle">/plan</div>
+                                <div class="workflow-label">Design architecture</div>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-circle">/tasks</div>
+                                <div class="workflow-label">Break down work</div>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="workflow-circle">/implement</div>
+                                <div class="workflow-label">Generate code</div>
+                            </div>
+                        </div>
+                        <p class="content-text" style="margin-top: 50px; text-align: center;">Plus: <span class="highlight">/clarify</span> to refine specs, <span class="highlight">/analyze</span> to validate consistency</p>
+                    </div>
+                </div>
+
+                <!-- Slide 10: Example Flow -->
+                <div class="slide" data-chapter="2">
+                    <div class="slide-content">
+                        <h2>Example: Profile Picture Upload</h2>
+                        <div class="pill">
+                            <h4>1. Specify</h4>
+                            <p>"Users can upload avatar image (JPEG/PNG, ≤5MB) with preview and error handling"</p>
+                        </div>
+                        <div class="pill">
+                            <h4>2. Plan</h4>
+                            <p>React component + Express API + AWS S3 pre-signed URLs for direct upload</p>
+                        </div>
+                        <div class="pill">
+                            <h4>3. Tasks</h4>
+                            <p>Add avatarUrl field, create API endpoint, build upload component, write tests</p>
+                        </div>
+                        <div class="pill">
+                            <h4>4. Implement</h4>
+                            <p>AI generates code for each task, developer reviews and verifies</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 11: VS Code Integration -->
+                <div class="slide" data-chapter="2">
+                    <div class="slide-content">
+                        <h2>VS Code Integration</h2>
+                        <p class="content-text">Works with your favorite AI assistant</p>
+                        <div style="display: flex; gap: 30px; justify-content: center; margin: 40px 0;">
+                            <div class="badge">GitHub Copilot</div>
+                            <div class="badge">Claude Code</div>
+                            <div class="badge">OpenAI GPT</div>
+                            <div class="badge">Google Gemini</div>
+                        </div>
+                        <div class="pill" style="margin-top: 40px;">
+                            <h4>Slash Commands in Chat</h4>
+                            <p>Type /speckit.specify in your AI interface to trigger the workflow</p>
+                        </div>
+                        <div class="pill">
+                            <h4>SpecKit Companion Extension</h4>
+                            <p>Enhanced UX for managing specs directly in VS Code</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 12: Speed & Quality -->
+                <div class="slide" data-chapter="3">
+                    <div class="slide-content">
+                        <h2>Speed & Quality</h2>
+                        <div style="text-align: center;">
+                            <div class="big-number">60 → 20</div>
+                            <p class="content-text">Months of development time (automotive case study)</p>
+                        </div>
+                        <div class="grid-4" style="grid-template-columns: 1fr 1fr 1fr; margin-top: 60px;">
+                            <div class="grid-item">
+                                <h4>Faster Development</h4>
+                                <p>Structured workflow reduces rework cycles</p>
+                            </div>
+                            <div class="grid-item">
+                                <h4>Better Alignment</h4>
+                                <p>Code matches requirements by design</p>
+                            </div>
+                            <div class="grid-item">
+                                <h4>Reduced Rework</h4>
+                                <p>Clear specs prevent misunderstandings</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 13: Use Cases -->
+                <div class="slide" data-chapter="3">
+                    <div class="slide-content">
+                        <h2>Use Cases</h2>
+                        <div class="grid-4">
+                            <div class="grid-item">
+                                <h4>🚀 Greenfield Projects</h4>
+                                <p>Start new applications with clear architecture and aligned code from day one</p>
+                            </div>
+                            <div class="grid-item">
+                                <h4>🔧 Complex Features</h4>
+                                <p>Add sophisticated functionality to existing systems with confidence</p>
+                            </div>
+                            <div class="grid-item">
+                                <h4>♻️ Legacy Modernization</h4>
+                                <p>Capture intended behavior and regenerate without technical debt</p>
+                            </div>
+                            <div class="grid-item">
+                                <h4>✓ Compliance Workflows</h4>
+                                <p>Ensure security and privacy requirements are captured upfront</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 14: Team Alignment -->
+                <div class="slide" data-chapter="3">
+                    <div class="slide-content">
+                        <h2>Team Alignment</h2>
+                        <ul class="bullet-list">
+                            <li>Specs serve as <span class="highlight">communication tool</span> between developers, PMs, and QA</li>
+                            <li><span class="highlight">Knowledge retention</span> — decisions persist in repository, not lost in chat</li>
+                            <li><span class="highlight">Cross-functional review</span> — validate requirements before coding begins</li>
+                        </ul>
+                        <div class="quote-box" style="margin-top: 40px;">
+                            <p>Your role isn't just to steer. It's to verify.</p>
+                            <cite>— GitHub Blog on Spec-Driven Development</cite>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 15: Know the Limits -->
+                <div class="slide" data-chapter="4">
+                    <div class="slide-content">
+                        <h2>Know the Limits</h2>
+                        <div class="warning-box">
+                            <h4>⚠️ Experimental & Evolving</h4>
+                            <p>Launched mid-2025, actively developed with frequent updates and potential breaking changes</p>
+                        </div>
+                        <div class="pill">
+                            <h4>Learning Curve</h4>
+                            <p>Requires strong writing and systems design skills — quality specs need practice</p>
+                        </div>
+                        <div class="pill">
+                            <h4>Overhead for Small Projects</h4>
+                            <p>Simple bug fixes or scripts don't justify the multi-phase structure</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 16: Not a Silver Bullet -->
+                <div class="slide" data-chapter="4">
+                    <div class="slide-content">
+                        <h2>Not a Silver Bullet</h2>
+                        <div class="split-panel">
+                            <div class="panel good">
+                                <h3>✓ When It Excels</h3>
+                                <p>Substantial features</p>
+                                <p>New components</p>
+                                <p>Complex integrations</p>
+                                <p>Well-defined requirements</p>
+                            </div>
+                            <div class="panel">
+                                <h3>❌ Watch Out For</h3>
+                                <p>Context length limits</p>
+                                <p>Quality depends on spec quality</p>
+                                <p>AI can still generate errors</p>
+                                <p>Requires diligent verification</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 17: Comparison -->
+                <div class="slide" data-chapter="4">
+                    <div class="slide-content">
+                        <h2>Comparison to Alternatives</h2>
+                        <table class="comparison-table">
+                            <tr>
+                                <th>Tool</th>
+                                <th>Approach</th>
+                                <th>Key Difference</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Spec Kit</strong></td>
+                                <td>Comprehensive, verbose</td>
+                                <td>8 commands, thousands of lines, GitHub integration</td>
+                            </tr>
+                            <tr>
+                                <td><strong>OpenSpec</strong></td>
+                                <td>Lightweight, concise</td>
+                                <td>3 commands, hundreds of lines, TypeScript-based</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Kiro</strong></td>
+                                <td>Simple, free-form</td>
+                                <td>3-step workflow, memory-based guidance</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tessl</strong></td>
+                                <td>Ambitious, spec-as-source</td>
+                                <td>Private beta, spec-code round-tripping</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Slide 18: Best Practices -->
+                <div class="slide" data-chapter="5">
+                    <div class="slide-content">
+                        <h2>Best Practices</h2>
+                        <div class="pill">
+                            <h4>💡 Invest in the Spec</h4>
+                            <p>Code quality = spec quality. Allocate time to thoroughly write requirements.</p>
+                        </div>
+                        <div class="pill">
+                            <h4>🏛️ Use Constitution Wisely</h4>
+                            <p>Capture project-wide principles once, apply everywhere automatically.</p>
+                        </div>
+                        <div class="pill">
+                            <h4>✅ Don't Skip Verification</h4>
+                            <p>Review AI-generated code like any team member's work. Run tests, verify acceptance criteria.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 19: Common Pitfalls -->
+                <div class="slide" data-chapter="5">
+                    <div class="slide-content">
+                        <h2>Common Pitfalls</h2>
+                        <div class="warning-box">
+                            <h4>❌ Treating as Magic</h4>
+                            <p>Not a "push-button and forget" solution — engineering judgment still required</p>
+                        </div>
+                        <div class="warning-box" style="background: #78350f; border-color: #f59e0b;">
+                            <h4 style="color: #fcd34d;">⚠️ Overly Broad Specs</h4>
+                            <p style="color: #fde68a;">Break large projects into focused specs — one per major feature or epic</p>
+                        </div>
+                        <div class="warning-box" style="background: #164e63; border-color: #06b6d4;">
+                            <h4 style="color: #67e8f9;">💭 Ignoring AI Limits</h4>
+                            <p style="color: #a5f3fc;">LLMs can hallucinate — use task breakdown to isolate and fix issues incrementally</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 20: What to Do Monday -->
+                <div class="slide" data-chapter="6">
+                    <div class="slide-content">
+                        <h2>What to Do Monday Morning</h2>
+                        <div class="roadmap">
+                            <div class="roadmap-step">
+                                <div class="roadmap-number">1</div>
+                                <h4>Install CLI</h4>
+                                <p>uv tool install specify-cli --from git+...</p>
+                            </div>
+                            <div class="roadmap-step">
+                                <div class="roadmap-number">2</div>
+                                <h4>Initialize Project</h4>
+                                <p>specify init my-app --ai claude</p>
+                            </div>
+                            <div class="roadmap-step">
+                                <div class="roadmap-number">3</div>
+                                <h4>Start Small</h4>
+                                <p>Pick one feature to build spec-first</p>
+                            </div>
+                            <div class="roadmap-step">
+                                <div class="roadmap-number">4</div>
+                                <h4>Iterate & Learn</h4>
+                                <p>Refine your specs as you go</p>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 60px;">
+                            <p class="content-text">🌟 github.com/github/spec-kit</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const chapterTitles = document.querySelectorAll('.chapter-title');
+        
+        // Chapter to slide mapping
+        const chapterSlides = {
+            0: [0, 1, 2, 3],        // Introduction
+            1: [4, 5, 6, 7],        // Architecture
+            2: [8, 9, 10],          // Workflow
+            3: [11, 12, 13],        // Benefits
+            4: [14, 15, 16],        // Limitations
+            5: [17, 18],            // Tips
+            6: [19]                 // Wrap-up
+        };
+
+        function updateSlideCounter() {
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            document.getElementById('total-slides').textContent = totalSlides;
+        }
+
+        function updateChapterHighlight() {
+            const currentChapter = slides[currentSlide].dataset.chapter;
+            chapterTitles.forEach(title => {
+                if (title.dataset.chapter === currentChapter) {
+                    title.classList.add('active');
+                } else {
+                    title.classList.remove('active');
+                }
+            });
+        }
+
+        function showSlide(index) {
+            if (index < 0 || index >= totalSlides) return;
+            
+            slides[currentSlide].classList.remove('active');
+            currentSlide = index;
+            slides[currentSlide].classList.add('active');
+            
+            updateSlideCounter();
+            updateChapterHighlight();
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (e.key === 'Home') {
+                showSlide(0);
+            } else if (e.key === 'End') {
+                showSlide(totalSlides - 1);
+            }
+        });
+
+        // Chapter navigation
+        chapterTitles.forEach(title => {
+            title.addEventListener('click', () => {
+                const chapter = parseInt(title.dataset.chapter);
+                const firstSlide = chapterSlides[chapter][0];
+                showSlide(firstSlide);
+            });
+        });
+
+        // Initialize
+        updateSlideCounter();
+        updateChapterHighlight();
+    </script>
+</body>
+</html>

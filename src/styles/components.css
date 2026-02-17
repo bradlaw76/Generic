@@ -1,0 +1,1326 @@
+/* =============================================================================
+   GENERIC D365 SHELL — SHARED COMPONENTS
+   Cards, section headers, data grids, buttons, badges
+   Version: 1.0.0
+   Last Updated: 2026-02-16
+   ============================================================================= */
+
+/* ─── Page Content ─── */
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ─── Section Header ─── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ─── Card ─── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background-color: var(--bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.card h3 {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.card p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+/* ─── Stat Card ─── */
+.stat {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ─── Data Grid / Table ─── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.table th {
+  text-align: left;
+  padding: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.table td {
+  padding: 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.table tbody tr {
+  transition: background-color 150ms ease-in-out;
+}
+
+.table tbody tr:hover {
+  background-color: var(--bg-tertiary);
+}
+
+/* ─── Buttons ─── */
+.button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.button-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.button-primary:hover {
+  filter: brightness(0.9);
+}
+
+.button-outline {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+}
+
+.button-outline:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* ─── Badge ─── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-info {
+  background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.badge-success {
+  background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.badge-warning {
+  background-color: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning);
+}
+
+.badge-danger {
+  background-color: color-mix(in srgb, var(--color-danger) 15%, transparent);
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+}
+
+/* ─── SVG Icons ─── */
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+.icon-lg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ─── Section Header Left ─── */
+.dash-header-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.section-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ─── Version Badge ─── */
+.version-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  color: var(--color-primary);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+/* ─── Stat Cards ─── */
+.stat-card {
+  border-left: 3px solid var(--stat-accent, var(--color-primary));
+}
+
+.stat-card .stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.stat-card .stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ─── Button Small ─── */
+.button-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ─── Button Danger ─── */
+.button-danger {
+  background-color: var(--color-danger);
+  color: white;
+}
+
+.button-danger:hover {
+  filter: brightness(0.9);
+}
+
+/* ─── Button Warning (for disable/archive) ─── */
+.button-warning {
+  background-color: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning);
+}
+
+.button-warning:hover {
+  background-color: color-mix(in srgb, var(--color-warning) 25%, transparent);
+}
+
+/* ─── SpeckKit Feature Grid ─── */
+.sk-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.sk-feature-card {
+  background-color: var(--bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.sk-feature-card .sk-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  color: white;
+}
+
+.sk-feature-card .sk-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.sk-feature-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.sk-feature-card p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.sk-feature-card .sk-status {
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ─── Page Transition Animation ─── */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-content {
+  animation: pageIn 200ms ease-out;
+}
+
+/* ─── Disabled tool row ─── */
+.table tbody tr.disabled-row {
+  opacity: 0.5;
+}
+
+.table tbody tr.disabled-row td {
+  text-decoration: line-through;
+  text-decoration-color: var(--text-muted);
+}
+
+/* ─── Inline toggle button in grid ─── */
+.grid-toggle-btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  transition: all 150ms ease-in-out;
+}
+
+.grid-toggle-btn:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.grid-toggle-btn.btn-enable {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.grid-toggle-btn.btn-disable {
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+/* =============================================================================
+   D365 GRID — Dataverse-style grid with toolbar, clickable rows, badges
+   ============================================================================= */
+
+/* ─── Grid Toolbar (D365 command bar) ─── */
+.grid-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 0;
+  flex-wrap: wrap;
+}
+
+.grid-toolbar .button {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.grid-search {
+  flex: 0 1 260px;
+  margin-left: auto;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 150ms;
+}
+
+.grid-search::placeholder {
+  color: var(--text-muted);
+}
+
+.grid-search:focus {
+  border-color: var(--color-primary);
+}
+
+/* ─── Clickable grid rows ─── */
+.table tbody tr.clickable-row {
+  cursor: pointer;
+}
+
+.table tbody tr.clickable-row:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.table tbody tr.clickable-row:active {
+  background-color: color-mix(in srgb, var(--color-primary) 8%, var(--bg-tertiary));
+}
+
+/* ─── Priority badge (D365 style) ─── */
+.priority-high {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.priority-normal {
+  color: var(--text-secondary);
+}
+
+.priority-low {
+  color: var(--color-success);
+}
+
+/* ─── Status badge (D365 inline) ─── */
+.status-active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.status-draft {
+  color: var(--color-warning);
+  font-weight: 600;
+}
+
+.status-archived {
+  color: var(--text-muted);
+}
+
+/* ─── Grid pagination bar ─── */
+.grid-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* =============================================================================
+   DETAIL PAGE — Tool detail view with metadata sidebar
+   ============================================================================= */
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.detail-header .back-button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  transition: background-color 150ms;
+}
+
+.detail-header .back-button:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.detail-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.meta-value {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.meta-value a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.meta-value a:hover {
+  text-decoration: underline;
+}
+
+.detail-body {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  white-space: pre-line;
+}
+
+.tag-list {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.screenshot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.screenshot-grid img {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+}
+
+/* =============================================================================
+   FORM STYLES — Add New Tool form
+   ============================================================================= */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 150ms;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-select {
+  cursor: pointer;
+}
+
+/* ─── JSON Output Preview ─── */
+.json-preview {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 16px;
+  font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  overflow-x: auto;
+  white-space: pre;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* =============================================================================
+   CONTENT PAGE — Rich text pages (SpeckKit, VS Code)
+   ============================================================================= */
+
+.content-page h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 24px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.content-page h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 16px 0 8px;
+}
+
+.content-page p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.content-page ul,
+.content-page ol {
+  padding-left: 24px;
+  margin-bottom: 12px;
+}
+
+.content-page li {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.content-page a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.content-page a:hover {
+  text-decoration: underline;
+}
+
+.content-page code {
+  font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  font-size: 13px;
+  background-color: var(--bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--text-primary);
+}
+
+/* =============================================================================
+   SETTINGS PAGE — Tabs, Toggle Switches, Repo discovery
+   ============================================================================= */
+
+/* ─── Settings Tabs ─── */
+.settings-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--border-subtle);
+  margin-bottom: 20px;
+}
+
+.settings-tab {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 150ms ease;
+}
+
+.settings-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.settings-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* ─── Toggle Switch ─── */
+.toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-switch input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: var(--border-subtle);
+  border-radius: 10px;
+  transition: background 200ms ease;
+}
+
+.toggle-slider::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--bg-primary);
+  border-radius: 50%;
+  transition: transform 200ms ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--color-success);
+}
+
+.toggle-switch input:checked + .toggle-slider::after {
+  transform: translateX(16px);
+}
+
+.toggle-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* ─── Status Disabled badge ─── */
+.status-disabled {
+  color: var(--color-danger);
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* ─── Tracked repo list ─── */
+.tracked-repo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tracked-repo-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.tracked-repo-item a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.tracked-repo-item a:hover {
+  text-decoration: underline;
+  color: var(--color-primary);
+}
+
+/* =============================================================================
+   DASHBOARD — Metrics breakdown bars, recent list, quick actions
+   ============================================================================= */
+
+/* ─── Category / Priority breakdown ─── */
+.dash-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.dash-breakdown-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-breakdown-label {
+  min-width: 110px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.dash-breakdown-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dash-breakdown-bar {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 4px;
+  transition: width 300ms ease;
+  min-width: 4px;
+}
+
+.dash-breakdown-count {
+  min-width: 24px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* ─── Recently Updated list ─── */
+.dash-recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 12px;
+}
+
+.dash-recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 6px;
+  transition: background 150ms ease;
+}
+
+.dash-recent-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.dash-recent-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.dash-recent-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-recent-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ─── Quick Actions ─── */
+.dash-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.dash-actions .button .icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+
+/* ─── Donut Chart ─── */
+.donut-container {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-top: 12px;
+}
+
+.donut-chart {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.donut-hole {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-total {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.donut-total-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.donut-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.donut-legend-label {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.donut-legend-value {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ─── Public / Private Badges ─── */
+.badge-public {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+  border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent);
+}
+
+.badge-private {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+/* ─── Button Success (auto-import feedback) ─── */
+.button-success {
+  background: var(--color-success) !important;
+  color: #fff !important;
+  border-color: var(--color-success) !important;
+}
+
+/* ─── Edit Panel ─── */
+.edit-panel {
+  position: relative;
+}
+
+.edit-panel .section-header {
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 12px;
+}
+
+.edit-panel .icon-button .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.edit-tool-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  transition: color 0.15s, background 0.15s;
+}
+
+.edit-tool-btn:hover {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.edit-tool-btn .icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ─── Fade-Slide Animation ─── */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =============================================================================
+   SCREENSHOT GALLERY — Adaptive layout for 1–5 images
+   ============================================================================= */
+
+.gallery-section {
+  display: none;
+}
+
+.gallery-section.has-screenshots {
+  display: block;
+}
+
+.screenshot-gallery {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* 1 image: full width */
+.screenshot-gallery[data-count="1"] {
+  grid-template-columns: 1fr;
+}
+
+/* 2 images: equal columns */
+.screenshot-gallery[data-count="2"] {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* 3 images: first full-width, next 2 split */
+.screenshot-gallery[data-count="3"] {
+  grid-template-columns: 1fr 1fr;
+}
+
+.screenshot-gallery[data-count="3"] .gallery-item:first-child {
+  grid-column: 1 / -1;
+}
+
+/* 4 images: 2x2 grid */
+.screenshot-gallery[data-count="4"] {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* 5 images: first full-width, then 2x2 */
+.screenshot-gallery[data-count="5"] {
+  grid-template-columns: 1fr 1fr;
+}
+
+.screenshot-gallery[data-count="5"] .gallery-item:first-child {
+  grid-column: 1 / -1;
+}
+
+.gallery-item {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: border-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
+  background-color: var(--bg-tertiary);
+}
+
+.gallery-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.gallery-item:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.gallery-item img,
+.gallery-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  aspect-ratio: 16 / 9;
+}
+
+.screenshot-gallery[data-count="1"] .gallery-item img,
+.screenshot-gallery[data-count="1"] .gallery-item video {
+  aspect-ratio: 16 / 8;
+  max-height: 480px;
+  object-fit: contain;
+  background-color: var(--bg-tertiary);
+}
+
+.screenshot-gallery[data-count="3"] .gallery-item:first-child img,
+.screenshot-gallery[data-count="3"] .gallery-item:first-child video,
+.screenshot-gallery[data-count="5"] .gallery-item:first-child img,
+.screenshot-gallery[data-count="5"] .gallery-item:first-child video {
+  aspect-ratio: 16 / 7;
+  max-height: 400px;
+  object-fit: contain;
+  background-color: var(--bg-tertiary);
+}
+
+.gallery-index {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: var(--bg-secondary);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  opacity: 0;
+  transition: opacity 150ms ease-in-out;
+  pointer-events: none;
+}
+
+.gallery-item:hover .gallery-index {
+  opacity: 1;
+}
+
+.gallery-expand {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 150ms ease-in-out;
+  pointer-events: none;
+  color: var(--text-secondary);
+}
+
+.gallery-item:hover .gallery-expand {
+  opacity: 1;
+}
+
+.gallery-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+  font-size: 13px;
+  border: 2px dashed var(--border-subtle);
+  border-radius: 6px;
+  margin-top: 12px;
+}
+
+.gallery-empty svg {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  opacity: 0.5;
+}
+
+/* =============================================================================
+   LIGHTBOX / MODAL — Full-screen image viewer
+   ============================================================================= */
+
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background-color: rgba(0, 0, 0, 0.85);
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  cursor: pointer;
+}
+
+.lightbox.open {
+  display: flex;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  cursor: default;
+}
+
+.lightbox-content img,
+.lightbox-content video {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-primary);
+  z-index: 5001;
+  transition: background-color 150ms ease-in-out;
+}
+
+.lightbox-close:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-primary);
+  z-index: 5001;
+  transition: background-color 150ms ease-in-out;
+}
+
+.lightbox-nav:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.lightbox-prev {
+  left: 16px;
+}
+
+.lightbox-next {
+  right: 16px;
+}
+
+.lightbox-counter {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: var(--text-muted);
+  background-color: var(--bg-secondary);
+  padding: 4px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+  z-index: 5001;
+}
+

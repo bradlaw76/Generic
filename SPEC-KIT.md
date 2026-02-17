@@ -1,10 +1,10 @@
-# GENERIC D365 MODERN SHELL — SPEC KIT
+# GENERIC TOOL PORTFOLIO — SPEC KIT
 
-## Version 1.0.0 | Baseline Lock
+## Version 3.0.0 | Complete Specification
 
 > **Last updated:** 2026-02-16  
-> **Status:** Baseline specification — ready for implementation  
-> **Type:** Application Shell (not a marketing site)
+> **Status:** Implemented — all features live  
+> **Type:** Portfolio showcase application (D365 Modern UI shell)
 
 ---
 
@@ -14,43 +14,46 @@
 2. [Goals & Constraints](#2-goals--constraints)
 3. [Technology Stack](#3-technology-stack)
 4. [Repository Structure](#4-repository-structure)
-5. [Design System — Circuit Palette](#5-design-system--circuit-palette)
+5. [Design System — Theme Tokens](#5-design-system--theme-tokens)
 6. [Theming Architecture](#6-theming-architecture)
 7. [Layout Contract](#7-layout-contract)
-8. [Routing & Tool Injection](#8-routing--tool-injection)
-9. [Component Library](#9-component-library)
-10. [Typography](#10-typography)
-11. [Motion & Interaction](#11-motion--interaction)
-12. [Accessibility](#12-accessibility)
-13. [Git Workflow & Versioning](#13-git-workflow--versioning)
-14. [Development Setup](#14-development-setup)
-15. [Baseline Lock Criteria](#15-baseline-lock-criteria)
-16. [Visual Tone Guardrails](#16-visual-tone-guardrails)
-17. [Demo Reference](#17-demo-reference)
-18. [Future Scalability (Out of Scope v1)](#18-future-scalability-out-of-scope-v1)
-19. [File Manifest](#19-file-manifest)
+8. [Routing & Page Architecture](#8-routing--page-architecture)
+9. [Data Model](#9-data-model)
+10. [Settings Page](#10-settings-page)
+11. [GitHub Integration](#11-github-integration)
+12. [Component Library](#12-component-library)
+13. [Typography](#13-typography)
+14. [Motion & Interaction](#14-motion--interaction)
+15. [Accessibility](#15-accessibility)
+16. [Development Setup](#16-development-setup)
+17. [Visual Tone Guardrails](#17-visual-tone-guardrails)
+18. [Demo Reference](#18-demo-reference)
+19. [Future Enhancements](#19-future-enhancements)
+20. [File Manifest](#20-file-manifest)
 
 ### Companion Documents
 
 | Document             | Purpose                                          |
 |----------------------|--------------------------------------------------|
-| `CONSTITUTION.md`    | Engineering principles: code quality, testing, UX, performance |
-| `PLAN.md`            | Architecture decisions: vanilla-first, Vite, SQLite, local images |
-| `TASKS.md`           | 121 implementation tasks across 13 phases        |
+| `CONSTITUTION.md`    | Engineering principles: zero deps, code quality, UX, perf |
+| `PLAN.md`            | Architecture decisions: vanilla JS, localStorage, hash router |
+| `TASKS.md`           | Feature completion checklist (82 tasks, all complete) |
+| `PROJECT-INDEX.md`   | File-level module index with exports and imports |
 
 ---
 
 ## 1. Overview
 
-Build a Git-hosted, modular, Fluent UI–based React shell that:
+A single-page portfolio application that:
 
-- Visually resembles a modern Dynamics 365 experience
-- Uses a custom **Circuit** color palette
-- Supports dark/light modes with localStorage persistence
-- Allows easy tool injection via config (no shell edits required)
-- Scales into a full application platform
+- Presents a curated portfolio of tools, utilities, and publications
+- Visually mirrors the **Dynamics 365 Modern UI** shell
+- Uses a custom **Circuit** color palette with 3 themes
+- Supports tool management (add, edit, enable/disable) via Settings page
+- Integrates with GitHub API for repository discovery and auto-import
+- Runs with **zero dependencies** — no npm, no build step, no framework
 
-**This is an application shell, not a landing page.**
+**This is an application built with vanilla HTML, CSS, and JavaScript.**
 
 ---
 
@@ -58,100 +61,117 @@ Build a Git-hosted, modular, Fluent UI–based React shell that:
 
 ### Goals
 
-| # | Goal                              | Measure                                      |
-|---|-----------------------------------|----------------------------------------------|
-| 1 | D365-authentic look               | Visual density matches D365 tone             |
-| 2 | Token-only theming                | Zero hardcoded hex values in components      |
-| 3 | Modular tool injection            | Add tool = new folder + 1 config entry       |
-| 4 | Dark/Light parity                 | Both modes fully styled, toggle persistent   |
-| 5 | No layout jitter                  | SideNav collapse smooth, no content shift    |
-| 6 | Accessibility baseline            | WCAG AA contrast, keyboard nav, ARIA labels  |
+| # | Goal                              | Measure                                      | Status |
+|---|-----------------------------------|----------------------------------------------|--------|
+| 1 | D365-authentic look               | Visual density matches D365 Modern UI        | ✅     |
+| 2 | Token-only theming                | Zero hardcoded hex values in JS              | ✅     |
+| 3 | Zero dependencies                 | No `package.json`, no `node_modules`         | ✅     |
+| 4 | 3-theme parity                    | Dark, Light, D365 all fully styled           | ✅     |
+| 5 | No layout jitter                  | SideNav collapse smooth, no content shift    | ✅     |
+| 6 | Data-driven tools                 | All tools loaded from JSON + localStorage    | ✅     |
+| 7 | GitHub integration                | Poll repos, auto-import, PAT support         | ✅     |
+| 8 | Inline editing                    | Edit any tool from Settings or Detail page   | ✅     |
 
-### Constraints (v1.0.0)
+### Constraints
 
-- No global state manager (Redux/Zustand)
-- No authentication/authorization
-- No API integration layer
-- No role-based navigation
-- No module federation
-- Local + Context state only
+- No npm packages — zero dependencies, forever
+- No build step — no Vite, no Webpack, no TypeScript compiler
+- No framework — no React, no Vue, no Svelte
+- No database — localStorage + JSON file only
+- No server — static files served by Python/GitHub Pages
+- No authentication (v1)
 
 ---
 
 ## 3. Technology Stack
 
-| Layer        | Choice                          | Rationale                 | Locked |
-|--------------|---------------------------------|---------------------------|--------|
-| UI Framework | React 18                        | Component modularity      | ✅     |
-| Language     | TypeScript (strict)             | Long-term maintainability | ✅     |
-| Bundler      | Vite                            | Fast dev + clean output   | ✅     |
-| UI Library   | Fluent UI v9                    | Authentic Microsoft UX    | ✅     |
-| Routing      | React Router v6                 | Lazy tool injection       | ✅     |
-| Icons        | @fluentui/react-icons           | Consistent icon set       | ✅     |
-| State        | Local + Context only (v1)       | No global store yet       | ✅     |
-| Hosting      | Git + Static (GitHub Pages/Azure SWA) | —                   | ✅     |
+| Layer        | Choice                          | Rationale                              | Status |
+|--------------|---------------------------------|----------------------------------------|--------|
+| Language     | JavaScript (ES Modules)         | Native browser support, no transpile   | ✅     |
+| Markup       | HTML5                           | Single `index.html` + dynamic DOM      | ✅     |
+| Styling      | CSS3 + Custom Properties        | 3 themes, zero preprocessor            | ✅     |
+| Framework    | **None**                        | Vanilla JS is sufficient               | ✅     |
+| Build Tool   | **None**                        | Native ES modules, no bundler          | ✅     |
+| Data         | JSON + localStorage             | Portable, zero-server                  | ✅     |
+| Routing      | Hash-based SPA router           | Works on GitHub Pages, no config       | ✅     |
+| Icons        | Inline SVG (18 functions)       | No icon font, no CDN                   | ✅     |
+| Dev Server   | Python `http.server`            | Pre-installed, zero config             | ✅     |
+| Hosting      | GitHub Pages                    | Free static hosting                    | ✅     |
+
+### Explicitly Not Used
+
+| Technology  | Why Not                                              |
+|-------------|------------------------------------------------------|
+| React       | Unnecessary runtime; vanilla JS handles this scope   |
+| TypeScript  | Requires build step; not justified for this project  |
+| Vite        | No build needed; native ES modules work directly     |
+| Fluent UI   | Adds dependency; CSS custom properties replicate it  |
+| SQLite      | 400KB WASM payload; localStorage is adequate         |
+| npm         | OneDrive path breaks `node_modules`                  |
 
 ---
 
 ## 4. Repository Structure
 
 ```
-generic-d365-modern-shell/
-│
-├─ src/
-│  ├─ app/                          # Application shell & orchestration
-│  │   ├─ AppShell.tsx              #   Main shell orchestrator
-│  │   ├─ routes.tsx                #   Dynamic route generation from navConfig
-│  │   ├─ navConfig.ts              #   Tool registration config (single source of truth)
-│  │   └─ AppContext.tsx            #   Application-level context
-│  │
-│  ├─ layout/                       # Layout primitives
-│  │   ├─ TopBar.tsx                #   48px fixed header
-│  │   ├─ SideNav.tsx               #   Collapsible navigation (240px / 64px)
-│  │   └─ ContentArea.tsx           #   Scrollable main content area
-│  │
-│  ├─ theme/                        # Theming system
-│  │   ├─ circuitTokens.ts          #   Circuit color palette definitions
-│  │   ├─ darkTheme.ts              #   Dark mode Fluent theme overrides
-│  │   ├─ lightTheme.ts             #   Light mode Fluent theme overrides
-│  │   └─ ThemeProvider.tsx         #   Theme context + localStorage persistence
-│  │
-│  ├─ components/                   # Shared component library
-│  │   ├─ AppCard.tsx               #   Standard card component
-│  │   ├─ SectionHeader.tsx         #   Section headers with optional actions
-│  │   └─ DataGrid.tsx              #   Basic data table component
-│  │
-│  ├─ tools/                        # Modular tool pages
-│  │   ├─ Dashboard/
-│  │   │   └─ index.tsx             #   Dashboard with stats + data grid
-│  │   └─ SampleTool/
-│  │       └─ index.tsx             #   Example tool implementation
-│  │
-│  ├─ main.tsx                      # Entry point (React StrictMode)
-│  ├─ App.tsx                       # Root component
-│  └─ index.css                     # Global CSS reset
-│
-├─ index.html                       # HTML shell
-├─ package.json                     # Dependencies + scripts
-├─ tsconfig.json                    # Strict TypeScript config
-├─ tsconfig.node.json               # Node TypeScript config
-├─ vite.config.ts                   # Vite bundler config
-├─ .gitignore                       # Git ignore patterns
-├─ README.md                        # Usage guide
-└─ VERIFICATION.md                  # Baseline lock checklist
+Generic/
+├── index.html                     # Entry point
+├── data/
+│   └── tools.json                 # 8 tool definitions
+├── images/
+│   └── Generic.ASCII.png          # Logo
+├── src/
+│   ├── app/
+│   │   ├── shell.js               # Main orchestrator
+│   │   └── router.js              # Hash-based SPA router (131 lines)
+│   ├── layout/
+│   │   ├── top-bar.js             # 48px fixed header
+│   │   ├── side-nav.js            # Collapsible navigation
+│   │   └── content-area.js        # Route target container
+│   ├── pages/
+│   │   ├── settings.js            # 3-tab Settings (~994 lines)
+│   │   ├── tool-detail.js         # Tool detail + edit
+│   │   ├── speckkit.js            # SpeckKit presentation
+│   │   ├── vscode.js              # VS Code page
+│   │   └── add-tool.js            # Legacy redirect
+│   ├── platform/
+│   │   ├── tool-registry.js       # Data CRUD layer
+│   │   ├── navigation-engine.js   # Nav helpers
+│   │   └── tool-types.js          # Schema definitions
+│   ├── shared/
+│   │   ├── icons.js               # 18 SVG icon functions
+│   │   └── components/            # Shared components
+│   ├── styles/
+│   │   ├── reset.css
+│   │   ├── themes.css             # 3 theme definitions
+│   │   ├── typography.css
+│   │   ├── layout.css
+│   │   ├── components.css         # ~1050 lines
+│   │   └── presentation.css
+│   ├── theme/
+│   │   └── theme-switcher.js
+│   └── tools/
+│       └── dashboard/
+│           └── index.js           # Metrics dashboard
+├── speckit-presentation.html      # Standalone SpeckKit
+├── demo.html                      # Original prototype
+├── CONSTITUTION.md
+├── PLAN.md
+├── PROJECT-INDEX.md
+├── TASKS.md
+├── SPEC-KIT.md                    # This file
+└── SYSTEM_MANIFEST.json.md
 ```
 
-**Total: 22 files**
+**Total: ~30 files | Dependencies: 0 | Build tools: 0**
 
 ---
 
-## 5. Design System — Theme System v1.2
+## 5. Design System — Theme Tokens
 
-Three themes are supported. All share a unified CSS custom property contract.
+Three themes share a unified CSS custom property contract. All components consume tokens — never raw hex values.
 
 ### 5.1 Unified Token Contract
-
-All components consume these tokens — never raw hex values:
 
 | Token               | Purpose                          |
 |---------------------|----------------------------------|
@@ -216,8 +236,6 @@ All components consume these tokens — never raw hex values:
 
 ### 5.4 Theme: Dynamics 365 (`theme-d365`)
 
-Fluent UI / Microsoft standard feel:
-
 | Token               | Hex       |
 |---------------------|-----------|
 | `--bg-primary`      | `#F3F2F1` |
@@ -239,23 +257,15 @@ Fluent UI / Microsoft standard feel:
 
 ### 5.5 Implementation Rule
 
-**No raw hex values in components.** All colors flow through CSS custom property tokens.
+**No raw hex values in JavaScript.** All colours flow through CSS custom property tokens defined in `themes.css`.
 
 ---
 
 ## 6. Theming Architecture
 
-### 6.1 Three Themes
+### 6.1 Implementation
 
-| Theme Class    | Name           | Character                        |
-|----------------|----------------|----------------------------------|
-| `theme-dark`   | Circuit Dark   | Deep, high-contrast dev palette  |
-| `theme-light`  | Circuit Light  | Clean, bright Circuit variant    |
-| `theme-d365`   | Dynamics 365   | Official Microsoft Fluent feel   |
-
-### 6.2 CSS Custom Properties (No JavaScript Objects)
-
-All themes are implemented as CSS class selectors on `<body>`, each defining the same set of custom properties. Components consume tokens — never theme-specific logic.
+All three themes are defined in `src/styles/themes.css` as CSS class selectors on `<body>`:
 
 ```css
 body.theme-dark  { --bg-primary: #0B0D10; /* ... */ }
@@ -263,161 +273,281 @@ body.theme-light { --bg-primary: #F4F7FA; /* ... */ }
 body.theme-d365  { --bg-primary: #F3F2F1; /* ... */ }
 ```
 
-### 6.3 Theme Switching
+### 6.2 Theme Switching
 
-```ts
+```js
 const THEMES = ['theme-dark', 'theme-light', 'theme-d365'];
 
-function setTheme(theme: string): void {
+function setTheme(theme) {
   THEMES.forEach(t => document.body.classList.remove(t));
   document.body.classList.add(theme);
-  localStorage.setItem('theme', theme);
+  localStorage.setItem('generic_theme', theme);
 }
 ```
 
-- Theme selected via dropdown (not binary toggle)
-- Persisted to `localStorage`
-- Instant switch — no re-render, no flash
+- Theme selected via dropdown in TopBar (3 options)
+- Persisted to `localStorage` key `generic_theme`
+- Instant switch — CSS class swap, no JS re-render
 - Default: `theme-dark`
 
 ---
 
 ## 7. Layout Contract
 
-### 7.1 TopBar
+### 7.1 TopBar (`top-bar.js`)
 
 | Property    | Value                                            |
 |-------------|--------------------------------------------------|
 | Height      | 48px                                             |
-| Position    | `fixed`, top: 0                                  |
+| Position    | Fixed, top: 0                                    |
 | Z-index     | 1000                                             |
-| Border      | Subtle bottom border (1px stroke)                |
-| Shadow      | None (no heavy shadow)                           |
-| Style       | Fluent CommandBar aesthetic                      |
+| Border      | Subtle bottom border (1px)                       |
 
-**Contains:**
-- App title (left-aligned)
-- Hamburger menu toggle (left)
-- Optional breadcrumb (center)
-- Search (right)
-- Theme selector dropdown (right) — 3 themes: Circuit Dark, Circuit Light, D365
-- Profile avatar (right)
+**Contains (left to right):**
+- Hamburger toggle button
+- Logo image (`Generic.ASCII.png`, 32px)
+- Title: "Generic"
+- Theme selector dropdown (3 options with colour dots)
+- Settings gear button (navigates to `/settings`)
+- Profile icon
 
-### 7.2 SideNav
+### 7.2 SideNav (`side-nav.js`)
 
 | Property         | Value                          |
 |------------------|--------------------------------|
 | Expanded width   | 240px                          |
 | Collapsed width  | 64px                           |
 | Transition       | `width 180ms ease-in-out`      |
-| Active indicator | 3px left border (brand accent) |
-| Hover            | Background shift to layer 3    |
+| Active indicator | Left-edge accent bar           |
+| Hover            | Background shift               |
 
-**Collapsed state:**
-- Icon only (no labels)
-- Tooltip on hover
+**Groups:**
+- Dashboard (home icon)
+- Tool categories (dynamic from registry)
+- Development: SpeckKit, VS Code & How I Build
+- Admin: Settings
 
-### 7.3 ContentArea
+### 7.3 ContentArea (`content-area.js`)
 
 | Property    | Value                                    |
 |-------------|------------------------------------------|
 | Padding     | 24px                                     |
 | Scroll      | `overflow-y: auto`                       |
 | Position    | Fills remaining space after TopBar + Nav |
-| Transition  | `left 180ms ease-in-out` on nav collapse |
+| Transition  | Adjusts on nav collapse via CSS          |
 
 **No layout shift during nav collapse.**
 
 ---
 
-## 8. Routing & Tool Injection
+## 8. Routing & Page Architecture
 
-### 8.1 navConfig.ts — Single Source of Truth
+### 8.1 Hash Router (`router.js` — 131 lines)
 
-```ts
-export const navItems = [
-  {
-    label: "Dashboard",
-    path: "/",
-    icon: Home24Regular,
-    element: lazy(() => import("../tools/Dashboard"))
-  },
-  {
-    label: "Sample Tool",
-    path: "/sample",
-    icon: Toolbox24Regular,
-    element: lazy(() => import("../tools/SampleTool"))
-  }
-];
-```
+The router uses `window.location.hash` for client-side navigation:
 
-### 8.2 routes.tsx — Dynamic Route Generation
+- `registerRoute(pattern, handler)` — registers a pattern (supports `:param` placeholders)
+- `navigate(path)` — `location.hash = path`
+- `startRouter()` — begins listening to `hashchange`
+- `compilePattern()` — converts `/tools/:id` to regex for matching
+- Handlers are `async (container, params) => cleanup?`
 
-Routes are automatically built from `navConfig`. No manual route registration.
+### 8.2 Route Table
 
-### 8.3 Adding a New Tool
+| Pattern        | Module                           | Description                |
+|----------------|----------------------------------|----------------------------|
+| `/`            | `tools/dashboard/index.js`       | Metrics dashboard          |
+| `/tools/:id`   | `pages/tool-detail.js`           | Tool detail + edit         |
+| `/settings`    | `pages/settings.js`              | Tool management + GitHub   |
+| `/add-tool`    | Redirect → `/settings`           | Legacy compat              |
+| `/speckkit`    | `pages/speckkit.js`              | SpeckKit presentation      |
+| `/vscode`      | `pages/vscode.js`                | VS Code showcase           |
 
-1. Create `src/tools/NewTool/index.tsx`
-2. Add entry to `src/app/navConfig.ts`
-3. Import icon from `@fluentui/react-icons`
-4. **Done** — no shell edits required
+### 8.3 Lazy Loading
 
-```tsx
-// Example: src/tools/Reports/index.tsx
-const Reports = () => <div>Reports Tool</div>;
-export default Reports;
+Pages are loaded via dynamic `import()` in route handlers within `shell.js`. The browser caches modules natively — no bundler required.
 
-// navConfig.ts addition
-import { DocumentTable24Regular } from '@fluentui/react-icons';
+---
+
+## 9. Data Model
+
+### 9.1 Tool Schema (`data/tools.json`)
+
+```json
 {
-  label: 'Reports',
-  path: '/reports',
-  icon: DocumentTable24Regular,
-  element: lazy(() => import('../tools/Reports')),
+  "id": "string (kebab-case)",
+  "name": "string",
+  "version": "string (semver)",
+  "status": "Active | Inactive | Draft",
+  "priority": "High | Normal | Low",
+  "category": "Generic Tools | Publications | Development",
+  "description": "string (short)",
+  "longDescription": "string (detailed, supports \\n)",
+  "repoUrl": "string (GitHub URL)",
+  "screenshots": "string[] (URLs or paths)",
+  "tags": "string[]",
+  "dateCreated": "YYYY-MM-DD",
+  "lastUpdated": "YYYY-MM-DD",
+  "origin": "Web | GitHub"
 }
 ```
 
----
+### 9.2 Static Baseline: 8 Tools
 
-## 9. Component Library
+| ID | Name | Category | Priority |
+|----|------|----------|----------|
+| `generic-sidebar` | Generic Sidebar | Generic Tools | Normal |
+| `copilot-studio-budgetary-cost-estimator` | Copilot Studio Budgetary Cost Estimator | Generic Tools | High |
+| `teleprompter` | Teleprompter | Generic Tools | Normal |
+| `dynamics-contact-center-whitepaper` | Dynamics Contact Center White Paper | Publications | High |
+| `contact-center-mcp` | Contact Center MCP | Generic Tools | Normal |
+| `snippets` | Snippets | Development | Low |
+| `powerbi` | Power BI | Development | Normal |
+| `speckkit-project-development` | SpeckKit Project Development | Development | High |
 
-### 9.1 AppCard
+### 9.3 localStorage Persistence
 
-| Property | Value                        |
-|----------|------------------------------|
-| Padding  | 16–24px                      |
-| Radius   | 6px                          |
-| Border   | 1px subtle stroke            |
-| Shadow   | Slight elevation (1px 2px)   |
-| Style    | No heavy shadow; data-first  |
+| Key                      | Type         | Purpose                              |
+|--------------------------|--------------|--------------------------------------|
+| `generic_user_tools`     | JSON array   | User-added tools                     |
+| `generic_tool_edits`     | JSON object  | Edit overrides (keyed by tool ID)    |
+| `generic_disabled_tools` | JSON array   | Disabled tool IDs                    |
+| `generic_github_pat`     | String       | GitHub PAT (optional)                |
+| `generic_theme`          | String       | Active theme class name              |
 
-### 9.2 SectionHeader
+### 9.4 Data Merge Strategy (`tool-registry.js`)
 
-| Property    | Value                          |
-|-------------|--------------------------------|
-| Title       | 20px / weight 600              |
-| Layout      | Flex row, space-between        |
-| Right slot  | Optional action button         |
-| Spacing     | Dense (16px margin-bottom)     |
-
-### 9.3 DataGrid (v1 Minimal)
-
-| Property        | Value                       |
-|-----------------|-----------------------------|
-| Base            | Fluent Table                |
-| Row hover       | Background highlight (150ms)|
-| Header          | Sticky (optional)           |
-| Virtualization  | Not included (v1)           |
-| All styling     | Fluent `makeStyles`         |
+1. `fetch('data/tools.json')` → base array
+2. Append `generic_user_tools` from localStorage
+3. Overlay `generic_tool_edits` on matching tool IDs
+4. Return unified array to all consumers
 
 ---
 
-## 10. Typography
+## 10. Settings Page
+
+The Settings page (`pages/settings.js`, ~994 lines) has 3 tabs:
+
+### Tab 1 — Tool Management Grid
+
+D365-style data grid displaying all tools:
+
+| Column       | Type           |
+|--------------|----------------|
+| Tool Name    | Link to detail |
+| Category     | Text           |
+| Visibility   | Badge (Public/Private) |
+| Status       | Text           |
+| Priority     | Text           |
+| Last Updated | Date           |
+| Enabled      | Toggle switch  |
+| Edit         | Pencil icon button |
+
+Features:
+- Stats cards (Total, Active, High Priority, Disabled)
+- Toolbar: +New Tool, Refresh, Filter
+- `showEditPanel()` — slide-in form editing all fields
+- Toggle persistence via `toggleToolDisabled()`
+
+### Tab 2 — Add New Tool
+
+Form with fields: name, category, status, priority, version, description, repo URL, tags
+
+Features:
+- Live JSON preview panel
+- Copy JSON button
+- Submit adds tool via `addTool()`
+
+### Tab 3 — GitHub Repository Sync
+
+Features:
+- PAT input (password) with Show/Hide/Clear
+- Poll button → paginated `fetchAllRepos(token)`
+- Untracked repos table: Visibility badge, Generate JSON, + Add to Portfolio
+- Tracked repos list with Visibility badges
+- Import feedback (green "Added!" button state)
+
+---
+
+## 11. GitHub Integration
+
+### 11.1 API Modes
+
+| Mode            | Endpoint                     | Auth              |
+|-----------------|------------------------------|--------------------|
+| Public          | `GET /users/bradlaw76/repos` | None               |
+| Authenticated   | `GET /user/repos`            | Bearer `<PAT>`     |
+
+### 11.2 Pagination
+
+Follows GitHub `Link` header for pagination, up to 10 pages (100 repos per page).
+
+### 11.3 Classification
+
+- **Tracked** — `repoUrl` matches a tool in the portfolio
+- **Untracked** — repo not yet in the portfolio
+
+### 11.4 Auto-Import
+
+`autoImportRepo(repo)` creates a tool entry from GitHub repo metadata:
+- `id` from repo name (lowercased, hyphenated)
+- `name` from repo name
+- `repoUrl` from `html_url`
+- `origin: "GitHub"`
+- `visibility` from `private` flag
+
+### 11.5 Visibility Badges
+
+Public/Private badges use CSS classes `.badge-public` and `.badge-private` and appear in:
+- Settings tool grid (Visibility column)
+- Untracked repos table
+- Tracked repos list
+
+---
+
+## 12. Component Library
+
+### 12.1 Stat Cards
+
+4-card grid layout for metrics display. Each card has a label, value, and themed background.
+
+### 12.2 D365 Data Grid
+
+Table component mimicking D365 grid aesthetics:
+- Row hover highlighting
+- Column-aligned headers
+- Inline action buttons (edit, toggle)
+- Badge rendering within cells
+
+### 12.3 Edit Panel
+
+Slide-in form panel (`fadeSlideIn` animation):
+- All tool fields editable
+- Save/Cancel buttons
+- Persists via `updateTool()` → localStorage
+
+### 12.4 Donut Chart
+
+CSS `conic-gradient` chart on Dashboard showing public vs private repo split. No charting library — pure CSS.
+
+### 12.5 Toggle Switches
+
+CSS-only toggle switches for enable/disable tool state in Settings grid.
+
+### 12.6 Badges
+
+Inline coloured labels:
+- Status: Active (green), Inactive (grey), Draft (yellow)
+- Visibility: Public (blue), Private (orange)
+
+---
+
+## 13. Typography
 
 ### Font Stack
 
 ```
-"Segoe UI Variable", "Segoe UI", system-ui, sans-serif
+"Segoe UI Variable", "Segoe UI", system-ui, -apple-system, sans-serif
 ```
 
 ### Type Scale
@@ -432,127 +562,69 @@ import { DocumentTable24Regular } from '@fluentui/react-icons';
 
 ---
 
-## 11. Motion & Interaction
+## 14. Motion & Interaction
 
 ### Transition Standard
 
-- Duration: **150–180ms**
+- Duration: **150–200ms**
 - Easing: `ease-in-out`
 
 ### Interaction Patterns
 
-| Element       | Behavior                                  |
-|---------------|-------------------------------------------|
-| Card hover    | Slight background shift, optional 1px lift|
-| Nav collapse  | Width animation only (no opacity fade)    |
-| Button hover  | Background color shift (150ms)            |
-| Table row     | Background highlight on hover (150ms)     |
-| Theme switch  | Instant swap, no animation                |
-| Theme dropdown| Fade in, close on outside click           |
+| Element          | Behaviour                                      |
+|------------------|------------------------------------------------|
+| Card hover       | Background shift                               |
+| Nav collapse     | Width animation (180ms ease-in-out)            |
+| Button hover     | Background colour shift (150ms)                |
+| Table row hover  | Background highlight (150ms)                   |
+| Theme switch     | Instant class swap, no animation               |
+| Edit panel       | `fadeSlideIn` — slide from right + fade in     |
+| Toggle switch    | CSS transition on knob position + bg colour    |
+| Import button    | Turns green with "Added!" text temporarily     |
 
 ---
 
-## 12. Accessibility
+## 15. Accessibility
 
-### Baseline Requirements (v1)
+### Implemented
 
-| Requirement       | Standard                           |
-|-------------------|------------------------------------|
-| Color contrast    | WCAG AA minimum                    |
-| Focus indicators  | Visible outlines on all interactives|
-| Keyboard nav      | Full SideNav + TopBar navigation   |
-| ARIA labels       | All toggle buttons + icon buttons  |
-| Screen reader     | Semantic HTML structure            |
+| Feature              | Status |
+|----------------------|--------|
+| Semantic HTML        | ✅     |
+| ARIA labels on icons | ✅     |
+| Keyboard navigation  | ✅     |
+| Focus indicators     | ✅     |
+| WCAG AA contrast     | ✅ (all 3 themes) |
 
 ---
 
-## 13. Git Workflow & Versioning
+## 16. Development Setup
 
-### Branch Strategy
-
-```
-main            ← production-ready
-dev             ← integration branch
-feature/*       ← individual feature work
-```
-
-### Versioning
-
-Semantic versioning: `v1.0.0`
-
-### First Commit
+### Quick Start
 
 ```bash
-git init
-git add .
-git commit -m "v1.0.0 baseline"
+# Clone
+git clone https://github.com/bradlaw76/Generic.Website.git
+cd Generic.Website/Generic
+
+# Serve
+python -m http.server 8080
+
+# Open
+# http://localhost:8080
 ```
+
+No `npm install`. No build. No config.
+
+### Adding a New Tool
+
+**Via JSON:** Add entry to `data/tools.json`, refresh browser.  
+**Via UI:** Settings → Tab 2 → fill form → Add Tool.  
+**Via GitHub:** Settings → Tab 3 → Poll → + Add to Portfolio.
 
 ---
 
-## 14. Development Setup
-
-### 14.1 Create Project
-
-```bash
-npm create vite@latest generic-d365-modern-shell -- --template react-ts
-cd generic-d365-modern-shell
-npm install
-```
-
-### 14.2 Install Dependencies
-
-```bash
-npm install @fluentui/react-components
-npm install react-router-dom
-npm install @fluentui/react-icons    # optional but recommended
-```
-
-### 14.3 TypeScript Config
-
-```json
-{
-  "compilerOptions": {
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
-  }
-}
-```
-
-### 14.4 Run
-
-```bash
-npm run dev      # development server
-npm run build    # production build
-```
-
----
-
-## 15. Baseline Lock Criteria
-
-v1.0.0 is **locked** when ALL of these pass:
-
-| #  | Criterion                          | Status |
-|----|------------------------------------|--------|
-| 1  | AppShell renders without errors    | ☐      |
-| 2  | SideNav collapse/expand works      | ☐      |
-| 3  | All 3 themes work (dark/light/d365)| ☐      |
-| 4  | Navigation routing functional      | ☐      |
-| 5  | Dashboard page renders             | ☐      |
-| 6  | Sample tool page renders           | ☐      |
-| 7  | No hardcoded color values          | ☐      |
-| 8  | No console errors                  | ☐      |
-| 9  | Visual density matches D365 tone   | ☐      |
-| 10 | No layout jitter on nav collapse   | ☐      |
-
-**Only then begin building tools.**
-
----
-
-## 16. Visual Tone Guardrails
-
-To maintain D365 credibility:
+## 17. Visual Tone Guardrails
 
 | Rule                            | Rationale                      |
 |---------------------------------|--------------------------------|
@@ -566,85 +638,76 @@ To maintain D365 credibility:
 
 ---
 
-## 17. Demo Reference
+## 18. Demo Reference
 
-A standalone HTML demo exists at `demo.html` in the project root. It implements:
-
-- 3-theme system (Circuit Dark, Circuit Light, Dynamics 365) via CSS custom properties
-- Theme selector dropdown with visual indicators
-- Collapsible SideNav (240px ↔ 64px) with smooth transitions
-- TopBar with hamburger menu, theme toggle, and profile icon
-- Dashboard page with stat cards + data table
-- Sample Tool page with configuration cards
-- localStorage theme persistence
-- All Circuit palette tokens applied
-- No external dependencies (pure HTML/CSS/JS)
-
-**Use this as the visual reference target for the React implementation.**
+`demo.html` in the project root is the original visual prototype. It implements the 3-theme system, collapsible SideNav, TopBar, and sample pages in a single HTML file with zero dependencies. The production app faithfully replicates this visual reference across all pages.
 
 ---
 
-## 18. Future Scalability (Out of Scope v1)
+## 19. Future Enhancements
 
-These are explicitly excluded from v1.0.0 and will be layered in future versions:
+Not in scope for current version:
 
-| Feature                   | Target Version |
-|---------------------------|----------------|
-| Global state (Redux/Zustand) | v1.1+       |
-| Authentication/SSO        | v1.2+          |
-| API integration layer     | v1.2+          |
-| Role-based navigation     | v1.3+          |
-| Module federation         | v2.0+          |
-| Advanced DataGrid (virtual, sort, filter) | v1.1+ |
-| Command palette / search  | v1.1+          |
-| Notification system       | v1.1+          |
-| Breadcrumb navigation     | v1.1+          |
-
----
-
-## 19. File Manifest
-
-### Current Repository Contents
-
-| File              | Type       | Purpose                                    |
-|-------------------|------------|--------------------------------------------|
-| `demo.html`       | HTML       | Standalone visual reference implementation |
-| `PROJECT-INDEX.md`| Markdown   | Project structure & feature documentation  |
-| `README.md`       | Markdown   | Repository description                     |
-| `spec.chatgpt`    | Text       | Original technical specification           |
-| `SPEC-KIT.md`     | Markdown   | **This file** — unified spec kit          |
-| `CONSTITUTION.md` | Markdown   | Engineering principles & standards         |
-| `PLAN.md`         | Markdown   | Implementation plan & architecture decisions|
-| `TASKS.md`        | Markdown   | 121 tasks across 13 phases                 |
-| `Generic.ASCII.png`| Image     | Project logo/branding asset                |
-
-### Target Implementation (22 files)
-
-| File                              | Category     |
-|-----------------------------------|--------------|
-| `src/App.tsx`                     | Core         |
-| `src/main.tsx`                    | Core         |
-| `src/index.css`                   | Core         |
-| `src/app/AppShell.tsx`            | Shell        |
-| `src/app/routes.tsx`              | Shell        |
-| `src/app/navConfig.ts`            | Shell        |
-| `src/app/AppContext.tsx`          | Shell        |
-| `src/layout/TopBar.tsx`           | Layout       |
-| `src/layout/SideNav.tsx`          | Layout       |
-| `src/layout/ContentArea.tsx`      | Layout       |
-| `src/theme/circuitTokens.ts`      | Theme        |
-| `src/theme/darkTheme.ts`          | Theme        |
-| `src/theme/lightTheme.ts`         | Theme        |
-| `src/theme/ThemeProvider.tsx`      | Theme        |
-| `src/components/AppCard.tsx`       | Components   |
-| `src/components/SectionHeader.tsx` | Components   |
-| `src/components/DataGrid.tsx`      | Components   |
-| `src/tools/Dashboard/index.tsx`    | Tools        |
-| `src/tools/SampleTool/index.tsx`   | Tools        |
-| `package.json`                     | Config       |
-| `tsconfig.json`                    | Config       |
-| `vite.config.ts`                   | Config       |
+| Feature                              | Notes                           |
+|--------------------------------------|---------------------------------|
+| Authentication / SSO                 | No server backend            |
+| API integration layer                | Local-first architecture      |
+| Advanced grid (sort, filter, resize) | Current grid is read+edit only|
+| Image/screenshot management          | Placeholder in tool detail    |
+| Export/import portfolio as JSON      | Could add file download       |
+| CI/CD pipeline                       | Manual deploy via GitHub Pages|
+| Automated testing                    | No test framework (zero deps) |
+| PWA / offline support               | Could add service worker      |
+| Dark mode auto-detect               | `prefers-color-scheme` media query |
 
 ---
 
-*End of Spec Kit — Generic D365 Modern Shell v1.0.0*
+## 20. File Manifest
+
+### Implemented Files
+
+| File                              | Category   | Lines  |
+|-----------------------------------|------------|--------|
+| `index.html`                      | Entry      | ~35    |
+| `data/tools.json`                 | Data       | ~131   |
+| `src/app/shell.js`               | Core       | ~96    |
+| `src/app/router.js`              | Core       | ~131   |
+| `src/layout/top-bar.js`          | Layout     | ~78    |
+| `src/layout/side-nav.js`         | Layout     | ~120   |
+| `src/layout/content-area.js`     | Layout     | ~20    |
+| `src/pages/settings.js`          | Pages      | ~994   |
+| `src/pages/tool-detail.js`       | Pages      | ~230   |
+| `src/pages/speckkit.js`          | Pages      | ~600   |
+| `src/pages/vscode.js`            | Pages      | ~174   |
+| `src/pages/add-tool.js`          | Pages      | ~10    |
+| `src/platform/tool-registry.js`  | Platform   | ~220   |
+| `src/platform/navigation-engine.js` | Platform | —     |
+| `src/platform/tool-types.js`     | Platform   | —      |
+| `src/shared/icons.js`            | Shared     | ~50    |
+| `src/tools/dashboard/index.js`   | Dashboard  | ~190   |
+| `src/theme/theme-switcher.js`    | Theme      | ~40    |
+| `src/styles/reset.css`           | Styles     | —      |
+| `src/styles/themes.css`          | Styles     | ~70    |
+| `src/styles/typography.css`      | Styles     | —      |
+| `src/styles/layout.css`          | Styles     | ~231   |
+| `src/styles/components.css`      | Styles     | ~1050  |
+| `src/styles/presentation.css`    | Styles     | —      |
+| `images/Generic.ASCII.png`       | Assets     | —      |
+| `speckit-presentation.html`      | Static     | —      |
+| `demo.html`                      | Reference  | —      |
+
+### Spec Documents
+
+| File                    | Purpose                              |
+|-------------------------|--------------------------------------|
+| `README.md`             | Project overview + setup             |
+| `CONSTITUTION.md`       | Engineering principles               |
+| `PLAN.md`               | Architecture decisions               |
+| `PROJECT-INDEX.md`      | File-level module index              |
+| `TASKS.md`              | Feature completion checklist         |
+| `SPEC-KIT.md`           | This file — full specification       |
+| `SYSTEM_MANIFEST.json.md` | Machine-readable project metadata |
+
+---
+
+*End of Spec Kit — Generic Tool Portfolio v3.0.0*

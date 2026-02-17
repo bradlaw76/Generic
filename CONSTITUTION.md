@@ -1,10 +1,10 @@
-# GENERIC D365 MODERN SHELL — CONSTITUTION
+# GENERIC TOOL PORTFOLIO — CONSTITUTION
 
 ## Engineering Principles & Standards
 
-> **Version:** 1.0.0  
+> **Version:** 3.0.0  
 > **Last updated:** 2026-02-16  
-> **Authority:** This document governs all code contributions. Violations block merge.
+> **Authority:** This document governs all code contributions.
 
 ---
 
@@ -12,350 +12,243 @@
 
 1. [Preamble](#1-preamble)
 2. [Code Quality Principles](#2-code-quality-principles)
-3. [Testing Standards](#3-testing-standards)
-4. [User Experience Consistency](#4-user-experience-consistency)
-5. [Performance Requirements](#5-performance-requirements)
-6. [Enforcement](#6-enforcement)
+3. [User Experience Consistency](#3-user-experience-consistency)
+4. [Performance Requirements](#4-performance-requirements)
+5. [Enforcement](#5-enforcement)
 
 ---
 
 ## 1. Preamble
 
-This constitution defines the non-negotiable engineering principles for the Generic D365 Modern Shell. Every contributor, every commit, and every review must comply. These principles exist to protect long-term maintainability, user trust, and application credibility.
+This constitution defines the engineering principles for the Generic Tool Portfolio. Every contributor and every commit must comply. These principles protect maintainability, user trust, and application credibility.
 
-**The application favors vanilla HTML, CSS, and JavaScript.** External libraries are introduced only when they provide irreplaceable value. Simplicity is a feature.
+**This application uses zero dependencies.** No npm packages, no build tools, no frameworks. Pure HTML, CSS, and JavaScript served as static files. This is the defining architectural constraint — it is not a compromise, it is a feature.
 
 ---
 
 ## 2. Code Quality Principles
 
-### P1 — Vanilla First
+### P1 — Zero Dependencies
 
-> Prefer native browser APIs and vanilla HTML/CSS/JS over library abstractions.
+> No npm packages. No build tools. No frameworks. No exceptions.
 
-- Use standard DOM APIs before reaching for a library
-- CSS custom properties over CSS-in-JS where possible
-- Native `fetch` over HTTP client libraries
-- Native ES modules over bundler-specific patterns
-- A new dependency must justify itself against a vanilla alternative
+This is the foundational principle. The project operates entirely on native browser APIs:
 
-### P2 — Minimal Dependencies
+| Concern          | Solution                                    |
+|------------------|---------------------------------------------|
+| UI rendering     | `innerHTML` + template literals             |
+| State management | `localStorage` + in-memory arrays           |
+| Routing          | Hash-based router (131 lines of JS)         |
+| Theming          | CSS custom properties + class swap           |
+| HTTP requests    | Native `fetch()`                            |
+| Icons            | Inline SVG functions                        |
+| Bundling         | None — native ES module `import()`          |
+| Dev server       | `python -m http.server 8080`                |
 
-> Every dependency is a liability. Add only what you cannot reasonably build.
+**Why?** The workspace lives on a OneDrive-synced path that breaks `node_modules`. Rather than fight the toolchain, we eliminated it entirely.
 
-| Allowed                        | Justification              |
-|--------------------------------|----------------------------|
-| Vite                           | Bundler (locked)           |
-| better-sqlite3 / sql.js       | Local SQLite (locked)      |
-| Fluent UI v9 (optional)       | Design token consistency   |
-| No other runtime dependencies without explicit approval |
+### P2 — Vanilla First
 
-- `node_modules` size must stay under 50MB (production deps)
-- No utility libraries (lodash, underscore, moment)
-- No CSS frameworks (Tailwind, Bootstrap)
-- Date handling: native `Intl.DateTimeFormat` and `Date`
+> Use standard browser APIs before inventing abstractions.
 
-### P3 — Strict Type Safety
+- DOM APIs (`createElement`, `querySelector`, `addEventListener`)
+- ES module `import` / `export` / dynamic `import()`
+- CSS custom properties for theming
+- `fetch()` for HTTP
+- `localStorage` for persistence
+- `Intl.DateTimeFormat` for date formatting
+- `crypto.randomUUID()` for IDs
 
-> TypeScript strict mode is non-negotiable.
+### P3 — Single Responsibility
 
-```json
-{
-  "strict": true,
-  "noUnusedLocals": true,
-  "noUnusedParameters": true,
-  "noImplicitReturns": true,
-  "noFallthroughCasesInSwitch": true,
-  "noUncheckedIndexedAccess": true
-}
-```
+> Every file, function, and module does one thing.
 
-- Zero `any` types in committed code
-- Explicit return types on all exported functions
-- Interface over type alias for object shapes
-- No `@ts-ignore` or `@ts-expect-error` without linked issue
-
-### P4 — Single Responsibility
-
-> Every file, function, and component does one thing.
-
-- Files: ≤ 200 lines (soft limit), ≤ 300 lines (hard limit)
-- Functions: ≤ 40 lines, ≤ 4 parameters
-- Components: one concern, props-driven, no side effects in render
+- Files: ≤ 300 lines preferred (Settings is the exception at ~994 lines)
+- Functions: ≤ 50 lines, ≤ 5 parameters
+- Modules: one page or one concern per file
 - No god files, no mega-functions
 
-### P5 — No Dead Code
+### P4 — No Dead Code
 
 > If it's not used, it doesn't exist.
 
 - No commented-out code blocks
-- No unused imports, variables, or functions (enforced by TS strict)
+- No unused imports, variables, or functions
 - No placeholder files without implementation
 - Remove before commit, not "later"
 
-### P6 — Naming Clarity
+### P5 — Naming Clarity
 
 > Names are documentation. Abbreviations are debt.
 
 | Element    | Convention          | Example                    |
 |------------|---------------------|----------------------------|
-| Files      | PascalCase (.tsx)   | `SideNav.tsx`              |
-| Files      | camelCase (.ts)     | `navConfig.ts`             |
-| Components | PascalCase          | `AppCard`                  |
-| Functions  | camelCase, verb-led | `toggleTheme()`            |
+| Files      | kebab-case (.js)    | `tool-registry.js`         |
+| Files      | kebab-case (.css)   | `components.css`           |
+| Functions  | camelCase, verb-led | `toggleToolDisabled()`     |
 | Constants  | UPPER_SNAKE         | `MAX_NAV_WIDTH`            |
-| CSS vars   | kebab-case          | `--dark-layer1`            |
+| CSS vars   | kebab-case          | `--bg-primary`             |
+| CSS classes| kebab-case          | `.stat-card`               |
 | Booleans   | is/has/should       | `isCollapsed`, `hasError`  |
+| IDs        | kebab-case          | `generic-sidebar`          |
 
-### P7 — Explicit Over Implicit
+### P6 — Explicit Over Implicit
 
 > Code should explain itself without comments.
 
-- Favor explicit conditionals over ternary chains
-- Destructure props at the function signature
-- Use named exports over default exports (except tool page index files)
-- No magic numbers — use named constants
+- Named constants over magic numbers
+- Template literals for HTML construction
+- Named functions over anonymous callbacks (for event listeners)
+- Comment blocks on module headers (SpeckKit standard)
+
+### P7 — Data Isolation
+
+> Tools may NOT modify core layout. No cross-tool imports.
+
+- `src/pages/` modules may import from `src/platform/` and `src/shared/` only
+- `src/tools/` modules may import from `src/platform/` and `src/shared/` only
+- `src/platform/` may NOT import from `src/pages/` or `src/tools/`
+- No global CSS injection from page modules
+- All tool data flows through `tool-registry.js`
 
 ---
 
-## 3. Testing Standards
-
-### T1 — Test Pyramid
-
-| Level        | Tool              | Coverage Target | What to Test                    |
-|--------------|-------------------|-----------------|---------------------------------|
-| Unit         | Vitest            | ≥ 80%           | Utility functions, state logic  |
-| Component    | Vitest + Testing Library | ≥ 70%   | Render, props, user interaction |
-| Integration  | Playwright        | Critical paths  | Nav, routing, theme toggle      |
-| Visual       | Manual + screenshot| Baseline        | Dark/light parity               |
-
-### T2 — Test File Convention
-
-```
-src/
-  components/
-    AppCard.tsx
-    AppCard.test.ts       ← co-located test
-  utils/
-    formatDate.ts
-    formatDate.test.ts    ← co-located test
-```
-
-- Test files live next to source files
-- Name: `{source}.test.ts` or `{source}.test.tsx`
-- No separate `__tests__` directories
-
-### T3 — What Must Be Tested
-
-| Category            | Required Tests                              |
-|---------------------|---------------------------------------------|
-| Theme switching   | Switches class/tokens, persists to storage, all 3 themes |
-| SideNav collapse    | Width changes, labels hide, no layout shift |
-| Route navigation    | Each nav item loads correct page            |
-| Data display        | Grid renders rows, handles empty state      |
-| Keyboard nav        | Tab order, Enter/Space activation           |
-| SQLite operations   | CRUD operations, error handling             |
-| Image references    | Local paths resolve, no broken refs         |
-
-### T4 — Test Quality Rules
-
-- No `test.skip` or `test.todo` in main branch
-- Tests must not depend on execution order
-- No network calls in unit/component tests (mock all I/O)
-- Assertions must be specific (no `toBeTruthy()` for object checks)
-- Each test has exactly one reason to fail
-
-### T5 — Pre-Commit Gate
-
-Before any commit:
-
-```bash
-npm run lint        # zero warnings
-npm run typecheck   # zero errors
-npm run test        # all pass
-```
-
-All three must pass. No exceptions.
-
----
-
-## 4. User Experience Consistency
+## 3. User Experience Consistency
 
 ### UX1 — Visual Consistency Contract
 
 > Every screen must look like it belongs to the same application.
 
-- All colors from Circuit palette tokens — zero hardcoded hex
-- All spacing from 4px grid system (4, 8, 12, 16, 20, 24, 32, 48)
+- All colours from CSS custom properties — zero hardcoded hex values in JS
+- All spacing on 4px grid (4, 8, 12, 16, 20, 24, 32, 48)
 - All type sizes from the defined scale (12, 14, 16, 20, 24)
 - All border-radius: 4px (buttons) or 6px (cards)
-- All transitions: 150–180ms ease-in-out
+- All transitions: 150–200ms ease-in-out
 
-### UX2 — Theme Parity (3 Themes)
+### UX2 — Three Themes Are First-Class
 
-> All three themes are first-class citizens.
+> Circuit Dark, Circuit Light, and Dynamics 365 are equally supported.
 
-- Three supported themes: Circuit Dark, Circuit Light, Dynamics 365
-- Every component must be verified in all three modes
-- No theme-specific component logic — all styling via CSS custom properties
-- Contrast must meet WCAG AA in all three themes
-- Screenshots of all three themes required for visual review
+- Every component must render correctly in all three themes
+- No theme-specific logic in JS — all via CSS custom properties
+- Theme switch is instant (class swap on `<body>`)
+- Contrast must be readable in all themes
+- Default: Circuit Dark (`theme-dark`)
 
 ### UX3 — Layout Stability
 
 > The user must never see unexpected movement.
 
-- No Cumulative Layout Shift (CLS) on page load
+- No layout shift on page load or route change
 - No jitter on SideNav collapse/expand
-- Content area smoothly adjusts (180ms transition)
-- No flash of unstyled content (FOUC)
-- Reserve space for async content (skeleton/placeholder)
+- Content area smoothly adjusts (CSS transitions)
+- No flash of unstyled content
 
-### UX4 — Loading States
+### UX4 — D365 Aesthetic
 
-> Every async operation must show feedback.
+> The application mirrors the Dynamics 365 Modern UI.
 
-| Duration     | Feedback Required                    |
-|--------------|--------------------------------------|
-| < 100ms      | None (instant perceived)             |
-| 100–300ms    | Subtle indicator (opacity shift)     |
-| 300ms–2s     | Spinner or skeleton                  |
-| > 2s         | Progress bar + cancel option         |
+- TopBar: 48px fixed header with left-aligned navigation
+- SideNav: collapsible (240px / 64px) with grouped items
+- Data grids: row hover, column alignment, header styling
+- Cards: subtle elevation, consistent padding
+- Badges: inline coloured labels (Active/Inactive, Public/Private)
 
-### UX5 — Error States
-
-> Errors are part of the design, not afterthoughts.
-
-- Every data-loading component has an error state
-- Error messages are human-readable (no stack traces in UI)
-- Recovery action always available (retry, dismiss, navigate back)
-- Errors logged to console with context (component, action, data)
-
-### UX6 — Interaction Feedback
+### UX5 — Interaction Feedback
 
 > Every user action must produce visible feedback.
 
-- Buttons: hover state + active/pressed state
+- Buttons: hover + active states via CSS
 - Nav items: hover background + active indicator
-- Form inputs: focus ring (visible, high contrast)
-- Destructive actions: confirmation required
-- Toast/notification for completed background actions
+- Toggle switches: animated state change
+- Edit panel: slide-in animation (`fadeSlideIn`)
+- Import: button turns green "Added!" temporarily
+- Copy: confirmation feedback on clipboard actions
 
-### UX7 — Local-First Data
+### UX6 — Local-First Data
 
-> Images are never uploaded. Metadata lives in SQLite.
+> No server. No database. localStorage is the persistence layer.
 
-- Images referenced by local file path only
-- No CDN, no cloud storage, no Base64 embedding in DB
-- SQLite database stored in the application's data directory
-- All data operations are synchronous or near-synchronous
-- Offline-capable by design (no network dependency)
+- Static `data/tools.json` as the immutable baseline
+- User modifications stored in localStorage
+- All data operations are synchronous
+- No network dependency (GitHub polling is optional)
+- Offline-capable by design
 
 ---
 
-## 5. Performance Requirements
+## 4. Performance Requirements
 
-### PERF1 — Load Time Budgets
+### PERF1 — Load Time
 
-| Metric                        | Target      | Hard Limit  |
-|-------------------------------|-------------|-------------|
-| First Contentful Paint (FCP)  | < 500ms     | < 1000ms    |
-| Largest Contentful Paint (LCP)| < 1000ms    | < 2000ms    |
-| Time to Interactive (TTI)     | < 1000ms    | < 2000ms    |
-| Total bundle size (gzipped)   | < 150KB     | < 300KB     |
-| Main thread blocking          | < 50ms      | < 100ms     |
+| Metric                         | Target          |
+|--------------------------------|-----------------|
+| First Contentful Paint         | < 500ms         |
+| Time to Interactive            | < 500ms         |
+| Total JS payload               | < 100KB (uncompressed) |
+| Total CSS payload              | < 50KB (uncompressed)  |
+
+No build step means no bundle overhead, no framework boot, no hydration delay.
 
 ### PERF2 — Runtime Performance
 
-| Metric                        | Target      | Hard Limit  |
-|-------------------------------|-------------|-------------|
-| Theme toggle latency          | < 16ms      | < 50ms      |
-| SideNav animation             | 60fps       | No drop below 30fps |
-| Route transition              | < 200ms     | < 500ms     |
-| SQLite query (simple)         | < 10ms      | < 50ms      |
-| SQLite query (complex/join)   | < 50ms      | < 200ms     |
-| DOM node count (per page)     | < 500       | < 1500      |
+| Metric                         | Target          |
+|--------------------------------|-----------------|
+| Theme toggle latency           | < 16ms (1 frame)|
+| Route transition               | < 200ms         |
+| SideNav animation              | 60fps           |
+| Page render (innerHTML)        | < 50ms          |
+| localStorage read/write        | < 5ms           |
 
 ### PERF3 — Asset Rules
 
-- No images in the application bundle
-- SVG icons inline or sprite-based (no icon font)
-- CSS: single file per scope, no duplicate selectors
-- No `@import` chains — use Vite's CSS handling
-- Lazy-load tool pages (code splitting per route)
+- SVG icons inline — no icon font, no external library
+- CSS loaded statically in `<head>` (6 files)
+- JS loaded as ES modules — browser handles caching
+- Lazy-load pages via dynamic `import()` in route handlers
+- One logo image (`Generic.ASCII.png`) — no other raster images in app shell
 
-### PERF4 — Memory Management
+### PERF4 — DOM Hygiene
 
-- No memory leaks: all event listeners cleaned up on unmount
-- No global state accumulation
-- SQLite connections: open once, reuse, close on app exit
-- Large data sets: paginate, don't load all into memory
-- Monitor: heap size should not grow unbounded over time
-
-### PERF5 — Build Optimization
-
-```bash
-npm run build    # must complete in < 15 seconds
-```
-
-- Tree-shaking enabled (Vite default)
-- No barrel files that defeat tree-shaking
-- Code splitting: one chunk per tool/route
-- Vendor chunk: shared dependencies isolated
-- Source maps: generated but not deployed to production
-
-### PERF6 — Measurement
-
-Performance is not optional — it's measured on every release:
-
-```bash
-npm run lighthouse   # automated Lighthouse CI
-npm run bundle-size  # track bundle size over time
-```
-
-| Gate              | Threshold                          |
-|-------------------|------------------------------------|
-| Lighthouse perf   | ≥ 90                               |
-| Bundle size delta | ≤ +5KB per PR (alerts on exceed)   |
-| Test suite time   | < 30 seconds total                 |
+- Route changes replace `innerHTML` on content area — no DOM accumulation
+- Event listeners attached after `innerHTML` insertion, scoped to content
+- Cleanup functions returned from route handlers for intervals/listeners
+- No global event listeners beyond router (`hashchange`) and theme (`click`)
 
 ---
 
-## 6. Enforcement
+## 5. Enforcement
 
-### Review Checklist
+### Commit Checklist
 
-Every pull request must answer YES to all:
+Every commit should be verified:
 
-- [ ] Zero TypeScript errors (`strict: true`)
-- [ ] Zero lint warnings
-- [ ] All tests pass
-- [ ] No new `any` types
-- [ ] No hardcoded colors
-- [ ] Verified in all three themes (dark, light, d365)
-- [ ] No new dependencies without justification
-- [ ] Performance budget not exceeded
-- [ ] Loading and error states handled
-- [ ] Keyboard accessible
+- [ ] Zero console errors
+- [ ] No hardcoded colour values in JS
+- [ ] Renders correctly in all three themes
+- [ ] No new dependencies (npm, CDN, or inline library)
+- [ ] Loading and error states handled for async operations
+- [ ] SpeckKit component header comment block applied to new files
 
 ### Violation Severity
 
 | Level    | Examples                                      | Action        |
 |----------|-----------------------------------------------|---------------|
-| Critical | `any` type, hardcoded color, broken a11y      | Block merge   |
-| Major    | Missing tests, perf budget exceeded            | Block merge   |
-| Minor    | Naming convention, file length soft limit      | Fix in PR     |
-| Advisory | Code style preference, optimization suggestion | Author choice |
+| Critical | Adding npm dependency, hardcoded colours       | Block commit  |
+| Major    | Broken theme rendering, layout shift           | Fix before commit |
+| Minor    | Naming convention, file length soft limit      | Fix in next commit |
+| Advisory | Code style preference, optimisation suggestion | Author choice |
 
-### Exceptions
+### The One Exception
 
-No principle is absolute. Exceptions require:
+**No principle is absolute.** But exceptions require:
 
-1. Written justification in the PR description
-2. Linked tracking issue for resolution
-3. Approval from at least one other reviewer
-4. Time-boxed: exception expires after 2 sprints
+1. Clear justification documented in the commit message
+2. A plan to resolve the exception in a follow-up
+3. The exception must not violate the zero-dependency principle
+
+The zero-dependency principle itself has no exceptions.
 
 ---
 
-*End of Constitution — Generic D365 Modern Shell v1.0.0*
+*End of Constitution — Generic Tool Portfolio v3.0.0*

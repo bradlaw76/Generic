@@ -1,295 +1,196 @@
-# GENERIC D365 MODERN SHELL — TASKS
+# GENERIC TOOL PORTFOLIO — TASKS
 
-## Implementation Task Breakdown
+## Feature Completion Checklist
 
-> **Version:** 1.0.0  
+> **Version:** 3.0.0  
 > **Last updated:** 2026-02-16  
-> **Tracking:** Checkbox-based. Check off as completed.
+> **Architecture:** Vanilla HTML/CSS/JS — zero dependencies
 
 ---
 
-## Phase 0: Project Scaffolding
+## Phase 1: Project Scaffold & Shell Layout
 
-> **Goal:** Empty project that builds and runs  
-> **Estimate:** 1 session
+> **Status:** ✅ Complete
 
-- [ ] **T0.1** — Initialize Vite project with `vanilla-ts` template
-- [ ] **T0.2** — Configure `tsconfig.json` (strict mode, all flags from Constitution)
-- [ ] **T0.3** — Configure `vite.config.ts` (aliases, build target, port)
-- [ ] **T0.4** — Set up `.gitignore` (node_modules, dist, data/*.db)
-- [ ] **T0.5** — Create `package.json` scripts (dev, build, preview, typecheck, lint, test)
-- [ ] **T0.6** — Install dev dependencies (vitest, eslint, typescript)
-- [ ] **T0.7** — Verify: `npm run dev` starts, `npm run build` succeeds
-- [ ] **T0.8** — Initial git commit: `"T0: project scaffolding"`
-
----
-
-## Phase 1: CSS Foundation & Theme System
-
-> **Goal:** Circuit palette working in both dark and light modes  
-> **Estimate:** 1 session  
-> **Depends on:** Phase 0
-
-- [ ] **T1.1** — Create `src/styles/reset.css` — minimal CSS reset
-- [ ] **T1.2** — Create `src/theme/circuit-tokens.css` — shared brand accent colors (if any shared across themes)
-- [ ] **T1.3** — Create `src/theme/dark.css` — `body.theme-dark` with full token set (bg, border, text, color, shadow)
-- [ ] **T1.4** — Create `src/theme/light.css` — `body.theme-light` with full token set
-- [ ] **T1.5** — Create `src/theme/d365.css` — `body.theme-d365` with Fluent/Microsoft standard tokens
-- [ ] **T1.6** — Create `src/styles/typography.css` — font stack, type scale (12/14/16/20/24)
-- [ ] **T1.7** — Create `src/index.css` — imports all CSS in correct order
-- [ ] **T1.8** — Create `src/theme/theme-switcher.ts` — `setTheme()`, `initTheme()`, localStorage (3 themes)
-- [ ] **T1.9** — Wire `index.html` to load `src/main.ts` → initializes theme
-- [ ] **T1.10** — Verify: page renders in theme-dark, dropdown switches all 3 themes, persists on reload
-- [ ] **T1.11** — Git commit: `"T1: CSS foundation and 3-theme system"`
+- [x] Create `index.html` entry point with 6 CSS loads + ES module bootstrap
+- [x] Create `src/app/shell.js` — main orchestrator (layout + routes + init)
+- [x] Create `src/app/router.js` — hash-based SPA router with parameterised patterns
+- [x] Create `src/layout/top-bar.js` — 48px fixed header with hamburger, logo, title, theme, gear, profile
+- [x] Create `src/layout/side-nav.js` — collapsible nav with category groups + active state
+- [x] Create `src/layout/content-area.js` — route target `<main>` container
+- [x] Create `src/shared/icons.js` — 18 inline SVG icon functions
+- [x] Add `images/Generic.ASCII.png` logo to TopBar (32px) and Dashboard (40px)
+- [x] Verify: shell renders, nav collapses, layout matches D365 Modern UI
 
 ---
 
-## Phase 2: Shell Layout
+## Phase 2: CSS Foundation & Theme System
 
-> **Goal:** TopBar + SideNav + ContentArea matching demo.html  
-> **Estimate:** 1–2 sessions  
-> **Depends on:** Phase 1
+> **Status:** ✅ Complete
 
-- [ ] **T2.1** — Create `src/styles/layout.css` — top-bar, side-nav, content-area styles
-- [ ] **T2.2** — Create `src/layout/top-bar.ts` — render 48px fixed header with title, theme dropdown, profile icon
-- [ ] **T2.3** — Create `src/layout/side-nav.ts` — render collapsible nav (240px/64px), toggle function
-- [ ] **T2.4** — Create `src/layout/content-area.ts` — scrollable main area, adjusts on nav collapse
-- [ ] **T2.5** — Create `src/app/shell.ts` — orchestrates layout: mounts TopBar, SideNav, ContentArea
-- [ ] **T2.6** — Add inline SVG icon functions for: hamburger, moon/sun/d365, profile, home, grid
-- [ ] **T2.7** — Create theme dropdown component (3 options with color dots)
-- [ ] **T2.8** — Wire `main.ts` to call `shell.init()`
-- [ ] **T2.9** — Verify: layout matches demo.html, nav collapses smoothly (180ms), no jitter
-- [ ] **T2.10** — Verify: all 3 themes render correctly for all layout elements
-- [ ] **T2.11** — Git commit: `"T2: shell layout (TopBar, SideNav, ContentArea)"`
+- [x] Create `src/styles/reset.css` — CSS reset
+- [x] Create `src/styles/themes.css` — 3 theme definitions (Circuit Dark, Circuit Light, Dynamics 365)
+- [x] Create `src/styles/typography.css` — font stack (Segoe UI), type scale
+- [x] Create `src/styles/layout.css` — shell grid layout, top-bar-logo
+- [x] Create `src/styles/components.css` — all component styles (~1050 lines)
+- [x] Create `src/styles/presentation.css` — SpeckKit slide styles
+- [x] Create `src/theme/theme-switcher.js` — theme persistence + dropdown close handler
+- [x] Theme dropdown in TopBar with 3 options
+- [x] localStorage persistence (`generic_theme`), default: `theme-dark`
+- [x] Verify: all 3 themes render correctly, switch is instant, persists on reload
 
 ---
 
-## Phase 3: Router & Navigation
+## Phase 3: Data Layer & Tool Registry
 
-> **Goal:** Hash-based routing, nav items highlight, pages swap  
-> **Estimate:** 1 session  
-> **Depends on:** Phase 2
+> **Status:** ✅ Complete
 
-- [ ] **T3.1** — Create `src/app/router.ts` — hash router with `registerRoute()`, `navigate()`, cleanup
-- [ ] **T3.2** — Create `src/app/nav-config.ts` — nav item definitions with lazy `load()` imports
-- [ ] **T3.3** — Wire SideNav to read from `nav-config.ts` and render nav items dynamically
-- [ ] **T3.4** — Wire nav item clicks to `navigate()` and update active indicator
-- [ ] **T3.5** — Wire router `hashchange` listener to swap content area
-- [ ] **T3.6** — Handle default route (`/` → Dashboard)
-- [ ] **T3.7** — Handle unknown routes (404 fallback page)
-- [ ] **T3.8** — Verify: clicking nav items changes URL hash and swaps content
-- [ ] **T3.9** — Verify: active indicator (3px brand bar) follows current route
-- [ ] **T3.10** — Git commit: `"T3: hash router and navigation"`
+- [x] Create `data/tools.json` — 8 tool definitions (source of truth)
+- [x] Create `src/platform/tool-registry.js` — central data CRUD module
+- [x] Implement `loadTools()` — fetch JSON + merge localStorage overrides
+- [x] Implement `getAllTools()`, `getActiveTools()`, `getToolById()`
+- [x] Implement `addTool()` — persist user-added tools to `generic_user_tools`
+- [x] Implement `updateTool()` — persist field-level edits to `generic_tool_edits`
+- [x] Implement `toggleToolDisabled()` — persist disabled state to `generic_disabled_tools`
+- [x] Implement `removeUserTool()` — remove user-added tools
+- [x] Create `src/platform/tool-types.js` — schema definitions
+- [x] Create `src/platform/navigation-engine.js` — nav configuration helpers
 
 ---
 
-## Phase 4: Shared Components
+## Phase 4: Dashboard
 
-> **Goal:** Reusable card, section header, and data grid components  
-> **Estimate:** 1 session  
-> **Depends on:** Phase 1
+> **Status:** ✅ Complete
 
-- [ ] **T4.1** — Create `src/styles/components.css` — card, section-header, data-grid, button styles
-- [ ] **T4.2** — Create `src/components/app-card.ts` — `createAppCard({ title, content, actions })`
-- [ ] **T4.3** — Create `src/components/section-header.ts` — `createSectionHeader({ title, action })`
-- [ ] **T4.4** — Create `src/components/data-grid.ts` — `createDataGrid({ columns, rows })`
-- [ ] **T4.5** — Create `src/components/button.ts` — `createButton({ label, variant, onClick })`
-- [ ] **T4.6** — Verify: all components render with theme tokens (no hardcoded colors)
-- [ ] **T4.7** — Verify: hover states, transitions (150ms), visual parity with demo.html
-- [ ] **T4.8** — Git commit: `"T4: shared component library"`
+- [x] Create `src/tools/dashboard/index.js` — metrics-only dashboard (no tool grid)
+- [x] 4 stat cards: Active Tools, Categories, High Priority, Disabled
+- [x] Category Breakdown — horizontal bars
+- [x] Recently Updated — top 5 tools list
+- [x] Public vs Private — CSS conic-gradient donut chart
+- [x] Priority Distribution — horizontal bars
+- [x] Quick Actions — buttons (Add New Tool, Settings, SpeckKit)
+- [x] Verify: all metrics computed from tool registry data
 
 ---
 
-## Phase 5: Dashboard Tool
+## Phase 5: Settings Page
 
-> **Goal:** Dashboard page with stat cards + activity table  
-> **Estimate:** 1 session  
-> **Depends on:** Phase 3, Phase 4
+> **Status:** ✅ Complete
 
-- [ ] **T5.1** — Create `src/tools/dashboard/index.ts` — `render()` and `destroy()` exports
-- [ ] **T5.2** — Render section header: "Dashboard"
-- [ ] **T5.3** — Render 3 stat cards in grid layout (Total Records, Completion Rate, Active Tasks)
-- [ ] **T5.4** — Render "Recent Activity" data grid (Name, Status, Value columns)
-- [ ] **T5.5** — Wire to nav-config as default route (`/`)
-- [ ] **T5.6** — Verify: matches demo.html dashboard layout in all 3 themes
-- [ ] **T5.7** — Git commit: `"T5: dashboard tool"`
+### Tab 1 — Tool Management Grid
+- [x] D365-style data grid with sortable columns
+- [x] Columns: Name, Category, Visibility, Status, Priority, Last Updated, Enabled, Edit
+- [x] Stats cards (Total, Active, High Priority, Disabled)
+- [x] Toolbar with +New Tool, Refresh, Filter buttons
+- [x] Toggle switches for enable/disable (persists via `toggleToolDisabled`)
+- [x] Edit pencil icon button per row
+- [x] `showEditPanel()` — inline edit form for all tool fields
+- [x] Public/Private visibility badges in grid
 
----
+### Tab 2 — Add New Tool
+- [x] Full form: name, category, status, priority, version, description, repo URL, tags
+- [x] Live JSON preview panel
+- [x] Copy JSON to clipboard button
+- [x] Submit adds tool via `addTool()`
 
-## Phase 6: Sample Tool
-
-> **Goal:** Sample tool page demonstrating the tool pattern  
-> **Estimate:** 0.5 session  
-> **Depends on:** Phase 3, Phase 4
-
-- [ ] **T6.1** — Create `src/tools/sample-tool/index.ts` — `render()` and `destroy()` exports
-- [ ] **T6.2** — Render section header with "New Action" primary button
-- [ ] **T6.3** — Render "Tool Configuration" card with description + button group
-- [ ] **T6.4** — Render "Integration Points" card with description
-- [ ] **T6.5** — Wire to nav-config at path `/sample`
-- [ ] **T6.6** — Verify: matches demo.html sample tool layout in all 3 themes
-- [ ] **T6.7** — Git commit: `"T6: sample tool"`
-
----
-
-## Phase 7: SQLite Data Layer
-
-> **Goal:** Local SQLite database for metadata storage  
-> **Estimate:** 1–2 sessions  
-> **Depends on:** Phase 0
-
-- [ ] **T7.1** — Install `sql.js` dependency
-- [ ] **T7.2** — Create `src/data/db.ts` — connection manager (init, get, save to localStorage)
-- [ ] **T7.3** — Create `src/data/migrations.ts` — schema creation (tools, images, settings, schema_version)
-- [ ] **T7.4** — Create `src/data/queries.ts` — typed CRUD functions for tools, images, settings
-- [ ] **T7.5** — Run migrations on app startup (idempotent)
-- [ ] **T7.6** — Store/retrieve theme preference via settings table (alongside localStorage)
-- [ ] **T7.7** — Write unit tests for all query functions
-- [ ] **T7.8** — Verify: database persists across page reloads
-- [ ] **T7.9** — Verify: no data loss on theme toggle or navigation
-- [ ] **T7.10** — Git commit: `"T7: SQLite data layer"`
+### Tab 3 — GitHub Repository Sync
+- [x] PAT input (password type) with Show/Hide/Clear controls
+- [x] Token persistence in `generic_github_pat`
+- [x] Poll Repositories button → `fetchAllRepos(token)` with pagination
+- [x] Public mode: `GET /users/bradlaw76/repos`
+- [x] Authenticated mode: `GET /user/repos` with Bearer token
+- [x] Untracked repos table with Visibility badge
+- [x] Generate JSON button (copies `tools.json`-compatible entry)
+- [x] + Add to Portfolio button (`autoImportRepo()`)
+- [x] Tracked repos list with Visibility badges
+- [x] Import feedback (button turns green "Added!")
 
 ---
 
-## Phase 8: Image Reference System
+## Phase 6: Tool Detail Page
 
-> **Goal:** Store and display local image paths (no uploads)  
-> **Estimate:** 1 session  
-> **Depends on:** Phase 7
+> **Status:** ✅ Complete
 
-- [ ] **T8.1** — Create `src/components/image-picker.ts` — file input that captures local path
-- [ ] **T8.2** — Create `src/components/image-display.ts` — renders `<img>` from local path
-- [ ] **T8.3** — Wire image picker to store path in SQLite `images` table
-- [ ] **T8.4** — Create image gallery component for tool pages
-- [ ] **T8.5** — Handle missing/broken image paths gracefully (placeholder + error state)
-- [ ] **T8.6** — Write tests for image CRUD operations
-- [ ] **T8.7** — Verify: selecting image stores path, image renders from local filesystem
-- [ ] **T8.8** — Git commit: `"T8: local image reference system"`
-
----
-
-## Phase 9: Accessibility & Keyboard Navigation
-
-> **Goal:** WCAG AA compliant, full keyboard support  
-> **Estimate:** 1 session  
-> **Depends on:** Phase 2, Phase 3
-
-- [ ] **T9.1** — Add ARIA labels to all icon buttons (toggle, profile, hamburger)
-- [ ] **T9.2** — Add ARIA roles to navigation (`nav`, `button`, `main`)
-- [ ] **T9.3** — Implement keyboard navigation for SideNav (Tab, Arrow keys, Enter/Space)
-- [ ] **T9.4** — Add visible focus indicators (outline) on all interactive elements
-- [ ] **T9.5** — Verify WCAG AA contrast ratios for all text/background combinations in all 3 themes
-- [ ] **T9.6** — Test with screen reader (NVDA or VoiceOver)
-- [ ] **T9.7** — Add `skip-to-content` link
-- [ ] **T9.8** — Git commit: `"T9: accessibility and keyboard navigation"`
+- [x] Create `src/pages/tool-detail.js` — full tool metadata display
+- [x] Metadata grid: version, status, priority, category, origin, dates
+- [x] Tags display
+- [x] Long description rendering
+- [x] Screenshots section (placeholder)
+- [x] Action buttons: View Repository (external link), Edit Tool, Back to Dashboard
+- [x] `showDetailEditPanel()` — inline edit form (same fields as Settings edit)
+- [x] Edit persists via `updateTool()`
+- [x] Parameterised route: `/tools/:id`
 
 ---
 
-## Phase 10: Testing
+## Phase 7: SpeckKit Page
 
-> **Goal:** Test coverage meets Constitution thresholds  
-> **Estimate:** 2 sessions  
-> **Depends on:** All previous phases
+> **Status:** ✅ Complete
 
-- [ ] **T10.1** — Configure Vitest (`vitest.config.ts`, coverage thresholds)
-- [ ] **T10.2** — Write unit tests for `theme-switcher.ts` (setTheme, persist, init, all 3 themes)
-- [ ] **T10.3** — Write unit tests for `router.ts` (register, navigate, cleanup)
-- [ ] **T10.4** — Write unit tests for `nav-config.ts` (items match expected shape)
-- [ ] **T10.5** — Write component tests for `app-card`, `section-header`, `data-grid`
-- [ ] **T10.6** — Write unit tests for `db.ts`, `queries.ts` (CRUD, migrations)
-- [ ] **T10.7** — Install Playwright, write integration test: full nav flow
-- [ ] **T10.8** — Write integration test: theme selector cycles all 3 themes + persists
-- [ ] **T10.9** — Write integration test: dashboard renders data
-- [ ] **T10.10** — Verify: `npm run test` all pass, coverage ≥ 80% unit / ≥ 70% component
-- [ ] **T10.11** — Git commit: `"T10: test suite"`
+- [x] Create `src/pages/speckkit.js` — overview + presentation
+- [x] Overview section explaining SpeckKit methodology
+- [x] 20-slide interactive presentation
+- [x] Chapter sidebar navigation
+- [x] Slide navigation: previous/next buttons + keyboard support
+- [x] Auto-sizing for content
+- [x] Cleanup function returned for route teardown
+- [x] Create `speckit-presentation.html` — standalone fullscreen version
 
 ---
 
-## Phase 11: Performance & Build Optimization
+## Phase 8: VS Code Page
 
-> **Goal:** Meet all PERF targets from Constitution  
-> **Estimate:** 1 session  
-> **Depends on:** Phase 10
+> **Status:** ✅ Complete
 
-- [ ] **T11.1** — Measure bundle size: must be < 150KB gzipped (excluding sql.js WASM)
-- [ ] **T11.2** — Verify code splitting: each tool is a separate chunk
-- [ ] **T11.3** — Run Lighthouse: performance score ≥ 90
-- [ ] **T11.4** — Measure FCP < 500ms, LCP < 1000ms, TTI < 1000ms
-- [ ] **T11.5** — Verify DOM node count < 500 per page
-- [ ] **T11.6** — Check for memory leaks: event listeners cleaned up
-- [ ] **T11.7** — Verify build completes in < 15 seconds
-- [ ] **T11.8** — Add `npm run bundle-size` script to track size over time
-- [ ] **T11.9** — Git commit: `"T11: performance optimization"`
+- [x] Create `src/pages/vscode.js` — dev environment showcase
+- [x] Sections: Dev Environment, Key Extensions, Workflow, Why Vanilla JS, Project Structure
 
 ---
 
-## Phase 12: Baseline Lock & Release
+## Phase 9: SideNav & Routing
 
-> **Goal:** v1.0.0 release — all criteria met  
-> **Estimate:** 0.5 session  
-> **Depends on:** All phases
+> **Status:** ✅ Complete
 
-- [ ] **T12.1** — Run full baseline lock checklist (SPEC-KIT §15)
-- [ ] **T12.2** — Verify: AppShell renders without errors
-- [ ] **T12.3** — Verify: SideNav collapse/expand works in all 3 themes
-- [ ] **T12.4** — Verify: All 3 themes work (dark/light/d365) + persist
-- [ ] **T12.5** — Verify: Navigation routing functional (all routes)
-- [ ] **T12.6** — Verify: Dashboard renders stat cards + data grid
-- [ ] **T12.7** — Verify: Sample tool renders correctly
-- [ ] **T12.8** — Verify: Zero hardcoded colors in source
-- [ ] **T12.9** — Verify: Zero console errors
-- [ ] **T12.10** — Verify: No layout jitter on nav collapse
-- [ ] **T12.11** — Verify: SQLite data persists across sessions
-- [ ] **T12.12** — Verify: All tests pass, coverage thresholds met
-- [ ] **T12.13** — Update README.md with final setup instructions
-- [ ] **T12.14** — Tag release: `git tag v1.0.0`
-- [ ] **T12.15** — Git commit: `"v1.0.0: baseline lock"`
+- [x] SideNav groups: Dashboard, tool categories (dynamic), Development (SpeckKit, VS Code), Admin (Settings)
+- [x] Active route highlighting (`updateActiveNav()`)
+- [x] Route registration in `shell.js`: `/`, `/tools/:id`, `/settings`, `/add-tool`, `/speckkit`, `/vscode`
+- [x] Legacy `/add-tool` route redirects to `/settings`
+- [x] Lazy loading via dynamic `import()` in route handlers
+- [x] 404 handling for unknown tool IDs
 
 ---
 
 ## Summary
 
-| Phase | Name                       | Tasks | Estimate    | Status      |
-|-------|----------------------------|-------|-------------|-------------|
-| 0     | Project Scaffolding        | 8     | 1 session   | ☐ Not started |
-| 1     | CSS Foundation & Themes    | 11    | 1 session   | ☐ Not started |
-| 2     | Shell Layout               | 11    | 1–2 sessions| ☐ Not started |
-| 3     | Router & Navigation        | 10    | 1 session   | ☐ Not started |
-| 4     | Shared Components          | 8     | 1 session   | ☐ Not started |
-| 5     | Dashboard Tool             | 7     | 1 session   | ☐ Not started |
-| 6     | Sample Tool                | 7     | 0.5 session | ☐ Not started |
-| 7     | SQLite Data Layer          | 10    | 1–2 sessions| ☐ Not started |
-| 8     | Image Reference System     | 8     | 1 session   | ☐ Not started |
-| 9     | Accessibility              | 8     | 1 session   | ☐ Not started |
-| 10    | Testing                    | 11    | 2 sessions  | ☐ Not started |
-| 11    | Performance Optimization   | 9     | 1 session   | ☐ Not started |
-| 12    | Baseline Lock & Release    | 15    | 0.5 session | ☐ Not started |
-|       | **TOTAL**                  | **123**| **~13 sessions** |         |
+| Phase | Name                     | Tasks | Status       |
+|-------|--------------------------|-------|--------------|
+| 1     | Project Scaffold & Shell | 9     | ✅ Complete  |
+| 2     | CSS & Theme System       | 10    | ✅ Complete  |
+| 3     | Data Layer & Registry    | 10    | ✅ Complete  |
+| 4     | Dashboard                | 8     | ✅ Complete  |
+| 5     | Settings Page            | 20    | ✅ Complete  |
+| 6     | Tool Detail Page         | 9     | ✅ Complete  |
+| 7     | SpeckKit Page            | 8     | ✅ Complete  |
+| 8     | VS Code Page             | 2     | ✅ Complete  |
+| 9     | SideNav & Routing        | 6     | ✅ Complete  |
+|       | **TOTAL**                | **82**| **All Complete** |
 
 ---
 
-## Dependency Graph
+## Future Enhancements (Not Planned)
 
-```
-Phase 0 (Scaffold)
-  ├─→ Phase 1 (CSS/Themes)
-  │     ├─→ Phase 2 (Layout)
-  │     │     ├─→ Phase 3 (Router)
-  │     │     │     ├─→ Phase 5 (Dashboard)
-  │     │     │     └─→ Phase 6 (Sample Tool)
-  │     │     └─→ Phase 9 (Accessibility)
-  │     └─→ Phase 4 (Components)
-  │           ├─→ Phase 5 (Dashboard)
-  │           └─→ Phase 6 (Sample Tool)
-  └─→ Phase 7 (SQLite)
-        └─→ Phase 8 (Images)
+These are not in scope but could be added later:
 
-Phase 5 + 6 + 7 + 8 + 9
-  └─→ Phase 10 (Testing)
-        └─→ Phase 11 (Performance)
-              └─→ Phase 12 (Release)
-```
+- [ ] Authentication / authorization
+- [ ] Server-side API layer
+- [ ] Advanced data grid (sorting, filtering, column resize)
+- [ ] Image upload / screenshot management
+- [ ] Export / import tool portfolio as JSON file
+- [ ] CI/CD pipeline
+- [ ] Automated testing (no test framework — zero dependencies)
+- [ ] PWA / offline support
+- [ ] Dark mode auto-detect (`prefers-color-scheme`)
 
 ---
 
-*End of Tasks — Generic D365 Modern Shell v1.0.0*
+*End of Tasks — Generic Tool Portfolio v3.0.0*
