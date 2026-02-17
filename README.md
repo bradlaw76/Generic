@@ -195,3 +195,20 @@ This project participates in the [SpeckKit governance framework](https://github.
 ## License
 
 MIT
+
+---
+
+## GitHub Pages Setup
+
+- Enable Pages: In GitHub → `bradlaw76/Generic` → Settings → Pages → set Source to "Deploy from branch", choose branch `main` and folder `/ (root)`, then Save.
+- Landing Page: `index.html` redirects to `app.html` to load the full SPA (dashboard, settings, routes).
+- Live URLs (after enabling Pages):
+  - Main site: https://bradlaw76.github.io/Generic/
+  - Full SPA: https://bradlaw76.github.io/Generic/app.html
+  - Demo page: https://bradlaw76.github.io/Generic/demo.html
+
+### Public Demo (alt repo)
+
+If you prefer a lightweight public demo, see the separate site:
+- Demo: https://bradlaw76.github.io/Generic.ToolsReview/demo.html
+- VS Code Presentation: https://bradlaw76.github.io/Generic.ToolsReview/vscode-presentation.html
