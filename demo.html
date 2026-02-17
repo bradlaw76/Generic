@@ -883,10 +883,6 @@
            SCREENSHOT GALLERY — Adaptive layout for 1–5 images
            ============================================================================= */
         .gallery-section {
-            display: none;
-        }
-
-        .gallery-section.has-screenshots {
             display: block;
         }
 
@@ -1040,6 +1036,97 @@
             height: 20px;
             margin-right: 8px;
             opacity: 0.5;
+        }
+
+        /* ─── Gallery Header + Upload Controls ─── */
+        .gallery-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .gallery-header h3 { margin: 0; }
+
+        .gallery-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--color-primary);
+            background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+            border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 150ms ease-in-out, border-color 150ms ease-in-out;
+        }
+
+        .upload-btn:hover {
+            background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+            border-color: var(--color-primary);
+        }
+
+        .upload-btn:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 1px;
+        }
+
+        .upload-btn svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .upload-file-input { display: none; }
+
+        /* Remove button on uploaded screenshots */
+        .gallery-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-danger);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+            z-index: 10;
+            padding: 0;
+            font-size: 0;
+        }
+
+        .gallery-remove:hover { transform: scale(1.15); }
+
+        .gallery-remove:focus-visible {
+            outline: 2px solid var(--color-danger);
+            outline-offset: 2px;
+            opacity: 1;
+        }
+
+        .gallery-item:hover .gallery-remove { opacity: 1; }
+
+        .gallery-remove svg { width: 12px; height: 12px; }
+
+        /* Drag-over state */
+        .screenshot-gallery.drag-over {
+            outline: 2px dashed var(--color-primary);
+            outline-offset: -2px;
+            background: color-mix(in srgb, var(--color-primary) 5%, transparent);
         }
 
         /* =============================================================================
@@ -1417,11 +1504,21 @@
 
             <!-- Screenshot Gallery -->
             <div class="card gallery-section" id="gallerySection">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div class="gallery-header">
                     <h3>Screenshots</h3>
-                    <span id="galleryCount" style="font-size: 12px; color: var(--text-muted);"></span>
+                    <div class="gallery-header-right">
+                        <span id="galleryCount" style="font-size: 12px; color: var(--text-muted);"></span>
+                        <button class="upload-btn" onclick="triggerScreenshotUpload()" title="Add screenshots">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Add Files
+                        </button>
+                        <input type="file" id="screenshotFileInput" class="upload-file-input" multiple accept="image/*,video/mp4,video/webm,video/ogg" onchange="handleScreenshotFiles(event)" />
+                    </div>
                 </div>
-                <div class="screenshot-gallery" id="screenshotGallery" data-count="0">
+                <div class="screenshot-gallery" id="screenshotGallery" data-count="0"
+                     ondragover="galleryDragOver(event)"
+                     ondragleave="galleryDragLeave(event)"
+                     ondrop="galleryDrop(event)">
                     <!-- Rendered by JS -->
                 </div>
             </div>
@@ -1822,38 +1919,83 @@
         }
 
         /* ─────────────────────────────────────────────────────────────
-           SCREENSHOT GALLERY RENDERING
+           SCREENSHOT GALLERY — localStorage merge pattern
+           Base: tool.screenshots (repo paths, cross-machine)
+           User: localStorage generic_screenshots_{id} (local uploads)
            ───────────────────────────────────────────────────────────── */
+        window._currentGalleryToolId = null;
+
         function isVideo(src) {
-            return /\.(mp4|webm|ogg)$/i.test(src);
+            return /\.(mp4|webm|ogg)$/i.test(src) || /^data:video\//i.test(src);
         }
 
+        // ── localStorage read/write ──
+        function getStoredScreenshots(toolId) {
+            try {
+                const raw = localStorage.getItem('generic_screenshots_' + toolId);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) { return []; }
+        }
+
+        function setStoredScreenshots(toolId, arr) {
+            try {
+                localStorage.setItem('generic_screenshots_' + toolId, JSON.stringify(arr));
+            } catch (e) {
+                alert('localStorage is full. Remove some screenshots before adding more.');
+            }
+        }
+
+        // ── Merge repo screenshots + localStorage uploads ──
+        function getAllScreenshots(tool) {
+            const base = tool.screenshots || [];
+            const local = getStoredScreenshots(tool.id);
+            return { base, local, all: [...base, ...local] };
+        }
+
+        // ── Render ──
         function renderScreenshotGallery(tool) {
-            const section = document.getElementById('gallerySection');
             const gallery = document.getElementById('screenshotGallery');
             const countEl = document.getElementById('galleryCount');
-            const screenshots = tool.screenshots || [];
+            window._currentGalleryToolId = tool.id;
 
-            if (screenshots.length === 0) {
-                section.classList.remove('has-screenshots');
-                gallery.innerHTML = '';
+            const { base, local, all } = getAllScreenshots(tool);
+
+            if (all.length === 0) {
+                gallery.setAttribute('data-count', '0');
+                gallery.innerHTML = `
+                    <div class="gallery-empty">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                        No screenshots — click Add Files or drag &amp; drop images here
+                    </div>
+                `;
                 countEl.textContent = '';
+                window._lightboxMedia = [];
+                window._lightboxToolName = tool.name;
                 return;
             }
 
-            section.classList.add('has-screenshots');
-            const count = Math.min(screenshots.length, 5);
+            const display = all.slice(0, 5);
+            const count = display.length;
             gallery.setAttribute('data-count', count);
-            countEl.textContent = count + ' of ' + screenshots.length;
+            countEl.textContent = all.length + ' screenshot' + (all.length !== 1 ? 's' : '');
 
-            gallery.innerHTML = screenshots.slice(0, 5).map((src, i) => {
+            gallery.innerHTML = display.map((src, i) => {
+                const isLocal = i >= base.length;
+                const localIdx = i - base.length;
                 const mediaEl = isVideo(src)
                     ? `<video src="${src}" muted preload="metadata"></video>`
                     : `<img src="${src}" alt="${tool.name} screenshot ${i + 1}" loading="lazy" />`;
 
+                const removeBtn = isLocal
+                    ? `<button class="gallery-remove" onclick="removeScreenshot(event, '${tool.id}', ${localIdx})" title="Remove" aria-label="Remove screenshot">
+                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                       </button>`
+                    : '';
+
                 return `
                     <div class="gallery-item" tabindex="0" onclick="openLightbox(${i})" onkeydown="if(event.key==='Enter')openLightbox(${i})" role="button" aria-label="View screenshot ${i + 1}">
                         ${mediaEl}
+                        ${removeBtn}
                         <div class="gallery-expand">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 11V3h-8l3.29 3.29-10 10L3 13v8h8l-3.29-3.29 10-10L21 11z"/></svg>
                         </div>
@@ -1862,9 +2004,94 @@
                 `;
             }).join('');
 
-            // Store current screenshots for lightbox
-            window._lightboxMedia = screenshots.slice(0, 5);
+            window._lightboxMedia = display;
             window._lightboxToolName = tool.name;
+        }
+
+        // ── Trigger file picker ──
+        function triggerScreenshotUpload() {
+            document.getElementById('screenshotFileInput').click();
+        }
+
+        // ── Handle file input change ──
+        function handleScreenshotFiles(e) {
+            const files = Array.from(e.target.files);
+            if (files.length) processScreenshotFiles(files);
+            e.target.value = '';
+        }
+
+        // ── Process selected files → data URLs → localStorage ──
+        function processScreenshotFiles(files) {
+            const toolId = window._currentGalleryToolId;
+            if (!toolId) return;
+
+            const valid = /^(image\/(png|jpeg|gif|webp|svg\+xml|bmp)|video\/(mp4|webm|ogg))$/i;
+            const accepted = files.filter(f => valid.test(f.type));
+            if (!accepted.length) {
+                alert('No supported files selected.\nAccepted: PNG, JPG, GIF, WebP, SVG, MP4, WebM, OGG');
+                return;
+            }
+
+            const tool = TOOLS_DATA.find(t => t.id === toolId);
+            const existing = getStoredScreenshots(toolId);
+            const baseCount = (tool?.screenshots || []).length;
+            const room = 5 - baseCount - existing.length;
+
+            if (room <= 0) {
+                alert('Maximum of 5 screenshots reached for this tool.');
+                return;
+            }
+
+            const batch = accepted.slice(0, room);
+            let done = 0;
+
+            batch.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    existing.push(ev.target.result);
+                    done++;
+                    if (done === batch.length) {
+                        setStoredScreenshots(toolId, existing);
+                        if (tool) renderScreenshotGallery(tool);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+
+            if (accepted.length > batch.length) {
+                alert((accepted.length - batch.length) + ' file(s) skipped — max 5 total.');
+            }
+        }
+
+        // ── Remove a localStorage screenshot ──
+        function removeScreenshot(e, toolId, localIndex) {
+            e.stopPropagation();
+            e.preventDefault();
+            const arr = getStoredScreenshots(toolId);
+            if (localIndex >= 0 && localIndex < arr.length) {
+                arr.splice(localIndex, 1);
+                setStoredScreenshots(toolId, arr);
+                const tool = TOOLS_DATA.find(t => t.id === toolId);
+                if (tool) renderScreenshotGallery(tool);
+            }
+        }
+
+        // ── Drag & Drop ──
+        function galleryDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function galleryDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function galleryDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            const files = Array.from(e.dataTransfer.files);
+            if (files.length) processScreenshotFiles(files);
         }
 
         /* ─────────────────────────────────────────────────────────────
