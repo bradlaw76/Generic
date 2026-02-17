@@ -115,7 +115,12 @@
 - [x] Metadata grid: version, status, priority, category, origin, dates
 - [x] Tags display
 - [x] Long description rendering
-- [x] Screenshots section (placeholder)
+- [x] Screenshots section with upload (Add Files button + drag-and-drop)
+- [x] localStorage merge: repo screenshots + user uploads (`generic_screenshots_{id}`)
+- [x] Remove button (X) on hover for user-uploaded screenshots
+- [x] Lightbox viewer with keyboard nav (arrows, Escape)
+- [x] Adaptive gallery layout (1–5 images)
+- [x] Max 5 screenshots per tool
 - [x] Action buttons: View Repository (external link), Edit Tool, Back to Dashboard
 - [x] `showDetailEditPanel()` — inline edit form (same fields as Settings edit)
 - [x] Edit persists via `updateTool()`
@@ -169,11 +174,11 @@
 | 3     | Data Layer & Registry    | 10    | ✅ Complete  |
 | 4     | Dashboard                | 8     | ✅ Complete  |
 | 5     | Settings Page            | 20    | ✅ Complete  |
-| 6     | Tool Detail Page         | 9     | ✅ Complete  |
+| 6     | Tool Detail Page         | 14    | ✅ Complete  |
 | 7     | SpeckKit Page            | 8     | ✅ Complete  |
 | 8     | VS Code Page             | 2     | ✅ Complete  |
 | 9     | SideNav & Routing        | 6     | ✅ Complete  |
-|       | **TOTAL**                | **82**| **All Complete** |
+|       | **TOTAL**                | **87**| **All Complete** |
 
 ---
 
@@ -184,7 +189,7 @@ These are not in scope but could be added later:
 - [ ] Authentication / authorization
 - [ ] Server-side API layer
 - [ ] Advanced data grid (sorting, filtering, column resize)
-- [ ] Image upload / screenshot management
+- [x] ~~Image upload / screenshot management~~ (Implemented v3.1.0)
 - [ ] Export / import tool portfolio as JSON file
 - [ ] CI/CD pipeline
 - [ ] Automated testing (no test framework — zero dependencies)
@@ -193,4 +198,4 @@ These are not in scope but could be added later:
 
 ---
 
-*End of Tasks — Generic Tool Portfolio v3.0.0*
+*End of Tasks — Generic Tool Portfolio v3.1.0*

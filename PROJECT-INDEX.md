@@ -88,12 +88,12 @@ This document catalogues every file in the project, its purpose, exports, and re
 - Tracked repos list with Visibility badges
 - `autoImportRepo()` function for instant tool creation
 
-### `tool-detail.js` (~230 lines)
+### `tool-detail.js` (~470 lines)
 - **Type:** ES Module
-- **Purpose:** Full tool detail page with metadata display and inline editing
+- **Purpose:** Full tool detail page with metadata display, inline editing, and screenshot upload
 - **Exports:** `render(container, tool)`
 - **Imports:** `icons.js`, `router.js`, `tool-registry.js`
-- **Features:** Metadata grid, tags, long description, screenshots, actions (View Repo, Edit Tool, Back), `showDetailEditPanel()` inline editor
+- **Features:** Metadata grid, tags, long description, screenshot gallery with upload (Add Files + drag-and-drop), lightbox viewer, remove button for user uploads, adaptive gallery layout (1–5 images), localStorage merge pattern (`generic_screenshots_{id}`), actions (View Repo, Edit Tool, Back), `showDetailEditPanel()` inline editor
 
 ### `speckkit.js` (~600 lines)
 - **Type:** ES Module

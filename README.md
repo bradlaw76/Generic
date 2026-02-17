@@ -19,7 +19,7 @@ Generic is a single-page application that presents a curated portfolio of tools,
 - **Metrics Dashboard** — stat cards, category breakdown, priority distribution, public/private donut chart
 - **Settings Page** — tool management grid with inline editing, add-new-tool form, GitHub repository sync
 - **GitHub Integration** — polls `bradlaw76` repos, supports optional PAT for private repos, auto-import to portfolio
-- **Tool Detail Pages** — full metadata display with inline edit panel
+- **Tool Detail Pages** — full metadata display, inline edit panel, screenshot upload (Add Files + drag-and-drop)
 - **SpeckKit Presentation** — 20-slide interactive methodology overview
 - **VS Code & How I Build** — development environment showcase
 
@@ -79,7 +79,7 @@ Generic/
 │   │   └── content-area.js    # Route target container
 │   ├── pages/
 │   │   ├── settings.js        # 3-tab Settings (grid, add tool, GitHub sync)
-│   │   ├── tool-detail.js     # Tool detail page with inline edit
+│   │   ├── tool-detail.js     # Tool detail + screenshot upload + lightbox
 │   │   ├── speckkit.js        # SpeckKit overview + 20-slide presentation
 │   │   ├── vscode.js          # VS Code & How I Build page
 │   │   └── add-tool.js        # Legacy route (redirects to /settings)
@@ -119,7 +119,7 @@ Generic/
 | Hash Route | Page | Description |
 |------------|------|-------------|
 | `#/` | Dashboard | Metrics cards, category breakdown, donut chart |
-| `#/tools/:id` | Tool Detail | Full tool metadata + inline edit |
+| `#/tools/:id` | Tool Detail | Metadata, edit, screenshot upload, lightbox |
 | `#/settings` | Settings | Tool grid, add tool form, GitHub sync |
 | `#/speckkit` | SpeckKit | Methodology overview + 20-slide deck |
 | `#/vscode` | VS Code | Dev environment & workflow page |
@@ -156,6 +156,7 @@ Tools are defined in `data/tools.json` with the following schema:
 | `generic_user_tools` | User-added tools (via Settings or auto-import) |
 | `generic_tool_edits` | Edit overrides for any tool |
 | `generic_disabled_tools` | Disabled tool IDs |
+| `generic_screenshots_{id}` | User-uploaded screenshot data URLs per tool |
 | `generic_github_pat` | GitHub Personal Access Token (optional) |
 | `generic_theme` | Active theme selection |
 

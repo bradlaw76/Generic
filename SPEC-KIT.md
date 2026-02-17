@@ -1,6 +1,6 @@
 # GENERIC TOOL PORTFOLIO — SPEC KIT
 
-## Version 3.0.0 | Complete Specification
+## Version 3.1.0 | Complete Specification
 
 > **Last updated:** 2026-02-16  
 > **Status:** Implemented — all features live  
@@ -130,7 +130,7 @@ Generic/
 │   │   └── content-area.js        # Route target container
 │   ├── pages/
 │   │   ├── settings.js            # 3-tab Settings (~994 lines)
-│   │   ├── tool-detail.js         # Tool detail + edit
+│   │   ├── tool-detail.js         # Tool detail + edit + screenshot upload
 │   │   ├── speckkit.js            # SpeckKit presentation
 │   │   ├── vscode.js              # VS Code page
 │   │   └── add-tool.js            # Legacy redirect
@@ -357,7 +357,7 @@ The router uses `window.location.hash` for client-side navigation:
 | Pattern        | Module                           | Description                |
 |----------------|----------------------------------|----------------------------|
 | `/`            | `tools/dashboard/index.js`       | Metrics dashboard          |
-| `/tools/:id`   | `pages/tool-detail.js`           | Tool detail + edit         |
+| `/tools/:id`   | `pages/tool-detail.js`           | Tool detail + edit + screenshots |
 | `/settings`    | `pages/settings.js`              | Tool management + GitHub   |
 | `/add-tool`    | Redirect → `/settings`           | Legacy compat              |
 | `/speckkit`    | `pages/speckkit.js`              | SpeckKit presentation      |
@@ -412,6 +412,7 @@ Pages are loaded via dynamic `import()` in route handlers within `shell.js`. The
 | `generic_user_tools`     | JSON array   | User-added tools                     |
 | `generic_tool_edits`     | JSON object  | Edit overrides (keyed by tool ID)    |
 | `generic_disabled_tools` | JSON array   | Disabled tool IDs                    |
+| `generic_screenshots_{id}` | JSON array | User-uploaded screenshot data URLs   |
 | `generic_github_pat`     | String       | GitHub PAT (optional)                |
 | `generic_theme`          | String       | Active theme class name              |
 
@@ -653,7 +654,7 @@ Not in scope for current version:
 | Authentication / SSO                 | No server backend            |
 | API integration layer                | Local-first architecture      |
 | Advanced grid (sort, filter, resize) | Current grid is read+edit only|
-| Image/screenshot management          | Placeholder in tool detail    |
+| ~~Image/screenshot management~~      | ✅ Implemented v3.1.0         |
 | Export/import portfolio as JSON      | Could add file download       |
 | CI/CD pipeline                       | Manual deploy via GitHub Pages|
 | Automated testing                    | No test framework (zero deps) |
@@ -676,7 +677,7 @@ Not in scope for current version:
 | `src/layout/side-nav.js`         | Layout     | ~120   |
 | `src/layout/content-area.js`     | Layout     | ~20    |
 | `src/pages/settings.js`          | Pages      | ~994   |
-| `src/pages/tool-detail.js`       | Pages      | ~230   |
+| `src/pages/tool-detail.js`       | Pages      | ~470   |
 | `src/pages/speckkit.js`          | Pages      | ~600   |
 | `src/pages/vscode.js`            | Pages      | ~174   |
 | `src/pages/add-tool.js`          | Pages      | ~10    |
@@ -710,4 +711,4 @@ Not in scope for current version:
 
 ---
 
-*End of Spec Kit — Generic Tool Portfolio v3.0.0*
+*End of Spec Kit — Generic Tool Portfolio v3.1.0*

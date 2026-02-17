@@ -1068,11 +1068,89 @@
    ============================================================================= */
 
 .gallery-section {
-  display: none;
+  display: block;
 }
 
-.gallery-section.has-screenshots {
-  display: block;
+/* ── Gallery Header + Upload Controls ── */
+.gallery-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gallery-header h3 { margin: 0; }
+
+.gallery-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 150ms ease-in-out, border-color 150ms ease-in-out;
+}
+
+.upload-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.upload-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.upload-file-input { display: none; }
+
+/* Remove button on uploaded screenshots */
+.gallery-remove {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-danger);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 150ms ease-in-out, transform 100ms ease-in-out;
+  z-index: 2;
+}
+
+.gallery-remove:hover { transform: scale(1.15); }
+
+.gallery-remove:focus-visible {
+  outline: 2px solid var(--color-danger);
+  outline-offset: 2px;
+  opacity: 1;
+}
+
+.gallery-item:hover .gallery-remove { opacity: 1; }
+
+.gallery-remove svg { width: 12px; height: 12px; }
+
+/* Drag-over state */
+.screenshot-gallery.drag-over {
+  outline: 2px dashed var(--color-primary);
+  outline-offset: -2px;
+  background-color: rgba(30, 136, 229, 0.05);
 }
 
 .screenshot-gallery {
